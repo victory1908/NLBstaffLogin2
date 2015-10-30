@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editTextEmail;
     private EditText editTextPassword;
 
-    private Button buttonRegister;
+//    private Button buttonRegister;
     private Button buttonLogin;
 
 
@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         editTextEmail= (EditText) findViewById(R.id.editTextEmail);
 
-        buttonRegister = (Button) findViewById(R.id.buttonRegister);
+//        buttonRegister = (Button) findViewById(R.id.buttonRegister);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
-        buttonRegister.setOnClickListener(this);
+//        buttonRegister.setOnClickListener(this);
         buttonLogin.setOnClickListener(this);
     }
 
@@ -93,12 +93,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v == buttonRegister){
-            registerUser();
-        }
-        if(v == buttonLogin){
+//        if(v == buttonRegister){
+//            registerUser();
+//        }
+//        if(v == buttonLogin){
             startActivity(new Intent(this,LoginActivity.class));
-        }
+//        }
     }
 }
 
