@@ -23,8 +23,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
 
-    public static final String KEY_StaffID ="staffID";
-    public static final String KEY_PASSWORD="password";
+    public static final String KEY_StaffID ="StaffID";
+    public static final String KEY_PASSWORD="Password";
 
     private EditText editTextStaffID;
     private EditText editTextPassword;
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(KEY_StaffID,staffID);
+                map.put(KEY_StaffID, staffID);
                 map.put(KEY_PASSWORD,password);
                 return map;
             }
