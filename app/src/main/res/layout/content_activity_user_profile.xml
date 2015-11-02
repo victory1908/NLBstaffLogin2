@@ -16,6 +16,15 @@
         android:id="@+id/textViewUsername"
         android:layout_gravity="center_horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="5sp"
+        android:text="EventID"
+        android:id="@+id/EventID"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>
 
 
