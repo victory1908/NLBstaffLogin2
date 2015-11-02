@@ -1,11 +1,8 @@
 package victory1908.nlbstafflogin2;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,23 +16,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    public static final String LOGIN_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyLogin.php";
+    public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
 
-    public static final String KEY_USERNAME="username";
-    public static final String KEY_PASSWORD="password";
+    public static final String KEY_StaffID ="StaffID";
+    public static final String KEY_PASSWORD="Password";
 
-    private EditText editTextUsername;
+    private EditText editTextStaffID;
     private EditText editTextPassword;
     private Button buttonLogin;
 
-    private String username;
+    private String staffID;
     private String password;
 
     @Override
@@ -43,7 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
+        editTextStaffID = (EditText) findViewById(R.id.editTextStaffID);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
@@ -53,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     private void userLogin() {
-        username = editTextUsername.getText().toString().trim();
+        staffID = editTextStaffID.getText().toString().trim();
         password = editTextPassword.getText().toString().trim();
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN_URL,
@@ -76,7 +71,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(KEY_USERNAME,username);
+                map.put(KEY_StaffID, staffID);
                 map.put(KEY_PASSWORD,password);
                 return map;
             }
@@ -88,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void openProfile(){
         Intent intent = new Intent(this, ActivityUserProfile.class);
-        intent.putExtra(KEY_USERNAME, username);
+        intent.putExtra(KEY_StaffID, staffID);
         startActivity(intent);
     }
 

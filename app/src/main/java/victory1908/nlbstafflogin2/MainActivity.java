@@ -3,6 +3,7 @@ package victory1908.nlbstafflogin2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
     private static final String REGISTER_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyRegister.php";
 
     public static final String KEY_USERNAME = "username";
@@ -46,10 +48,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("NLBstaffAttedance");
+        toolbar.setLogo(R.drawable.nlblogo);
 
-        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
-        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
-        editTextEmail= (EditText) findViewById(R.id.editTextEmail);
+//        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
+//        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+//        editTextEmail= (EditText) findViewById(R.id.editTextEmail);
 
 //        buttonRegister = (Button) findViewById(R.id.buttonRegister);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
