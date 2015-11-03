@@ -19,8 +19,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import victory1908.nlbstafflogin2.ActivityUserProfile;
-import victory1908.nlbstafflogin2.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
