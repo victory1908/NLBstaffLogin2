@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/textViewUsername"
+        android:id="@+id/textViewStaffID"
         android:layout_gravity="center_horizontal" />
 
     <TextView
@@ -22,7 +22,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_marginTop="5sp"
         android:text="EventID"
-        android:id="@+id/EventID"
+        android:id="@+id/Event_Today"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
