@@ -4,6 +4,8 @@ package victory1908.nlbstafflogin2;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,16 +25,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActivityUserProfile extends AppCompatActivity {
+public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{
     private TextView textView;
 
     public final String KEY_BEACON_UUID = "beaconUUID";
 
 //    TextView eventid = (TextView) findViewById(R.id.Event_Today);
 
+    private Button checkIn;
+
     private String beaconUUID = "F94DBB23-2266-7822-3782-57BEAC0952AC";
 
     private JSONArray result;
+
 
     //Initializing the ArrayList
     private ArrayList<String> event = new ArrayList<String>();
@@ -49,7 +54,10 @@ public class ActivityUserProfile extends AppCompatActivity {
         textView.setText("Welcome User " + intent.getStringExtra(LoginActivity.KEY_STAFFID));
 
         getData();
-    }
+
+        checkIn = (Button) findViewById(R.id.CheckIn_Button);
+        checkIn.setOnClickListener(this);
+    };
 
     // Display eventID from beaconUUID
     private void getData() {
@@ -99,12 +107,17 @@ public class ActivityUserProfile extends AppCompatActivity {
                 JSONObject json = j.getJSONObject(i);
 
                 Toast.makeText(ActivityUserProfile.this,json.getString(Config.KEY_EVENT_ID),Toast.LENGTH_LONG ).show();
-
                 //Adding the EventID to array list
                 event.add(json.getString(Config.KEY_EVENT_ID));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(this, ActivtityCheckIn.class);
+        startActivity(intent);
     }
 }

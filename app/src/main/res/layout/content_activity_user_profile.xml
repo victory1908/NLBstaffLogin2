@@ -24,6 +24,12 @@
         android:text="EventID"
         android:id="@+id/Event_Today"
         android:layout_gravity="center_horizontal" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="CHECK IN"
+        android:id="@+id/CheckIn_Button"/>
 
 </LinearLayout>
 
