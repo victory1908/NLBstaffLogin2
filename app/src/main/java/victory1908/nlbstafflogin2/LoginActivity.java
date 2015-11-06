@@ -31,8 +31,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText editTextPassword;
     private Button buttonLogin;
 
-    private String staffID;
-    private String password;
+    public static String staffID;
+    public static String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(KEY_STAFFID, staffID);
+                map.put(KEY_STAFFID,staffID);
                 map.put(KEY_PASSWORD,password);
                 return map;
             }

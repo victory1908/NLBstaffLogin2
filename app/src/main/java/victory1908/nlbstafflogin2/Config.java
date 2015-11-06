@@ -7,6 +7,7 @@ public class Config {
     //JSON URL
     public static final String DATA_URL = "http://simplifiedcoding.16mb.com/Spinner/json.php";
     public static final String EVENT_URL = "http://vinhvumobile.com/phpconnect/getevent.php";
+    public static final String CHECK_IN_URL = "http://vinhvumobile.com/phpconnect/checkIn.php";
 
     //Tags used in the JSON String
     public static final String KEY_EVENT_ID = "EventID";

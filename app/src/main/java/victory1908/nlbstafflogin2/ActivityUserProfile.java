@@ -118,6 +118,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, ActivtityCheckIn.class);
+        intent.putExtra(LoginActivity.KEY_STAFFID,LoginActivity.class);
         startActivity(intent);
     }
 }
