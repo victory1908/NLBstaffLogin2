@@ -19,8 +19,11 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mobstac.beaconstac.core.BeaconstacReceiver;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+
 
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
 
@@ -45,6 +48,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
         buttonLogin.setOnClickListener(this);
+
+
     }
 
 

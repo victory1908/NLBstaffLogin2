@@ -17,11 +17,15 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
+
 import java.util.HashMap;
 import java.util.Map;
+import org.joda.time.LocalDate;
 
 public class ActivtityCheckIn extends AppCompatActivity {
 
+    private static LocalDate localDate = new LocalDate();
+    private static final String KEY_LOCALDATE = "localDate";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,11 @@ public class ActivtityCheckIn extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(ActivtityCheckIn.this,response,Toast.LENGTH_LONG).show();
+                        if (response.toString() == "") {
+                            Toast.makeText(ActivtityCheckIn.this,localDate.toString(),Toast.LENGTH_LONG).show();
+                        }else {
+                            Toast.makeText(ActivtityCheckIn.this,response.toString(),Toast.LENGTH_LONG).show();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -64,6 +72,8 @@ public class ActivtityCheckIn extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
                 map.put(LoginActivity.KEY_STAFFID,LoginActivity.staffID);
+                map.put(ActivtityCheckIn.KEY_LOCALDATE, ActivtityCheckIn.localDate.toString());
+
                 return map;
             }
         };
