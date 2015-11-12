@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         buttonLogin.setOnClickListener(this);
 
-
     }
 
 

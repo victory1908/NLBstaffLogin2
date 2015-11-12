@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 
 
 public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{
     private TextView textView;
 
-    public final String KEY_BEACON_UUID = "beaconUUID";
 
 //    TextView eventid = (TextView) findViewById(R.id.Event_Today);
 
@@ -57,14 +57,14 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
         textView.setText("Welcome User " + intent.getStringExtra(LoginActivity.KEY_STAFFID));
 
-        getData();
+        getEvent();
 
         checkIn = (Button) findViewById(R.id.CheckIn_Button);
         checkIn.setOnClickListener(this);
     };
 
     // Display eventID from beaconUUID
-    private void getData() {
+    private void getEvent() {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.EVENT_URL,
                 new Response.Listener<String>() {
@@ -94,7 +94,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(KEY_BEACON_UUID, beaconUUID);
+                map.put(Config.KEY_BEACON_UUID, beaconUUID);
                 return map;
             }
         };
