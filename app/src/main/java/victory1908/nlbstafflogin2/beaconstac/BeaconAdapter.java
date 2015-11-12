@@ -19,7 +19,9 @@ import victory1908.nlbstafflogin2.R;
 
 public class BeaconAdapter extends BaseAdapter {
 
-    public static ArrayList <String> beaconUUID;
+
+    public static String beaconUUID;
+
     private ArrayList <MSBeacon> beacons;
     private Context ctx;
     private LayoutInflater myInflator;
@@ -94,7 +96,7 @@ public class BeaconAdapter extends BaseAdapter {
         key.setText("Major: " + beacon.getMajor() + "\t\t\t Minor: " + beacon.getMinor() +
                 " \t\t\t  Mean RSSI: " + beacon.getMeanRSSI());
 
-//        beaconUUID.add(beacon.getBeaconUUID().toString());
+        beaconUUID = beacon.getBeaconUUID().toString();
 
         if (beacon.getIsCampedOn()) {
             view.setBackgroundResource(android.R.color.holo_green_light);

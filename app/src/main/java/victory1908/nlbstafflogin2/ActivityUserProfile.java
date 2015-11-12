@@ -38,7 +38,8 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
 
 
-    private String beaconUUID = "F94DBB23-2266-7822-3782-57BEAC0952AC";
+//    private String beaconUUID = "F94DBB23-2266-7822-3782-57BEAC0952AC";
+
 
     private JSONArray result;
 
@@ -94,7 +95,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(Config.KEY_BEACON_UUID, beaconUUID);
+                map.put(Config.KEY_BEACON_UUID, BeaconAdapter.beaconUUID);
                 return map;
             }
         };

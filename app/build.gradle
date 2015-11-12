@@ -26,7 +26,6 @@ dependencies {
     compile 'com.android.support:design:23.1.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.crittercism:crittercism-android-agent:5.0.6'
-    compile 'joda-time:joda-time:2.9'
     compile (name: 'beaconstac-release', ext: 'aar')
     compile 'com.google.android.gms:play-services:8.3.0'
 }
