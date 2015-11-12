@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.joda.time.LocalDate;
 
+
 public class ActivtityCheckIn extends AppCompatActivity {
 
     private static LocalDate localDate = new LocalDate();

@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //import android.view.Menu;
 //import android.view.MenuItem;
 //
-//public class MainActivity extends AppCompatActivity {
+//public class Beacon_MainActivity extends AppCompatActivity {
 //
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {

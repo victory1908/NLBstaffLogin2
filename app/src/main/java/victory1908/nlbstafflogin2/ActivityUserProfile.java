@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{
     private TextView textView;
 
@@ -33,6 +35,8 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 //    TextView eventid = (TextView) findViewById(R.id.Event_Today);
 
     private Button checkIn;
+
+
 
     private String beaconUUID = "F94DBB23-2266-7822-3782-57BEAC0952AC";
 
@@ -117,7 +121,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, ActivtityCheckIn.class);
+        Intent intent = new Intent(this, victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity.class);
         intent.putExtra(LoginActivity.KEY_STAFFID,LoginActivity.class);
         startActivity(intent);
     }

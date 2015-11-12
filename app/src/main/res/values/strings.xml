@@ -4,4 +4,11 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_activity_user_profile">ActivityUserProfile</string>
     <string name="title_activity_activtity_check_in">ActivtityCheckIn</string>
+
+    <!--<string name="app_name">Beaconstac Example</string>-->
+    <string name="ble_not_supported">BLE not supported on this device.</string>
+
+    <string name="label_device_name">Device Name</string>
+    <string name="label_device_address">Device Address</string>
+    <string name="title_Beacon_MainActivity">tile_Beacon_MainActivity</string>
 </resources>

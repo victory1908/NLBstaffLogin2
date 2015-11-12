@@ -19,7 +19,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mobstac.beaconstac.core.BeaconstacReceiver;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
