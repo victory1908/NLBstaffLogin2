@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
@@ -53,7 +54,9 @@ import victory1908.nlbstafflogin2.LoginActivity;
 import victory1908.nlbstafflogin2.R;
 
 
-public class Beacon_MainActivity extends Activity {
+public class Beacon_MainActivity extends AppCompatActivity {
+
+    private TextView textView;
 
     private static final String TAG = Beacon_MainActivity.class.getSimpleName();
 
@@ -76,6 +79,13 @@ public class Beacon_MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.beacon_activity_main);
+
+        textView = (TextView) findViewById(R.id.textView_staffid);
+
+        Intent intent = getIntent();
+
+        textView.setText("Welcome User " + intent.getStringExtra(LoginActivity.KEY_STAFFID));
+
 
         // Use this check to determine whether BLE is supported on the device.
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
