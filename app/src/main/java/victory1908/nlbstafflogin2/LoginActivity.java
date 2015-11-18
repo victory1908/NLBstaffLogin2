@@ -19,6 +19,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(String response) {
                         if(response.trim().equals("success")){
-                            openProfile();
+                            beacon_main();
                         }else{
                             Toast.makeText(LoginActivity.this,response,Toast.LENGTH_LONG).show();
                         }
@@ -85,8 +86,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         requestQueue.add(stringRequest);
     }
 
-    private void openProfile(){
-        Intent intent = new Intent(this, ActivityUserProfile.class);
+    private void beacon_main(){
+        Intent intent = new Intent(this, Beacon_MainActivity.class);
         intent.putExtra(KEY_STAFFID, staffID);
         startActivity(intent);
     }

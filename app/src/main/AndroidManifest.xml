@@ -3,13 +3,12 @@
     package="victory1908.nlbstafflogin2" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -52,7 +51,9 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
-        <receiver android:name=".beaconstac.BeaconstacExampleReceiver" android:exported="false">
+        <receiver
+            android:name=".beaconstac.BeaconstacReceiver"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.mobstac.beaconstac.intent.action.RANGED_BEACON" />
                 <action android:name="com.mobstac.beaconstac.intent.action.CAMPED_BEACON" />
@@ -65,7 +66,9 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.mobstac.beaconstac.core.MSBLEService" android:enabled="true"/>
+        <service
+            android:name="com.mobstac.beaconstac.core.MSBLEService"
+            android:enabled="true" />
         <service android:name="com.mobstac.beaconstac.core.MSGeofenceTransitionIntentService" />
 
         <provider
@@ -73,12 +76,11 @@
             android:authorities="@string/provider"
             android:enabled="true"
             android:exported="false"
-            android:multiprocess="true"
             android:grantUriPermissions="true"
+            android:multiprocess="true"
             android:syncable="true" >
         </provider>
 
     </application>
-
 
 </manifest>

@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
+import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
 public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{

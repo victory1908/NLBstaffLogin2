@@ -30,7 +30,6 @@ public class ActivtityCheckIn extends AppCompatActivity {
         setContentView(R.layout.activtity_check_in);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Attendance");
         checkIn();
 
 
