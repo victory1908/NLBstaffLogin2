@@ -56,6 +56,7 @@ import victory1908.nlbstafflogin2.R;
 
 public class Beacon_MainActivity extends AppCompatActivity {
 
+    public static final ArrayList<String> event = new ArrayList<String>();
     private TextView textView;
 
     private static final String TAG = Beacon_MainActivity.class.getSimpleName();
@@ -117,7 +118,7 @@ public class Beacon_MainActivity extends AppCompatActivity {
         // set region parameters (UUID and unique region identifier)
         bstacInstance = Beaconstac.getInstance(this);
         bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
-                "com.mobstac.beaconstacexample");
+                "com.mobstac.beaconstac");
         bstacInstance.syncRules();
 
         // if location is enabled
@@ -159,7 +160,8 @@ public class Beacon_MainActivity extends AppCompatActivity {
             }
         }
 
-
+        // Call getEvent and display
+        getEvent();
     }
 
     // end oncreate
@@ -438,6 +440,64 @@ public class Beacon_MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Exited Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
         }
     };
+
+
+    // Display eventID from beaconUUID
+    private void getEvent() {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.EVENT_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject j = null;
+                        JSONArray result = null;
+                        try {
+                            //Parsing the fetched Json String to JSON Object
+                            j = new JSONObject(response);
+
+                            //Storing the Array of JSON String to our JSON Array
+                            result = j.getJSONArray(Config.JSON_ARRAY);
+
+                            //Calling method getEventID to get the eventID from the JSON Array
+                            getEventtID(result);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Beacon_MainActivity.this,error.toString(),Toast.LENGTH_SHORT ).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put(Config.KEY_BEACON_UUID, BeaconAdapter.beaconUUID);
+                return map;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    private void getEventtID(JSONArray j) {
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                Toast.makeText(Beacon_MainActivity.this,json.getString(Config.KEY_EVENT_ID),Toast.LENGTH_LONG ).show();
+                //Adding the EventID to array list
+                event.add(json.getString(Config.KEY_EVENT_ID));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
 }

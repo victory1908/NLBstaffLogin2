@@ -52,7 +52,7 @@
         </activity>
 
         <receiver
-            android:name=".beaconstac.BeaconstacReceiver"
+            android:name=".beaconstac.BeaconReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.mobstac.beaconstac.intent.action.RANGED_BEACON" />

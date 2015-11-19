@@ -17,35 +17,35 @@ import victory1908.nlbstafflogin2.MainActivity;
 import victory1908.nlbstafflogin2.R;
 
 
-public class BeaconstacReceiver extends com.mobstac.beaconstac.core.BeaconstacReceiver {
+public class BeaconReceiver extends com.mobstac.beaconstac.core.BeaconstacReceiver {
     private NotificationManager notificationManager;
 
     @Override
     public void exitedBeacon(Context context, MSBeacon beacon) {
-        Log.v(BeaconstacReceiver.class.getName(), "exited called " + beacon.getBeaconKey());
+        Log.v(BeaconReceiver.class.getName(), "exited called " + beacon.getBeaconKey());
         sendNotification(context, "Exited " + beacon.getMajor() + " : " + beacon.getMinor());
     }
 
     @Override
     public void rangedBeacons(Context context, ArrayList<MSBeacon> beacons) {
-        Log.v(BeaconstacReceiver.class.getName(), "Ranged called " + beacons.size());
+        Log.v(BeaconReceiver.class.getName(), "Ranged called " + beacons.size());
         sendNotification(context, "Ranged " + beacons.size() + " beacons");
     }
 
     @Override
     public void campedOnBeacon(Context context, MSBeacon beacon) {
-        Log.v(BeaconstacReceiver.class.getName(), "camped on called " + beacon.getBeaconKey());
+        Log.v(BeaconReceiver.class.getName(), "camped on called " + beacon.getBeaconKey());
         sendNotification(context, "Camped " + beacon.getMajor() + " : " + beacon.getMinor());
     }
 
     @Override
     public void triggeredRule(Context context, String ruleName, ArrayList<MSAction> actions) {
-        Log.v(BeaconstacReceiver.class.getName(), "triggered rule called " + ruleName);
+        Log.v(BeaconReceiver.class.getName(), "triggered rule called " + ruleName);
     }
 
     @Override
     public void enteredRegion(Context context, String region) {
-        Log.v(BeaconstacReceiver.class.getName(), "Entered region " + region);
+        Log.v(BeaconReceiver.class.getName(), "Entered region " + region);
     }
 
     @Override
@@ -53,17 +53,17 @@ public class BeaconstacReceiver extends com.mobstac.beaconstac.core.BeaconstacRe
         notificationManager = (NotificationManager)
                 context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-        Log.v(BeaconstacReceiver.class.getName(), "Exited region " + region);
+        Log.v(BeaconReceiver.class.getName(), "Exited region " + region);
     }
 
     @Override
     public void enteredGeofence(Context context, ArrayList<MSPlace> arrayList) {
-        Log.v(BeaconstacReceiver.class.getName(), "Entered geofence");
+        Log.v(BeaconReceiver.class.getName(), "Entered geofence");
     }
 
     @Override
     public void exitedGeofence(Context context, ArrayList<MSPlace> arrayList) {
-        Log.v(BeaconstacReceiver.class.getName(), "Exited geofence");
+        Log.v(BeaconReceiver.class.getName(), "Exited geofence");
     }
 
     @Override
