@@ -80,10 +80,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Welcome"
-        android:id="@+id/textView_staffid"
-        android:layout_above="@+id/button"
-        android:layout_toRightOf="@+id/button"
-        android:layout_toEndOf="@+id/button" />
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView_staffid"/>
 
 
 </RelativeLayout>
