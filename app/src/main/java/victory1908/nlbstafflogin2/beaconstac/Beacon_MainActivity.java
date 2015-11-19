@@ -16,8 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,13 +51,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import crittercism.android.v;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.LoginActivity;
 import victory1908.nlbstafflogin2.R;
 
 
-public class Beacon_MainActivity extends AppCompatActivity {
+public class Beacon_MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public static final ArrayList<String> event = new ArrayList<String>();
     private TextView textView;
@@ -74,6 +76,23 @@ public class Beacon_MainActivity extends AppCompatActivity {
 
     private boolean registered = false;
     private boolean isPopupVisible = false;
+
+
+    //snipper
+    //Declaring an Spinner
+    private Spinner spinner;
+
+    //An ArrayList for Spinner Items
+    private ArrayList<String> eventdetail;
+
+    //JSON Array
+    private JSONArray result;
+
+    //TextViews to display details
+    private TextView textViewName;
+    private TextView textViewCourse;
+    private TextView textViewSession;
+
 
 
     @Override
@@ -160,8 +179,23 @@ public class Beacon_MainActivity extends AppCompatActivity {
             }
         }
 
-        // Call getEvent and display
-        getEvent();
+        //Create Spinner
+        //Initializing the ArrayList
+        eventdetail = new ArrayList<String>();
+
+        //Initializing Spinner
+        spinner = (Spinner) findViewById(R.id.spinner);
+
+        //Adding an Item Selected Listener to our Spinner
+        //As we have implemented the class Spinner.OnItemSelectedListener to this class iteself we are passing this to setOnItemSelectedListener
+        spinner.setOnItemSelectedListener(this);
+
+        //Initializing TextViews
+        textViewName = (TextView) findViewById(R.id.textViewName);
+        textViewCourse = (TextView) findViewById(R.id.textViewCourse);
+        textViewSession = (TextView) findViewById(R.id.textViewSession);
+        //end spinner
+
     }
 
     // end oncreate
@@ -184,6 +218,7 @@ public class Beacon_MainActivity extends AppCompatActivity {
         bCount.setText("" + beacons.size());
         unregisterBroadcast();
         isPopupVisible = true;
+
     }
 
     @Override
@@ -198,6 +233,12 @@ public class Beacon_MainActivity extends AppCompatActivity {
         bCount.setText("" + beacons.size());
         registerBroadcast();
         isPopupVisible = false;
+
+        // Call getEvent and display
+        getEvent();
+
+        //This method will fetch the data from the URL
+        geteventdetail();
     }
 
     @Override
@@ -499,5 +540,125 @@ public class Beacon_MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private void geteventdetail(){
+        //Creating a string request
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,Config.DATA_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject j = null;
+                        JSONArray eventid = null;
+                        try {
+                            //Parsing the fetched Json String to JSON Object
+                            j = new JSONObject(response);
+
+                            //Storing the Array of JSON String to our JSON Array
+                            eventid = j.getJSONArray(Config.JSON_ARRAY);
+
+                            //Calling method geteventdetail to get the eventdetail from the JSON Array
+                            geteventdetail(eventid);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put(event.toString(), event.toString());
+                return map;
+            }
+        };
+
+        //Creating a request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        //Adding request to the queue
+        requestQueue.add(stringRequest);
+    }
+
+    private void geteventdetail(JSONArray j){
+        //Traversing through all the items in the json array
+        for(int i=0;i<j.length();i++){
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                //Adding the name of the student to array list
+                eventdetail.add(json.getString(Config.KEY_EVENT_ID));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Setting adapter to show the items in the spinner
+        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventdetail));
+    }
+
+    //Method to get student name of a particular position
+    private String getTitle(int position){
+        String EventTitle="";
+        try {
+            //Getting object of given index
+            JSONObject json = result.getJSONObject(position);
+
+            //Fetching EventTitle from that object
+            EventTitle = json.getString(Config.EVENT_TITLE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returning the EventTitle
+        return EventTitle;
+    }
+
+    //Doing the same with this method as we did with getTitle()
+    private String getDesc(int position){
+        String course="";
+        try {
+            JSONObject json = result.getJSONObject(position);
+            course = json.getString(Config.EVENT_DESC);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return course;
+    }
+
+    //Doing the same with this method as we did with getTitle()
+    private String getEventTime(int position){
+        String session="";
+        try {
+            JSONObject json = result.getJSONObject(position);
+            session = json.getString(Config.EVENT_TIME);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return session;
+    }
+
+
+    //this method will execute when we pic an item from the spinner
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //Setting the values to textviews for a selected item
+        textViewName.setText(getTitle(position));
+        textViewCourse.setText(getDesc(position));
+        textViewSession.setText(getEventTime(position));
+    }
+
+    //When no item is selected this method would execute
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        textViewName.setText("");
+        textViewCourse.setText("");
+        textViewSession.setText("");
+    }
 
 }
