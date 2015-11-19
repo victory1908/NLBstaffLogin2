@@ -49,8 +49,9 @@
     android:text="0"
     android:id="@+id/beaconCount"
     android:layout_alignParentTop="true"
+        android:layout_marginTop="160sp"
     android:layout_toRightOf="@id/RangedView"
-    android:layout_toEndOf="@id/RangedView"/>
+    android:layout_toEndOf="@id/RangedView" />
 
 
     <Button
