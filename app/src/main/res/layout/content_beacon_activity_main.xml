@@ -29,72 +29,93 @@
         android:id="@+id/spinner"
         android:layout_below="@id/textView_staffid"/>
 
-    <TableLayout
-        android:layout_width="match_parent"
+
+
+    <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+        android:text="EventTitle"
+        android:id="@+id/textView1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/spinner"
+        android:padding="15dp"/>
+
+
+    <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+        android:text="EventDescription"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/textView1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="15dp"/>
+
+
+    <TextView
+
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spinner">
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="10dp"
-                android:text="Name"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginRight="20dp"
-                android:text="Course"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginRight="20dp"
-                android:text="Session"
-                />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="10dp"
-                android:id="@+id/textViewName"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:id="@+id/textViewCourse"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:id="@+id/textViewSession"
-                />
-        </TableRow>
-    </TableLayout>
+        android:textStyle="bold"
+        android:text="EventTime"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:padding="15dp"/>
+
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/nav_header_height"
+        android:id="@+id/textViewEventTitle"
+        android:padding="15dp"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_toRightOf="@+id/textView2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewEventDesc"
+        android:padding="15dp"
+        android:layout_below="@+id/textViewEventTitle"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_alignRight="@+id/textViewEventTitle"
+        android:layout_alignEnd="@+id/textViewEventTitle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewEventTime"
+        android:padding="15dp"
+        android:layout_below="@+id/textViewEventDesc"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_alignRight="@+id/textViewEventTitle"
+        android:layout_alignEnd="@+id/textViewEventTitle" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:paddingBottom="20sp"
         android:text="Beacons Ranged: "
         android:id="@+id/RangedView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="250sp" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/nav_header_height"
+        android:layout_marginTop="250sp"
         android:text="Camped: 0"
         android:id="@+id/CampedView"
         android:layout_alignParentTop="true"
@@ -114,10 +135,8 @@
     android:layout_height="wrap_content"
     android:text="0"
     android:id="@+id/beaconCount"
-    android:layout_alignParentTop="true"
-        android:layout_marginTop="160sp"
     android:layout_toRightOf="@id/RangedView"
-    android:layout_toEndOf="@id/RangedView" />
+        android:layout_marginTop="250sp"/>
 
 
     <Button
@@ -126,21 +145,9 @@
     android:text="Check In"
     android:id="@+id/Check_in"
         android:visibility="invisible"
-        android:layout_alignBottom="@+id/CampedView"
-        android:layout_alignRight="@+id/CampedView"
-        android:layout_alignEnd="@+id/CampedView"
-        android:layout_marginBottom="36dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Check In"
-        android:id="@+id/button"
-        android:visibility="invisible"
-        android:layout_alignBottom="@+id/Check_in"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2"
+        android:layout_alignTop="@+id/beaconCount" />
 
 
 </RelativeLayout>

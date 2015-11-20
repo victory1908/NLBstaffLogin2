@@ -21,6 +21,8 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
+
 
 public class ActivtityCheckIn extends AppCompatActivity {
 
@@ -64,6 +66,8 @@ public class ActivtityCheckIn extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
                 map.put(LoginActivity.KEY_STAFFID,LoginActivity.staffID);
+//                map.put(Beacon_MainActivity.eventCheckIn,Beacon_MainActivity.eventCheckIn);
+
                 return map;
             }
         };

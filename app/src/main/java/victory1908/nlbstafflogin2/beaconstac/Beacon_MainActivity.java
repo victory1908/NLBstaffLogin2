@@ -24,8 +24,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -49,7 +47,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.LoginActivity;
@@ -69,6 +66,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
     private TextView bCount;
     private TextView testCamped;
     private Button checkIn;
+    public static String eventCheckIn;
     Beaconstac bstacInstance;
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -86,12 +84,12 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
     private ArrayList<String> eventdetail;
 
     //JSON Array
-    private JSONArray result;
+    private JSONArray eventArrary;
 
     //TextViews to display details
-    private TextView textViewName;
-    private TextView textViewCourse;
-    private TextView textViewSession;
+    private TextView textViewEventTitle;
+    private TextView textViewEventDesc;
+    private TextView textViewEventTime;
 
 
 
@@ -191,11 +189,13 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         spinner.setOnItemSelectedListener(this);
 
         //Initializing TextViews
-        textViewName = (TextView) findViewById(R.id.textViewName);
-        textViewCourse = (TextView) findViewById(R.id.textViewCourse);
-        textViewSession = (TextView) findViewById(R.id.textViewSession);
+        textViewEventTitle = (TextView) findViewById(R.id.textViewEventTitle);
+        textViewEventDesc = (TextView) findViewById(R.id.textViewEventDesc);
+        textViewEventTime = (TextView) findViewById(R.id.textViewEventTime);
         //end spinner
 
+//        This method will fetch the data from the URL
+        geteventdetail();
     }
 
     // end oncreate
@@ -234,11 +234,10 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         registerBroadcast();
         isPopupVisible = false;
 
-        // Call getEvent and display
-        getEvent();
+//        // Call getEvent and display
+//        getEvent();
 
-        //This method will fetch the data from the URL
-        geteventdetail();
+
     }
 
     @Override
@@ -341,7 +340,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
 
-            Toast.makeText(Beacon_MainActivity.this, "Scanning for beacon", Toast.LENGTH_SHORT).show();
+
             Button checkIn = (Button) findViewById(R.id.Check_in);
             checkIn.setVisibility(View.VISIBLE);
             checkIn.setOnClickListener(new View.OnClickListener() {
@@ -349,6 +348,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
                 public void onClick(View v) {
                     Intent intent = new Intent(Beacon_MainActivity.this, victory1908.nlbstafflogin2.ActivtityCheckIn.class);
                     intent.putExtra(LoginActivity.KEY_STAFFID,LoginActivity.class);
+                    intent.putExtra(Beacon_MainActivity.eventCheckIn,Beacon_MainActivity.class);
                     startActivity(intent);
 
                 }
@@ -483,81 +483,81 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
     };
 
 
-    // Display eventID from beaconUUID
-    private void getEvent() {
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.EVENT_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONObject j = null;
-                        JSONArray result = null;
-                        try {
-                            //Parsing the fetched Json String to JSON Object
-                            j = new JSONObject(response);
-
-                            //Storing the Array of JSON String to our JSON Array
-                            result = j.getJSONArray(Config.JSON_ARRAY);
-
-                            //Calling method getEventID to get the eventID from the JSON Array
-                            getEventtID(result);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Beacon_MainActivity.this,error.toString(),Toast.LENGTH_SHORT ).show();
-                    }
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
-                map.put(Config.KEY_BEACON_UUID, BeaconAdapter.beaconUUID);
-                return map;
-            }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
-
-    private void getEventtID(JSONArray j) {
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                Toast.makeText(Beacon_MainActivity.this,json.getString(Config.KEY_EVENT_ID),Toast.LENGTH_LONG ).show();
-                //Adding the EventID to array list
-                event.add(json.getString(Config.KEY_EVENT_ID));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    // Display eventID from beaconUUID
+//    private void getEvent() {
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.EVENT_URL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        JSONObject j = null;
+//                        JSONArray result = null;
+//                        try {
+//                            //Parsing the fetched Json String to JSON Object
+//                            j = new JSONObject(response);
+//
+//                            //Storing the Array of JSON String to our JSON Array
+//                            result = j.getJSONArray(Config.JSON_ARRAY);
+//
+//                            //Calling method getEventID to get the eventID from the JSON Array
+//                            getEventtID(result);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(Beacon_MainActivity.this,error.toString(),Toast.LENGTH_SHORT ).show();
+//                    }
+//                }){
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String,String> map = new HashMap<String,String>();
+//                map.put(Config.KEY_BEACON_UUID, BeaconAdapter.beaconUUID);
+//                return map;
+//            }
+//        };
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        requestQueue.add(stringRequest);
+//    }
+//
+//    private void getEventtID(JSONArray j) {
+//        //Traversing through all the items in the json array
+//        for (int i = 0; i < j.length(); i++) {
+//            try {
+//                //Getting json object
+//                JSONObject json = j.getJSONObject(i);
+//
+//                Toast.makeText(Beacon_MainActivity.this,json.getString(Config.KEY_EVENT_ID),Toast.LENGTH_LONG ).show();
+//                //Adding the EventID to array list
+//                event.add(json.getString(Config.KEY_EVENT_ID));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
 
     private void geteventdetail(){
         //Creating a string request
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,Config.DATA_URL,
+        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         JSONObject j = null;
-                        JSONArray eventid = null;
+
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
 
                             //Storing the Array of JSON String to our JSON Array
-                            eventid = j.getJSONArray(Config.JSON_ARRAY);
+                            eventArrary = j.getJSONArray(Config.JSON_ARRAY);
 
                             //Calling method geteventdetail to get the eventdetail from the JSON Array
-                            geteventdetail(eventid);
+                            geteventdetail(eventArrary);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -569,14 +569,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
 
                     }
 
-                }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
-                map.put(event.toString(), event.toString());
-                return map;
-            }
-        };
+                });
 
         //Creating a request queue
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -603,12 +596,12 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventdetail));
     }
 
-    //Method to get student name of a particular position
+    //Method to get evnet title of a particular position
     private String getTitle(int position){
         String EventTitle="";
         try {
             //Getting object of given index
-            JSONObject json = result.getJSONObject(position);
+            JSONObject json = eventArrary.getJSONObject(position);
 
             //Fetching EventTitle from that object
             EventTitle = json.getString(Config.EVENT_TITLE);
@@ -621,26 +614,26 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
 
     //Doing the same with this method as we did with getTitle()
     private String getDesc(int position){
-        String course="";
+        String eventDescritpion="";
         try {
-            JSONObject json = result.getJSONObject(position);
-            course = json.getString(Config.EVENT_DESC);
+            JSONObject json = eventArrary.getJSONObject(position);
+            eventDescritpion = json.getString(Config.EVENT_DESC);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return course;
+        return eventDescritpion;
     }
 
     //Doing the same with this method as we did with getTitle()
     private String getEventTime(int position){
-        String session="";
+        String eventTime="";
         try {
-            JSONObject json = result.getJSONObject(position);
-            session = json.getString(Config.EVENT_TIME);
+            JSONObject json = eventArrary.getJSONObject(position);
+            eventTime = json.getString(Config.EVENT_TIME);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return session;
+        return eventTime;
     }
 
 
@@ -648,17 +641,19 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //Setting the values to textviews for a selected item
-        textViewName.setText(getTitle(position));
-        textViewCourse.setText(getDesc(position));
-        textViewSession.setText(getEventTime(position));
+        textViewEventTitle.setText(getTitle(position));
+        textViewEventDesc.setText(getDesc(position));
+        textViewEventTime.setText(getEventTime(position));
+        Toast.makeText(Beacon_MainActivity.this, "" + eventdetail.get(position).toString(), Toast.LENGTH_SHORT).show();
+        eventCheckIn = eventdetail.get(position).toString();
     }
 
     //When no item is selected this method would execute
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        textViewName.setText("");
-        textViewCourse.setText("");
-        textViewSession.setText("");
+        textViewEventTitle.setText("");
+        textViewEventDesc.setText("");
+        textViewEventTime.setText("");
     }
 
 }
