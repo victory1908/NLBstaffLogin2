@@ -53,7 +53,8 @@ public class ActivtityCheckIn extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(ActivtityCheckIn.this,response.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActivtityCheckIn.this,response,Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActivtityCheckIn.this,Beacon_MainActivity.eventCheckIn,Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
@@ -64,9 +65,9 @@ public class ActivtityCheckIn extends AppCompatActivity {
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
+                Map<String,String> map = new HashMap<>();
                 map.put(Config.KEY_STAFFID,LoginActivity.staffID);
-//                map.put(Beacon_MainActivity.eventCheckIn,Beacon_MainActivity.eventCheckIn);
+                map.put(Config.KEY_EVENT_ID,Beacon_MainActivity.eventCheckIn);
 
                 return map;
             }

@@ -55,12 +55,12 @@ import victory1908.nlbstafflogin2.R;
 
 public class Beacon_MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    public static final ArrayList<String> event = new ArrayList<String>();
+    public static final ArrayList<String> event = new ArrayList<>();
     private TextView textView;
 
     private static final String TAG = Beacon_MainActivity.class.getSimpleName();
 
-    private ArrayList<MSBeacon> beacons = new ArrayList<MSBeacon>();
+    private ArrayList<MSBeacon> beacons = new ArrayList<>();
 
     private BeaconAdapter beaconAdapter;
     private TextView bCount;
@@ -179,7 +179,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
 
         //Create Spinner
         //Initializing the ArrayList
-        eventDetail = new ArrayList<String>();
+        eventDetail = new ArrayList<>();
 
         //Initializing Spinner
         spinner = (Spinner) findViewById(R.id.spinner);
@@ -347,8 +347,8 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Beacon_MainActivity.this, victory1908.nlbstafflogin2.ActivtityCheckIn.class);
-                    intent.putExtra(Config.KEY_STAFFID,LoginActivity.class);
-                    intent.putExtra(Beacon_MainActivity.eventCheckIn,Beacon_MainActivity.class);
+                    intent.putExtra(Config.KEY_STAFFID,LoginActivity.staffID);
+                    intent.putExtra(Config.KEY_EVENT_ID,Beacon_MainActivity.eventCheckIn);
                     startActivity(intent);
 
                 }
@@ -489,7 +489,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
 
                         try {
                             //Parsing the fetched Json String to JSON Object
@@ -535,7 +535,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         }
 
         //Setting adapter to show the items in the spinner
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+        spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
 
     //Method to get event title of a particular position
