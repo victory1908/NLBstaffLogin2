@@ -65,7 +65,7 @@ public class ActivtityCheckIn extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(LoginActivity.KEY_STAFFID,LoginActivity.staffID);
+                map.put(Config.KEY_STAFFID,LoginActivity.staffID);
 //                map.put(Beacon_MainActivity.eventCheckIn,Beacon_MainActivity.eventCheckIn);
 
                 return map;

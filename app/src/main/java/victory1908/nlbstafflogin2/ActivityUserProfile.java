@@ -57,7 +57,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
         Intent intent = getIntent();
 
-        textView.setText("Welcome User " + intent.getStringExtra(LoginActivity.KEY_STAFFID));
+        textView.setText("Welcome User " + intent.getStringExtra(Config.KEY_STAFFID));
 
         getEvent();
 
@@ -124,7 +124,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity.class);
-        intent.putExtra(LoginActivity.KEY_STAFFID,LoginActivity.class);
+        intent.putExtra(Config.KEY_STAFFID,LoginActivity.class);
         startActivity(intent);
     }
 }

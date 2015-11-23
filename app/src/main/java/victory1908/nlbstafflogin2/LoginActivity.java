@@ -25,10 +25,6 @@ import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-    public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
-
-    public static final String KEY_STAFFID ="staffID";
-    public static final String KEY_PASSWORD="password";
 
     private EditText editTextStaffID;
     private EditText editTextPassword;
@@ -56,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         staffID = editTextStaffID.getText().toString().trim();
         password = editTextPassword.getText().toString().trim();
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, LOGIN_URL,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.LOGIN_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -76,8 +72,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<String,String>();
-                map.put(KEY_STAFFID,staffID);
-                map.put(KEY_PASSWORD,password);
+                map.put(Config.KEY_STAFFID,staffID);
+                map.put(Config.KEY_PASSWORD,password);
                 return map;
             }
         };
@@ -88,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void beacon_main(){
         Intent intent = new Intent(this, Beacon_MainActivity.class);
-        intent.putExtra(KEY_STAFFID, staffID);
+        intent.putExtra(Config.KEY_STAFFID, staffID);
         startActivity(intent);
     }
 
