@@ -66,12 +66,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginActivity.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(LoginActivity.this,error.toString()+ "wrong StaffID or password",Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
+                Map<String,String> map = new HashMap<>();
                 map.put(Config.KEY_STAFFID,staffID);
                 map.put(Config.KEY_PASSWORD,password);
                 return map;

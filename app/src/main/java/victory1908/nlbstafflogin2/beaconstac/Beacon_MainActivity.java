@@ -527,8 +527,8 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
-                //Adding the name of the student to array list
-                eventDetail.add(json.getString(Config.KEY_EVENT_ID));
+                //Adding the name of the event to array list
+                eventDetail.add(json.getString(Config.EVENT_TITLE));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -538,6 +538,21 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
 
+    //Method to get eventID of a particular position
+    private String getEventID(int position){
+        String EventID="";
+        try {
+            //Getting object of given index
+            JSONObject json = eventArray.getJSONObject(position);
+
+            //Fetching EventID from that object
+            EventID = json.getString(Config.KEY_EVENT_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returning the EventTitle
+        return EventID;
+    }
     //Method to get event title of a particular position
     private String getTitle(int position){
         String EventTitle="";
@@ -556,14 +571,14 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
 
     //Doing the same with this method as we did with getTitle()
     private String getDesc(int position){
-        String eventDescritpion="";
+        String eventDescription ="";
         try {
             JSONObject json = eventArray.getJSONObject(position);
-            eventDescritpion = json.getString(Config.EVENT_DESC);
+            eventDescription = json.getString(Config.EVENT_DESC);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return eventDescritpion;
+        return eventDescription;
     }
 
     //Doing the same with this method as we did with getTitle()
@@ -587,7 +602,7 @@ public class Beacon_MainActivity extends AppCompatActivity implements AdapterVie
         textViewEventDesc.setText(getDesc(position));
         textViewEventTime.setText(getEventTime(position));
         Toast.makeText(Beacon_MainActivity.this, "" + eventDetail.get(position), Toast.LENGTH_SHORT).show();
-        eventCheckIn = eventDetail.get(position);
+        eventCheckIn = getEventID(position);
     }
 
     //When no item is selected this method would execute

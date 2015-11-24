@@ -54,7 +54,6 @@ public class ActivtityCheckIn extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(ActivtityCheckIn.this,response,Toast.LENGTH_LONG).show();
-                        Toast.makeText(ActivtityCheckIn.this,Beacon_MainActivity.eventCheckIn,Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
