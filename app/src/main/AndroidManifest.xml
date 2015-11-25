@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="victory1908.nlbstafflogin2" >
+    package="victory1908.nlbstafflogin2">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -19,11 +19,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,27 +33,23 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ActivityUserProfile"
             android:label="@string/title_activity_activity_user_profile"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".ActivtityCheckIn"
-            android:label="@string/title_activity_activtity_check_in"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:name=".ActivityCheckIn"
+            android:label="@string/title_activity_activity_check_in"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".beaconstac.Beacon_MainActivity"
             android:label="@string/title_Beacon_MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <receiver
             android:name=".beaconstac.BeaconReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.mobstac.beaconstac.intent.action.RANGED_BEACON" />
                 <action android:name="com.mobstac.beaconstac.intent.action.CAMPED_BEACON" />
@@ -78,9 +74,9 @@
             android:exported="false"
             android:grantUriPermissions="true"
             android:multiprocess="true"
-            android:syncable="true" >
-        </provider>
+            android:syncable="true"></provider>
 
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>

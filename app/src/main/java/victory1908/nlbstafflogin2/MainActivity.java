@@ -1,33 +1,50 @@
 package victory1908.nlbstafflogin2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
+import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
+//    @Override
+//    public void onBackPressed() {
+//        exit();
+//    }
+//
+//    //exit function
+//    private void exit(){
+//        //Creating an alert dialog to confirm exit
+//        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+//        alertDialogBuilder.setMessage("Are you sure you want to exit?");
+//        alertDialogBuilder.setPositiveButton("Yes",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        finish();
+//                    }
+//                });
+//
+//        alertDialogBuilder.setNegativeButton("No",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                    }
+//                });
+//        //Showing the alert dialog
+//        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+//        alertDialog.show();
+//
+//    }
 
     private static final String REGISTER_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyRegister.php";
 
@@ -40,9 +57,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText editTextEmail;
     private EditText editTextPassword;
 
-//    private Button buttonRegister;
+    //    private Button buttonRegister;
     private Button buttonLogin;
 
+    public static boolean exit = false;
+
+    //handle exit
+
+    public static final int REQUEST_CODE = 0;
+//    public static final int RESULT_CODE = 0;
+    public static final String EXTRA_EXIT = "exit";
+
+    boolean loggedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +76,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("NLBstaffAttedance");
+        toolbar.setTitle("NLB-StaffAttendance");
         toolbar.setLogo(R.drawable.nlblogo);
+
+            //We will start the Login Activity
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+            startActivity(intent);
+            finish();
+
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("com.package.ACTION_EXIT");
+//        registerReceiver(myBroadcastReceiver, intentFilter);
+
+//        registerReceiver(new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.d("onReceive", "Logout in progress");
+//                finish();
+//            }
+//        }, intentFilter);
+
 
 //        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
 //        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
@@ -64,38 +109,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonLogin.setOnClickListener(this);
     }
 
-    private void registerUser(){
-        final String username = editTextUsername.getText().toString().trim();
-        final String password = editTextPassword.getText().toString().trim();
-        final String email = editTextEmail.getText().toString().trim();
+    // end oncreate
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-                    }
-                }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put(KEY_USERNAME,username);
-                params.put(KEY_PASSWORD,password);
-                params.put(KEY_EMAIL, email);
-                return params;
-            }
 
-        };
+    //BroadcastReceiver
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
+//    private void registerReceiver(){
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("com.package.ACTION_EXIT");
+//        registerReceiver(myBroadcastReceiver, intentFilter);
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        registerReceiver();
+//        super.onResume();
+//
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        registerReceiver();
+////        unregisterReceiver(myBroadcastReceiver);
+//    }
+//
+//    BroadcastReceiver myBroadcastReceiver =
+//            new BroadcastReceiver() {
+//                @Override
+//                public void onReceive(Context context, Intent intent) {
+//                    Log.d("onReceive", "Logout in progress");
+//                    Toast.makeText(MainActivity.this, "what the fuck", Toast.LENGTH_SHORT).show();
+//                    finish();
+//                }
+//            };
+
+
+//    private void registerUser(){
+//        final String username = editTextUsername.getText().toString().trim();
+//        final String password = editTextPassword.getText().toString().trim();
+//        final String email = editTextEmail.getText().toString().trim();
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+//                    }
+//                }){
+//            @Override
+//            protected Map<String,String> getParams(){
+//                Map<String,String> params = new HashMap<>();
+//                params.put(KEY_USERNAME,username);
+//                params.put(KEY_PASSWORD,password);
+//                params.put(KEY_EMAIL, email);
+//                return params;
+//            }
+//
+//        };
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        requestQueue.add(stringRequest);
+//    }
 
     @Override
     public void onClick(View v) {
@@ -103,11 +184,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            registerUser();
 //        }
 //        if(v == buttonLogin){
-            startActivity(new Intent(this,LoginActivity.class));
+
+        Intent actLogin = new Intent(this, LoginActivity.class);
+        startActivityForResult(actLogin, REQUEST_CODE);
+
 //        }
     }
-}
 
+    //handle exit
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE :
+                if (data == null) {
+                    return;
+                }
+
+                boolean shouldExit = data.getBooleanExtra(EXTRA_EXIT, false);
+                if (shouldExit) {
+                    finish();
+                }
+                break;
+        }
+    }
+}
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_logout) {
+//            clearSharePreferences();
+////            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//    public void clearSharePreferences() {
+//        //Getting out sharedPreferences
+//        SharedPreferences preferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+//        //Getting editor
+//        SharedPreferences.Editor editor = preferences.edit();
+//
+//        //Puting the value false for logged_in
+//        editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
+//
+//        //Putting blank value to password
+//        editor.putString(Config.KEY_PASSWORD, "");
+//
+//        //Saving the SharedPreferences
+//        editor.apply();
+//    }
 
 
 //import android.os.Bundle;

@@ -1,11 +1,8 @@
 package victory1908.nlbstafflogin2;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -24,14 +21,13 @@ import java.util.Map;
 import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
-public class ActivtityCheckIn extends AppCompatActivity {
+public class ActivityCheckIn extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activtity_check_in);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
         checkIn();
 
 
@@ -53,20 +49,20 @@ public class ActivtityCheckIn extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(ActivtityCheckIn.this,response,Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActivityCheckIn.this,response,Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(ActivtityCheckIn.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(ActivityCheckIn.this,error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.KEY_STAFFID,LoginActivity.staffID);
-                map.put(Config.KEY_EVENT_ID,Beacon_MainActivity.eventCheckIn);
+                map.put(Config.KEY_STAFFID,getIntent().getStringExtra(Config.KEY_STAFFID));
+                map.put(Config.KEY_EVENT_ID,getIntent().getStringExtra(Config.KEY_EVENT_ID));
 
                 return map;
             }

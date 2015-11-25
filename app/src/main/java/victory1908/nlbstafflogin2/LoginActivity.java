@@ -1,8 +1,11 @@
 package victory1908.nlbstafflogin2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +25,7 @@ import java.util.Map;
 import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
 
 
@@ -30,16 +33,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText editTextPassword;
     private Button buttonLogin;
 
-    public static String staffID;
-    public static String password;
+    String staffID;
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("NLBstaffAttedance");
+        toolbar.setLogo(R.drawable.nlblogo);
+
 
         editTextStaffID = (EditText) findViewById(R.id.editTextStaffID);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
+
+//        Getting values from edit texts
+        staffID = editTextStaffID.getText().toString().trim();
+        password = editTextPassword.getText().toString().trim();
 
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
@@ -47,32 +59,72 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
+    @Override
+    protected void onResume() {
+        boolean loggedIn;
+        super.onResume();
+//        //In onResume fetching value from sharedPreference
+//        SharedPreferences sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME,Context.MODE_PRIVATE);
+//
+//        //Fetching the boolean value form sharedPreferences
+        loggedIn = sharedPreferences.getBoolean(Config.LOGGED_IN_SHARED_PREF, false);
+//
+        //If we will get true
+        if(loggedIn){
+            //We will start the Beacon_Main Activity
+            Intent intent = new Intent(LoginActivity.this, Beacon_MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+            startActivity(intent);
+            finish();
+        }
+    }
 
-    private void userLogin() {
-        staffID = editTextStaffID.getText().toString().trim();
-        password = editTextPassword.getText().toString().trim();
 
+     void userLogin() {
+
+        //Creating a string request
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.LOGIN_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.trim().equals("success")){
-                            beacon_main();
+                        //If we are getting success from server
+                        if(response.equalsIgnoreCase(Config.LOGIN_SUCCESS)){
+//                            //Creating a shared preference
+//                            SharedPreferences sharedPreferences = LoginActivity.this.getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+//
+//                            //Creating editor to store values to shared preferences
+//                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            //Adding values to editor
+                            editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, true);
+                            editor.putString(Config.KEY_STAFFID, staffID);
+                            editor.putString(Config.KEY_PASSWORD, password);
+
+
+                            //Saving values to editor
+                            editor.apply();
+
+                            //Starting Beacon_Main activity
+                            Intent actA = new Intent(LoginActivity.this, Beacon_MainActivity.class);
+                            actA.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                            startActivity(actA);
+                            finish();
+
                         }else{
-                            Toast.makeText(LoginActivity.this,response,Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this,response +"invalid StaffID or Password",Toast.LENGTH_LONG).show();
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginActivity.this,error.toString()+ "wrong StaffID or password",Toast.LENGTH_LONG ).show();
+                        Toast.makeText(LoginActivity.this,error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.KEY_STAFFID,staffID);
+                map.put(Config.KEY_STAFFID,password);
                 map.put(Config.KEY_PASSWORD,password);
                 return map;
             }
@@ -82,14 +134,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         requestQueue.add(stringRequest);
     }
 
-    private void beacon_main(){
-        Intent intent = new Intent(this, Beacon_MainActivity.class);
-        intent.putExtra(Config.KEY_STAFFID, staffID);
-        startActivity(intent);
-    }
+//    private void beacon_main(){
+//        Intent intent = new Intent(this, Beacon_MainActivity.class);
+//        intent.putExtra(Config.KEY_STAFFID, staffID);
+//        startActivity(intent);
+//    }
 
     @Override
     public void onClick(View v) {
         userLogin();
+    }
+
+    @Override
+    public void onBackPressed() {
+        exit();
     }
 }

@@ -55,6 +55,12 @@
         android:text="Login"
         android:layout_marginTop="200sp"
         android:id="@+id/buttonLogin" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lgout"
+        android:layout_below="@id/buttonLogin"
+        android:id="@+id/action_logout" />
 
 </RelativeLayout>
 

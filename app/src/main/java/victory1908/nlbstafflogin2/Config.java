@@ -12,8 +12,22 @@ public class Config {
     public static final String CHECK_IN_URL = "http://vinhvumobile.com/phpconnect/checkIn.php";
 
     //Tags used in the JSON String
+    //This would be used to store the password of current logged in user
     public static final String KEY_STAFFID ="staffID";
     public static final String KEY_PASSWORD="password";
+
+    //If server response is equal to this that means login is successful
+    public static final String LOGIN_SUCCESS = "success";
+
+    //Keys for SharedPreferences
+    //This would be the name of our shared preferences
+    public static final String SHARED_PREF_NAME = "myloginapp";
+
+    //This would be used to store the password of current logged in user
+
+    //We will use this to store the boolean in sharedPreference to track user is loggedin or not
+    public static final String LOGGED_IN_SHARED_PREF = "loggedin";
+
 
     public static final String KEY_EVENT_ID = "EventID";
 
