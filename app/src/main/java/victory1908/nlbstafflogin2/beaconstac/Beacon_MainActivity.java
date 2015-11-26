@@ -363,6 +363,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         public void exitedBeacon(Context context, MSBeacon beacon) {
             testCamped.setText("Exited: " + beacon.getMajor() + ":" + beacon.getMinor());
             beaconAdapter.notifyDataSetChanged();
+            eventView.setVisibility(View.INVISIBLE);
+            checkIn.setVisibility(View.INVISIBLE);
         }
 
         @Override
