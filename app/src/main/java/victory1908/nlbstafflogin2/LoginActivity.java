@@ -82,7 +82,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
                             editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, true);
                             editor.putString(Config.STAFF_ID, staffID);
-                            editor.putString(Config.KEY_PASSWORD, password);
+                            editor.putString(Config.PASSWORD, password);
 
                             //Saving values to editor
                             editor.apply();
@@ -108,7 +108,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
                 map.put(Config.STAFF_ID,staffID);
-                map.put(Config.KEY_PASSWORD,password);
+                map.put(Config.PASSWORD,password);
                 return map;
             }
         };

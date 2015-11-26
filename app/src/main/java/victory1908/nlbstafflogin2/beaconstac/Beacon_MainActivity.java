@@ -80,20 +80,20 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     //Spinner
     //Declaring an Spinner
-    private Spinner spinner;
+    public Spinner spinner;
 
     //An ArrayList for Spinner Items
-    private ArrayList<String> eventDetail;
+    public ArrayList<String> eventDetail;
 
     //JSON Array
-    private JSONArray eventArray;
+    public JSONArray eventArray;
 
     //TextViews to display details
     private TextView textViewEventTitle;
     private TextView textViewEventDesc;
     private TextView textViewEventTime;
     private String staffID;
-    private String evenCheckIN;
+    private String eventCheckIN;
 
 
     @Override
@@ -104,9 +104,23 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         setSupportActionBar(toolbar);
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
-
         textViewWelcome = (TextView) findViewById(R.id.textView_staffid);
 
+        // initiate eventView;
+        eventView = (RelativeLayout) findViewById(R.id.event_View);
+
+        //initialize spinner
+        spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(this);
+
+        //Initializing TextViews
+        textViewEventTitle = (TextView) findViewById(R.id.textViewEventTitle);
+        textViewEventDesc = (TextView) findViewById(R.id.textViewEventDesc);
+        textViewEventTime = (TextView) findViewById(R.id.textViewEventTime);
+
+        //event View
+        eventView = (RelativeLayout) findViewById(R.id.event_View);
+        eventDetail = new ArrayList<>();
 
         //checkLogged In
         //Fetching StaffID from shared preferences
@@ -146,6 +160,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
 
+        //display list beacon
         if (savedInstanceState == null) {
             initList();
         }
@@ -155,6 +170,17 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
                 "com.mobstac.beaconstac");
         bstacInstance.syncRules();
+
+//        try {
+//            bstacInstance.startRangingBeacons();
+//        } catch (MSException e) {
+//            // handle for older devices
+//            TextView rangedView = (TextView) findViewById(R.id.RangedView);
+//            rangedView.setText(R.string.ble_not_supported);
+//            bCount.setVisibility(View.GONE);
+//            testCamped.setVisibility(View.GONE);
+//            e.printStackTrace();
+//        }
 
         // if location is enabled
         LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -195,38 +221,14 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
 
-        //Create Spinner
-        //Initializing the ArrayList
-        eventDetail = new ArrayList<>();
 
-        //Initializing Spinner
-        spinner = (Spinner) findViewById(R.id.spinner);
-
-        //Adding an Item Selected Listener to our Spinner
-        //As we have implemented the class Spinner.OnItemSelectedListener to this class iteself we are passing this to setOnItemSelectedListener
-        spinner.setOnItemSelectedListener(this);
-
-        //Initializing TextViews
-        textViewEventTitle = (TextView) findViewById(R.id.textViewEventTitle);
-        textViewEventDesc = (TextView) findViewById(R.id.textViewEventDesc);
-        textViewEventTime = (TextView) findViewById(R.id.textViewEventTime);
-        //end spinner
-
-//        This method will fetch the data from the URL
         getEventRespond();
+
     }
 
-    // end oncreate
+    // end OnCreate
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initList() {
-        ListView beaconList = (ListView) findViewById(R.id.beaconListView);
-        beaconAdapter = new BeaconAdapter(beacons, this);
-        beaconList.setAdapter(beaconAdapter);
-
-        bCount = (TextView) findViewById(R.id.beaconCount);
-        testCamped = (TextView) findViewById(R.id.CampedView);
-        registerBroadcast();
-    }
 
     @Override
     protected void onPause() {
@@ -289,6 +291,18 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
     }
+
+    //method display ListBeacon
+    private void initList() {
+        ListView beaconList = (ListView) findViewById(R.id.beaconListView);
+        beaconAdapter = new BeaconAdapter(beacons, this);
+        beaconList.setAdapter(beaconAdapter);
+
+        bCount = (TextView) findViewById(R.id.beaconCount);
+        testCamped = (TextView) findViewById(R.id.CampedView);
+        registerBroadcast();
+    }
+
 
     private void registerBroadcast() {
         if (!registered) {
@@ -358,23 +372,26 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
 
+
             //display event when beacon in range
-            eventView = (RelativeLayout) findViewById(R.id.event_View);
-            eventView.setVisibility(eventView.VISIBLE);
+            eventView.setVisibility(View.VISIBLE);
 
             // display Check In event when beacon in range
             checkIn = (Button) findViewById(R.id.Check_in);
-            checkIn.setVisibility(View.VISIBLE);
             checkIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
                     intent.putExtra(Config.STAFF_ID, staffID);
-                    intent.putExtra(Config.EVENT_ID, evenCheckIN);
+                    intent.putExtra(Config.EVENT_ID, eventCheckIN);
                     startActivity(intent);
 
                 }
             });
+
+            if (eventDetail!= null){
+             checkIn.setVisibility(View.VISIBLE);
+            }
 
         }
 
@@ -491,6 +508,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             beaconAdapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
             Toast.makeText(getApplicationContext(), "Exited region", Toast.LENGTH_SHORT).show();
+            eventView.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -512,7 +530,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                     @Override
                     public void onResponse(String response) {
                         JSONObject j;
-
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
@@ -550,14 +567,14 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 JSONObject json = j.getJSONObject(i);
 
                 //Adding the name of the event to array list
-                eventDetail.add(json.getString(Config.EVENT_TITLE));
+                    eventDetail.add(json.getString(Config.EVENT_TITLE));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         //Setting adapter to show the items in the spinner
-        spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
 
     //Method to get eventID of a particular position
@@ -592,7 +609,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         return EventTitle;
     }
 
-    //Doing the same with this method as we did with getTitle()
+    //Method to get event Desc of a particular position
     private String getDesc(int position) {
         String eventDescription = "";
         try {
@@ -604,7 +621,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         return eventDescription;
     }
 
-    //Doing the same with this method as we did with getTitle()
+    //Method to get event Time of a particular position
     private String getEventTime(int position) {
         String eventTime = "";
         try {
@@ -624,9 +641,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         textViewEventTitle.setText(getTitle(position));
         textViewEventDesc.setText(getDesc(position));
         textViewEventTime.setText(getEventTime(position));
-        Toast.makeText(Beacon_MainActivity.this, "" + eventDetail.get(position), Toast.LENGTH_SHORT).show();
-//        eventCheckIn = getEventID(position);
-        evenCheckIN = getEventID(position);
+        eventCheckIN = getEventID(position);
     }
 
     //When no item is selected this method would execute
