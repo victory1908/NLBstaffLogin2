@@ -56,7 +56,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
         Intent intent = getIntent();
 
-        textView.setText("Welcome User " + intent.getStringExtra(Config.STAFFID));
+        textView.setText("Welcome User " + intent.getStringExtra(Config.STAFF_ID));
 
         getEvent();
 
@@ -111,9 +111,9 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
-                Toast.makeText(ActivityUserProfile.this,json.getString(Config.KEY_EVENT_ID),Toast.LENGTH_LONG ).show();
+                Toast.makeText(ActivityUserProfile.this,json.getString(Config.EVENT_ID),Toast.LENGTH_LONG ).show();
                 //Adding the EventID to array list
-                event.add(json.getString(Config.KEY_EVENT_ID));
+                event.add(json.getString(Config.EVENT_ID));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,7 +123,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity.class);
-        intent.putExtra(Config.STAFFID,LoginActivity.class);
+        intent.putExtra(Config.STAFF_ID,LoginActivity.class);
         startActivity(intent);
     }
 }

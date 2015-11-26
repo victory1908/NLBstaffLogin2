@@ -1,5 +1,6 @@
 package victory1908.nlbstafflogin2;
 
+
 public class Config {
     //JSON URL
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
@@ -10,8 +11,8 @@ public class Config {
 
     //Tags used in the JSON String
     //This would be used to store the password of current logged in user
-    public static final String STAFFID ="staffID";
-    public static final String PASSWORD ="password";
+    public static final String STAFF_ID ="staffID";
+    public static final String KEY_PASSWORD="password";
 
     //If server response is equal to this that means login is successful
     public static final String LOGIN_SUCCESS = "success";
@@ -26,7 +27,7 @@ public class Config {
     public static final String LOGGED_IN_SHARED_PREF = "loggedin";
 
 
-    public static final String KEY_EVENT_ID = "EventID";
+    public static final String EVENT_ID = "EventID";
 
     public static final String EVENT_TITLE = "EventTitle";
     public static final String EVENT_DESC = "EventDesc";

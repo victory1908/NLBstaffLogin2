@@ -23,83 +23,93 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/textView_staffid"/>
 
-    <Spinner
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_below="@id/textView_staffid"/>
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:id="@+id/event_View"
+        android:layout_below="@id/textView_staffid"
+        android:visibility="invisible">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinner"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventTitle"
+            android:id="@+id/textView1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/spinner"
+            android:padding="15dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventDescription"
+            android:id="@+id/textView2"
+            android:layout_below="@+id/textView1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
+
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventTime"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
 
 
 
-    <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-        android:text="EventTitle"
-        android:id="@+id/textView1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/spinner"
-        android:padding="15dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewEventTitle"
+            android:padding="15dp"
+            android:layout_alignBottom="@+id/textView1"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/textView2"
+            android:layout_toRightOf="@+id/textView2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewEventDesc"
+            android:padding="15dp"
+            android:layout_below="@+id/textViewEventTitle"
+            android:layout_toRightOf="@+id/textView2"
+            android:layout_alignRight="@+id/textViewEventTitle"
+            android:layout_alignEnd="@+id/textViewEventTitle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewEventTime"
+            android:padding="15dp"
+            android:layout_below="@+id/textViewEventDesc"
+            android:layout_toRightOf="@+id/textView2"
+            android:layout_alignRight="@+id/textViewEventTitle"
+            android:layout_alignEnd="@+id/textViewEventTitle" />
 
 
-    <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-        android:text="EventDescription"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/textView1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:padding="15dp"/>
-
-
-    <TextView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="EventTime"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:padding="15dp"/>
-
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewEventTitle"
-        android:padding="15dp"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/textView2"
-        android:layout_toRightOf="@+id/textView2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewEventDesc"
-        android:padding="15dp"
-        android:layout_below="@+id/textViewEventTitle"
-        android:layout_toRightOf="@+id/textView2"
-        android:layout_alignRight="@+id/textViewEventTitle"
-        android:layout_alignEnd="@+id/textViewEventTitle" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewEventTime"
-        android:padding="15dp"
-        android:layout_below="@+id/textViewEventDesc"
-        android:layout_toRightOf="@+id/textView2"
-        android:layout_alignRight="@+id/textViewEventTitle"
-        android:layout_alignEnd="@+id/textViewEventTitle" />
-
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -144,11 +154,9 @@
     android:layout_height="wrap_content"
     android:text="Check In"
     android:id="@+id/Check_in"
-        android:visibility="invisible"
-        android:layout_below="@+id/textViewEventTime"
-        android:layout_alignLeft="@+id/textViewEventTime"
-        android:layout_alignStart="@+id/textViewEventTime"
-        android:layout_centerHorizontal="true"/>
+    android:layout_below="@id/event_View"
+    android:visibility="invisible"
+    android:layout_centerHorizontal="true"/>
 
 
 </RelativeLayout>

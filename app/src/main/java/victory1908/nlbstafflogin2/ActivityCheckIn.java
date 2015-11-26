@@ -28,8 +28,8 @@ public class ActivityCheckIn extends BaseActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
-        
 
+        //perform checkIn
         checkIn();
 
 
@@ -63,8 +63,8 @@ public class ActivityCheckIn extends BaseActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.STAFFID,getIntent().getStringExtra(Config.STAFFID));
-                map.put(Config.KEY_EVENT_ID,getIntent().getStringExtra(Config.KEY_EVENT_ID));
+                map.put(Config.STAFF_ID,getIntent().getStringExtra(Config.STAFF_ID));
+                map.put(Config.EVENT_ID,getIntent().getStringExtra(Config.EVENT_ID));
 
                 return map;
             }

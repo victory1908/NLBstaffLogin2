@@ -13,8 +13,9 @@ import android.view.MenuItem;
 
 public class BaseActivity extends AppCompatActivity {
 
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    protected SharedPreferences sharedPreferences;
+    protected SharedPreferences.Editor editor;
+    protected boolean loggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,9 @@ public class BaseActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         //Creating editor to store values to shared preferences
         editor = sharedPreferences.edit();
+
+        //checkLoggedIn
+        loggedIn= sharedPreferences.getBoolean(Config.LOGGED_IN_SHARED_PREF, false);
     }
 
     @Override

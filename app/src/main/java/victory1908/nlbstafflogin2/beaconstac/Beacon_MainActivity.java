@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
@@ -21,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +58,7 @@ import victory1908.nlbstafflogin2.R;
 
 public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
-    private TextView textView;
+    private TextView textViewWelcome;
 
     private static final String TAG = Beacon_MainActivity.class.getSimpleName();
 
@@ -68,7 +68,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     private TextView bCount;
     private TextView testCamped;
     private Button checkIn;
-    public static String eventCheckIn;
+    private RelativeLayout eventView;
     Beaconstac bstacInstance;
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -93,6 +93,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     private TextView textViewEventDesc;
     private TextView textViewEventTime;
     private String staffID;
+    private String evenCheckIN;
 
 
     @Override
@@ -104,25 +105,22 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
 
-        textView = (TextView) findViewById(R.id.textView_staffid);
+        textViewWelcome = (TextView) findViewById(R.id.textView_staffid);
 
 
         //checkLogged In
         //Fetching StaffID from shared preferences
-        SharedPreferences sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        boolean loggedIn = sharedPreferences.getBoolean(Config.LOGGED_IN_SHARED_PREF, false);
-
         //If we will get true
-        if(!loggedIn){
+        if (!loggedIn) {
             //We will start the Beacon_Main Activity
             Intent intent = new Intent(Beacon_MainActivity.this, LoginActivity.class);
             startActivity(intent);
         }
 
-        staffID = sharedPreferences.getString(Config.STAFFID, "Not Available");
+        staffID = sharedPreferences.getString(Config.STAFF_ID, "Not Available");
 
         //Showing the current logged in email to textview
-        textView.setText("Welcome User " + staffID);
+        textViewWelcome.setText("Welcome User " + staffID);
 
 
         // Use this check to determine whether BLE is supported on the device.
@@ -222,7 +220,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     private void initList() {
         ListView beaconList = (ListView) findViewById(R.id.beaconListView);
-        beaconAdapter   = new BeaconAdapter(beacons, this);
+        beaconAdapter = new BeaconAdapter(beacons, this);
         beaconList.setAdapter(beaconAdapter);
 
         bCount = (TextView) findViewById(R.id.beaconCount);
@@ -360,15 +358,19 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
 
+            //display event when beacon in range
+            eventView = (RelativeLayout) findViewById(R.id.event_View);
+            eventView.setVisibility(eventView.VISIBLE);
 
+            // display Check In event when beacon in range
             checkIn = (Button) findViewById(R.id.Check_in);
             checkIn.setVisibility(View.VISIBLE);
             checkIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
-                    intent.putExtra(Config.STAFFID,staffID);
-                    intent.putExtra(Config.KEY_EVENT_ID,eventCheckIn);
+                    intent.putExtra(Config.STAFF_ID, staffID);
+                    intent.putExtra(Config.EVENT_ID, evenCheckIN);
                     startActivity(intent);
 
                 }
@@ -503,7 +505,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     };
 
 
-    private void getEventRespond(){
+    private void getEventRespond() {
         //Creating a string request
         StringRequest stringRequest = new StringRequest(Config.DATA_URL,
                 new Response.Listener<String>() {
@@ -540,9 +542,9 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         requestQueue.add(stringRequest);
     }
 
-    private void getEventDetail(JSONArray j){
+    private void getEventDetail(JSONArray j) {
         //Traversing through all the items in the json array
-        for(int i=0;i<j.length();i++){
+        for (int i = 0; i < j.length(); i++) {
             try {
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
@@ -559,23 +561,24 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     }
 
     //Method to get eventID of a particular position
-    private String getEventID(int position){
-        String EventID="";
+    private String getEventID(int position) {
+        String EventID = "";
         try {
             //Getting object of given index
             JSONObject json = eventArray.getJSONObject(position);
 
             //Fetching EventID from that object
-            EventID = json.getString(Config.KEY_EVENT_ID);
+            EventID = json.getString(Config.EVENT_ID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         //Returning the EventTitle
         return EventID;
     }
+
     //Method to get event title of a particular position
-    private String getTitle(int position){
-        String EventTitle="";
+    private String getTitle(int position) {
+        String EventTitle = "";
         try {
             //Getting object of given index
             JSONObject json = eventArray.getJSONObject(position);
@@ -590,8 +593,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     }
 
     //Doing the same with this method as we did with getTitle()
-    private String getDesc(int position){
-        String eventDescription ="";
+    private String getDesc(int position) {
+        String eventDescription = "";
         try {
             JSONObject json = eventArray.getJSONObject(position);
             eventDescription = json.getString(Config.EVENT_DESC);
@@ -602,8 +605,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     }
 
     //Doing the same with this method as we did with getTitle()
-    private String getEventTime(int position){
-        String eventTime="";
+    private String getEventTime(int position) {
+        String eventTime = "";
         try {
             JSONObject json = eventArray.getJSONObject(position);
             eventTime = json.getString(Config.EVENT_TIME);
@@ -622,7 +625,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         textViewEventDesc.setText(getDesc(position));
         textViewEventTime.setText(getEventTime(position));
         Toast.makeText(Beacon_MainActivity.this, "" + eventDetail.get(position), Toast.LENGTH_SHORT).show();
-        eventCheckIn = getEventID(position);
+//        eventCheckIn = getEventID(position);
+        evenCheckIN = getEventID(position);
     }
 
     //When no item is selected this method would execute
@@ -633,127 +637,9 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         textViewEventTime.setText("");
     }
 
-//    //Logout function
-//    private void logout(){
-//        //Creating an alert dialog to confirm logout
-//        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-//        alertDialogBuilder.setMessage("Are you sure you want to logout?");
-//        alertDialogBuilder.setPositiveButton("Yes",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//
-//                        //Getting out sharedPreferences
-//                        SharedPreferences preferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-//                        //Getting editor
-//                        SharedPreferences.Editor editor = preferences.edit();
-//
-//                        //Puting the value false for loggedin
-//                        editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
-//
-//                        //Putting blank value to password
-//                        editor.putString(Config.PASSWORD, "");
-//
-//                        //Saving the SharedPreferences
-//                        editor.apply();
-//
-//                        //Starting login activity
-//////                        Intent intent = new Intent(Beacon_MainActivity.this, LoginActivity.class);
-////                        startActivity(intent);
-//
-//
-//                        Intent goToLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
-//                        goToLoginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Will clear out your activity history stack till now
-//                        startActivity(goToLoginActivity);
-//                        finish();
-//
-//                    }
-//                });
-//
-//        alertDialogBuilder.setNegativeButton("No",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//
-//                    }
-//                });
-//
-//        //Showing the alert dialog
-//        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-//        alertDialog.show();
-//
-//    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_logout) {
-//            logout();
-////            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public void onBackPressed() {
         exit();
     }
-//
-//    //exit function
-//    private void exit(){
-//        //Creating an alert dialog to confirm exit
-//        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-//        alertDialogBuilder.setMessage("Are you sure you want to exit?");
-//        alertDialogBuilder.setPositiveButton("Yes",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//
-//                        boolean shouldExit = true;
-//                        Intent result = new Intent();
-//                        result.putExtra(MainActivity.EXTRA_EXIT,shouldExit);
-//                        setResult(Activity.RESULT_OK, result);
-//                        finish();
-//
-////                        MainActivity.exit = true;
-////                        Intent broadcastIntent = new Intent(Beacon_MainActivity.this, MainActivity.class);
-////                        broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-////                        broadcastIntent.setAction("com.package.ACTION_EXIT");
-////                        sendBroadcast(broadcastIntent);
-////                        finish();
-//                    }
-//                });
-//
-//        alertDialogBuilder.setNegativeButton("No",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                    }
-//                });
-//        //Showing the alert dialog
-//        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-//        alertDialog.show();
-//
-//    }
-//    @Override
-//    public void onBackPressed() {
-//        Intent intent=new Intent(Beacon_MainActivity.this,MainActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        startActivity(intent);
-//        finish();
-//    }
-
 }
