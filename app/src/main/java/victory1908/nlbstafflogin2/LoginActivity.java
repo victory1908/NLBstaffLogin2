@@ -1,9 +1,6 @@
 package victory1908.nlbstafflogin2;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -29,9 +26,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
 
 
-    private EditText editTextStaffID;
-    private EditText editTextPassword;
-    private Button buttonLogin;
+    EditText editTextStaffID;
+    EditText editTextPassword;
+    Button buttonLogin;
 
     String staffID;
     String password;
@@ -49,10 +46,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         editTextStaffID = (EditText) findViewById(R.id.editTextStaffID);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
-//        Getting values from edit texts
-        staffID = editTextStaffID.getText().toString().trim();
-        password = editTextPassword.getText().toString().trim();
-
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
         buttonLogin.setOnClickListener(this);
@@ -61,8 +54,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
     protected void onResume() {
-        boolean loggedIn;
+
         super.onResume();
+
+        boolean loggedIn;
 //        //In onResume fetching value from sharedPreference
 //        SharedPreferences sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME,Context.MODE_PRIVATE);
 //
@@ -80,7 +75,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
 
-     void userLogin() {
+     private void userLogin() {
+
+         //        Getting values from edit texts
+         staffID = editTextStaffID.getText().toString();
+         password = editTextPassword.getText().toString();
 
         //Creating a string request
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.LOGIN_URL,
@@ -88,7 +87,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     @Override
                     public void onResponse(String response) {
                         //If we are getting success from server
-                        if(response.equalsIgnoreCase(Config.LOGIN_SUCCESS)){
+                        if(response.equals(Config.LOGIN_SUCCESS)){
 //                            //Creating a shared preference
 //                            SharedPreferences sharedPreferences = LoginActivity.this.getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 //
@@ -97,8 +96,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
                             //Adding values to editor
                             editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, true);
-                            editor.putString(Config.KEY_STAFFID, staffID);
-                            editor.putString(Config.KEY_PASSWORD, password);
+                            editor.putString(Config.STAFFID, staffID);
+                            editor.putString(Config.PASSWORD, password);
 
 
                             //Saving values to editor
@@ -111,7 +110,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                             finish();
 
                         }else{
-                            Toast.makeText(LoginActivity.this,response +"invalid StaffID or Password",Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this,response +" invalid StaffID or Password",Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -124,8 +123,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.KEY_STAFFID,password);
-                map.put(Config.KEY_PASSWORD,password);
+                map.put(Config.STAFFID,staffID);
+                map.put(Config.PASSWORD,password);
                 return map;
             }
         };
@@ -136,13 +135,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
 //    private void beacon_main(){
 //        Intent intent = new Intent(this, Beacon_MainActivity.class);
-//        intent.putExtra(Config.KEY_STAFFID, staffID);
+//        intent.putExtra(Config.STAFFID, staffID);
 //        startActivity(intent);
 //    }
 
     @Override
-    public void onClick(View v) {
-        userLogin();
+    public void onClick(View v) {userLogin();
     }
 
     @Override

@@ -13,11 +13,8 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -56,7 +53,6 @@ import victory1908.nlbstafflogin2.ActivityCheckIn;
 import victory1908.nlbstafflogin2.BaseActivity;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.LoginActivity;
-import victory1908.nlbstafflogin2.MainActivity;
 import victory1908.nlbstafflogin2.R;
 
 
@@ -123,7 +119,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             startActivity(intent);
         }
 
-        staffID = sharedPreferences.getString(Config.KEY_STAFFID, "Not Available");
+        staffID = sharedPreferences.getString(Config.STAFFID, "Not Available");
 
         //Showing the current logged in email to textview
         textView.setText("Welcome User " + staffID);
@@ -371,7 +367,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
-                    intent.putExtra(Config.KEY_STAFFID,staffID);
+                    intent.putExtra(Config.STAFFID,staffID);
                     intent.putExtra(Config.KEY_EVENT_ID,eventCheckIn);
                     startActivity(intent);
 
@@ -656,7 +652,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 //                        editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
 //
 //                        //Putting blank value to password
-//                        editor.putString(Config.KEY_PASSWORD, "");
+//                        editor.putString(Config.PASSWORD, "");
 //
 //                        //Saving the SharedPreferences
 //                        editor.apply();

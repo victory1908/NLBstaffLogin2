@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            protected Map<String,String> getParams(){
 //                Map<String,String> params = new HashMap<>();
 //                params.put(KEY_USERNAME,username);
-//                params.put(KEY_PASSWORD,password);
+//                params.put(PASSWORD,password);
 //                params.put(KEY_EMAIL, email);
 //                return params;
 //            }
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
 //
 //        //Putting blank value to password
-//        editor.putString(Config.KEY_PASSWORD, "");
+//        editor.putString(Config.PASSWORD, "");
 //
 //        //Saving the SharedPreferences
 //        editor.apply();

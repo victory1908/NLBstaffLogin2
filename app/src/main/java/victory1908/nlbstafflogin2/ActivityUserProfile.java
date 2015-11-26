@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
-import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
 public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{
@@ -46,7 +45,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
 
     //Initializing the ArrayList
-    private ArrayList<String> event = new ArrayList<String>();
+    private ArrayList<String> event = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +56,13 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
         Intent intent = getIntent();
 
-        textView.setText("Welcome User " + intent.getStringExtra(Config.KEY_STAFFID));
+        textView.setText("Welcome User " + intent.getStringExtra(Config.STAFFID));
 
         getEvent();
 
         checkIn = (Button) findViewById(R.id.CheckIn_Button);
         checkIn.setOnClickListener(this);
-    };
+    }
 
     // Display eventID from beaconUUID
     private void getEvent() {
@@ -72,7 +71,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        JSONObject j = null;
+                        JSONObject j;
                         try {
                             //Parsing the fetched Json String to JSON Object
                             j = new JSONObject(response);
@@ -95,8 +94,8 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> map = new HashMap<String,String>();
-                map.put(Config.KEY_BEACON_UUID, BeaconAdapter.beaconUUID);
+                Map<String,String> map = new HashMap<>();
+                map.put(Config.BEACON_UUID, BeaconAdapter.beaconUUID);
                 return map;
             }
         };
@@ -124,7 +123,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity.class);
-        intent.putExtra(Config.KEY_STAFFID,LoginActivity.class);
+        intent.putExtra(Config.STAFFID,LoginActivity.class);
         startActivity(intent);
     }
 }

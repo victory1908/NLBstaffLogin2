@@ -1,7 +1,6 @@
 package victory1908.nlbstafflogin2;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
@@ -18,8 +17,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
-
 
 public class ActivityCheckIn extends BaseActivity {
 
@@ -27,6 +24,11 @@ public class ActivityCheckIn extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activtity_check_in);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("NLBstaffAttedance");
+        toolbar.setLogo(R.drawable.nlblogo);
+        
 
         checkIn();
 
@@ -61,7 +63,7 @@ public class ActivityCheckIn extends BaseActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.KEY_STAFFID,getIntent().getStringExtra(Config.KEY_STAFFID));
+                map.put(Config.STAFFID,getIntent().getStringExtra(Config.STAFFID));
                 map.put(Config.KEY_EVENT_ID,getIntent().getStringExtra(Config.KEY_EVENT_ID));
 
                 return map;

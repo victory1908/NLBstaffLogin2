@@ -1,8 +1,5 @@
 package victory1908.nlbstafflogin2;
 
-/**
- * Created by Victory1908 on 04-Nov-15.
- */
 public class Config {
     //JSON URL
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
@@ -13,8 +10,8 @@ public class Config {
 
     //Tags used in the JSON String
     //This would be used to store the password of current logged in user
-    public static final String KEY_STAFFID ="staffID";
-    public static final String KEY_PASSWORD="password";
+    public static final String STAFFID ="staffID";
+    public static final String PASSWORD ="password";
 
     //If server response is equal to this that means login is successful
     public static final String LOGIN_SUCCESS = "success";
@@ -35,7 +32,7 @@ public class Config {
     public static final String EVENT_DESC = "EventDesc";
     public static final String EVENT_TIME = "EventTime";
 
-    public static final String KEY_BEACON_UUID = "beaconUUID";
+    public static final String BEACON_UUID = "beaconUUID";
 
     //JSON array name
     public static final String JSON_ARRAY = "result";

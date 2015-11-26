@@ -10,20 +10,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -87,7 +73,7 @@ public class BaseActivity extends AppCompatActivity {
                         editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
 
                         //Putting blank value to password
-                        editor.putString(Config.KEY_PASSWORD, "");
+                        editor.putString(Config.PASSWORD, "");
 
                         //Saving the SharedPreferences
                         editor.apply();
