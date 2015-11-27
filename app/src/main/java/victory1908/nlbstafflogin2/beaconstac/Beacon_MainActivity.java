@@ -95,6 +95,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     private String staffID;
     private String eventCheckIN;
 
+    public int tempRangedBeacon = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,19 +111,26 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         // initiate eventView;
         eventView = (RelativeLayout) findViewById(R.id.event_View);
 
+        eventDetail = new ArrayList<>();
+
         //initialize spinner
         spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setAdapter(null);
+
         spinner.setOnItemSelectedListener(this);
+        spinner.setAdapter(null);
+
+        //Setting adapter to show the items in the spinner
+
+        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+
 
         //Initializing TextViews
         textViewEventTitle = (TextView) findViewById(R.id.textViewEventTitle);
         textViewEventDesc = (TextView) findViewById(R.id.textViewEventDesc);
         textViewEventTime = (TextView) findViewById(R.id.textViewEventTime);
 
-        //event View
-        eventView = (RelativeLayout) findViewById(R.id.event_View);
-        eventDetail = new ArrayList<>();
+
+
 
         //checkLogged In
         //Fetching StaffID from shared preferences
@@ -223,6 +232,19 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         }
 
 
+        // display Check In event when beacon in range
+        checkIn = (Button) findViewById(R.id.Check_in);
+        checkIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
+                intent.putExtra(Config.STAFF_ID, staffID);
+                intent.putExtra(Config.EVENT_ID, eventCheckIN);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
     // end OnCreate
@@ -235,14 +257,10 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         beaconAdapter.clear();
         beaconAdapter.notifyDataSetChanged();
 
-        beacons.clear();
-        eventDetail.clear();
-
-        spinner.setAdapter(null);
-        spinner.setVisibility(View.INVISIBLE);
         eventView.setVisibility(View.INVISIBLE);
         checkIn.setVisibility(View.INVISIBLE);
 
+        tempRangedBeacon =0;
         bCount.setText("" + beacons.size());
         unregisterBroadcast();
         isPopupVisible = true;
@@ -258,11 +276,16 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
-        spinner.clearFocus();
+
+        tempRangedBeacon = 0;
+
         registerBroadcast();
+
         initList();
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
+        getEventRespond();
+        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 
 //        // Call getEvent and display
 //        getEvent();
@@ -273,7 +296,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        eventDetail.clear();
         unregisterBroadcast();
 
         // stop scanning when the app closes
@@ -384,31 +406,29 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             bCount.setText("" + rangedBeacons.size());
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
+            ArrayList temArray = eventDetail;
+            getEventRespond();
 
 
-            if (eventDetail.isEmpty() && !beacons.isEmpty()){
-                spinner.setAdapter(null);
-                getEventRespond();
+            if (rangedBeacons.size() != tempRangedBeacon) {
+                tempRangedBeacon = rangedBeacons.size();
+                //Setting adapter to show the items in the spinner
+                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
             }
 
 
-            // display Check In event when beacon in range
-            checkIn = (Button) findViewById(R.id.Check_in);
-            checkIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
-                    intent.putExtra(Config.STAFF_ID, staffID);
-                    intent.putExtra(Config.EVENT_ID, eventCheckIN);
-                    startActivity(intent);
+//            if (temArray.contains(eventDetail) && eventDetail.contains(temArray) && !rangedBeacons.isEmpty()){
+//               return;
+//            }else {
+//                //Setting adapter to show the items in the spinner
+//                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+//            }
 
-                }
-            });
+
 
             if (!eventDetail.isEmpty() && rangedBeacons.size()!=0) {
              checkIn.setVisibility(View.VISIBLE);
                 eventView.setVisibility(View.VISIBLE);
-                spinner.setVisibility(View.VISIBLE);
             }else checkIn.setVisibility(View.INVISIBLE);
 
         }
@@ -527,6 +547,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             bCount.setText("" + beacons.size());
             Toast.makeText(getApplicationContext(), "Exited region", Toast.LENGTH_SHORT).show();
             eventView.setVisibility(View.INVISIBLE);
+            checkIn.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -537,6 +558,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         @Override
         public void exitedGeofence(Context context, ArrayList<MSPlace> places) {
             Toast.makeText(getApplicationContext(), "Exited Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
+            checkIn.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -579,6 +601,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     private void getEventDetail(JSONArray j) {
         //Traversing through all the items in the json array
+        eventDetail.clear();
         for (int i = 0; i < j.length(); i++) {
             try {
                 //Getting json object
@@ -591,8 +614,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
 
-        //Setting adapter to show the items in the spinner
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
 
     //Method to get eventID of a particular position
