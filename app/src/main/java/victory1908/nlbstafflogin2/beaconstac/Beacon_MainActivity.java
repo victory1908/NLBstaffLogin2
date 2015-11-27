@@ -111,6 +111,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
         //initialize spinner
         spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setAdapter(null);
         spinner.setOnItemSelectedListener(this);
 
         //Initializing TextViews
@@ -222,8 +223,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         }
 
 
-        getEventRespond();
-
     }
 
     // end OnCreate
@@ -235,9 +234,19 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         super.onPause();
         beaconAdapter.clear();
         beaconAdapter.notifyDataSetChanged();
+
+        beacons.clear();
+        eventDetail.clear();
+
+        spinner.setAdapter(null);
+        spinner.setVisibility(View.INVISIBLE);
+        eventView.setVisibility(View.INVISIBLE);
+        checkIn.setVisibility(View.INVISIBLE);
+
         bCount.setText("" + beacons.size());
         unregisterBroadcast();
         isPopupVisible = true;
+
 
     }
 
@@ -249,9 +258,10 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
+        spinner.clearFocus();
+        registerBroadcast();
         initList();
         bCount.setText("" + beacons.size());
-        registerBroadcast();
         isPopupVisible = false;
 
 //        // Call getEvent and display
@@ -263,6 +273,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        eventDetail.clear();
         unregisterBroadcast();
 
         // stop scanning when the app closes
@@ -375,8 +386,11 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             beaconAdapter.notifyDataSetChanged();
 
 
-            //display event when beacon in range
-            eventView.setVisibility(View.VISIBLE);
+            if (eventDetail.isEmpty() && !beacons.isEmpty()){
+                spinner.setAdapter(null);
+                getEventRespond();
+            }
+
 
             // display Check In event when beacon in range
             checkIn = (Button) findViewById(R.id.Check_in);
@@ -391,9 +405,11 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 }
             });
 
-            if (eventDetail!= null){
+            if (!eventDetail.isEmpty() && rangedBeacons.size()!=0) {
              checkIn.setVisibility(View.VISIBLE);
-            }
+                eventView.setVisibility(View.VISIBLE);
+                spinner.setVisibility(View.VISIBLE);
+            }else checkIn.setVisibility(View.INVISIBLE);
 
         }
 
