@@ -327,7 +327,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     //method display ListBeacon
     private void initList() {
-        ListView beaconList = (ListView) findViewById(R.id.beaconListView);
+        Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
         beaconAdapter = new BeaconAdapter(beacons, this);
         beaconList.setAdapter(beaconAdapter);
 
