@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -13,7 +14,6 @@ import com.mobstac.beaconstac.models.MSBeacon;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.UUID;
 
 import victory1908.nlbstafflogin2.R;
 
@@ -21,7 +21,7 @@ import victory1908.nlbstafflogin2.R;
 public class BeaconAdapter extends BaseAdapter {
 
 
-    public static UUID beaconUUID;
+    public static ArrayList<String> beaconUUID;
 
     private ArrayList <MSBeacon> beacons;
     private Context ctx;
@@ -97,7 +97,6 @@ public class BeaconAdapter extends BaseAdapter {
         key.setText("Major: " + beacon.getMajor() + "\t\t\t Minor: " + beacon.getMinor() +
                 " \t\t\t  Mean RSSI: " + beacon.getMeanRSSI());
 
-        beaconUUID = beacon.getBeaconUUID();
 
         if (beacon.getIsCampedOn()) {
             view.setBackgroundResource(android.R.color.holo_green_light);
@@ -109,3 +108,4 @@ public class BeaconAdapter extends BaseAdapter {
 
     }
 }
+

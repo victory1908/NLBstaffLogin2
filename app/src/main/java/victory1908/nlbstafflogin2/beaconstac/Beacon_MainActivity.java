@@ -104,6 +104,9 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     private TextView textViewEventTime;
     private String staffID;
     private String eventCheckIN;
+    private String beaconUUID;
+    private int beaconMajor;
+    private int beaconMinor;
 
     public int tempRangedBeacon = 0;
 
@@ -344,6 +347,22 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
         beaconAdapter = new BeaconAdapter(beacons, this);
         beaconList.setAdapter(beaconAdapter);
+        beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                beaconUUID= beacons.get(position).getBeaconUUID().toString();
+                beaconMajor = beacons.get(position).getMajor();
+                beaconMinor = beacons.get(position).getMinor();
+
+                Toast.makeText(getApplicationContext(),"Major: " +beaconMajor,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Minor: " +beaconMinor,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         bCount = (TextView) findViewById(R.id.beaconCount);
         testCamped = (TextView) findViewById(R.id.CampedView);
@@ -705,7 +724,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     //this method will execute when we pic an item from the spinner
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
         //Setting the values to textViews for a selected item
         textViewEventTitle.setText(getTitle(position));
         textViewEventDesc.setText(getDesc(position));
@@ -720,6 +738,9 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 //        textViewEventDesc.setText("");
 //        textViewEventTime.setText("");
     }
+
+
+
 
 
     //testing
