@@ -10,6 +10,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.mobstac.beaconstac.models.MSBeacon;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -139,6 +153,122 @@ public class BaseActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
+
+//    public static ArrayList eventDetail;
+//
+//    private ArrayList getEventRespondTest(MSBeacon beacon) {
+//        //Creating a string request
+//        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        JSONObject j;
+//                        JSONArray eventArray;
+//                        try {
+//                            //Parsing the fetched Json String to JSON Object
+//                            j = new JSONObject(response);
+//
+//                            //Storing the Array of JSON String to our JSON Array
+//                            eventArray = j.getJSONArray(Config.JSON_ARRAY);
+//
+//                            //Calling method getEventDetail to get the eventDetail from the JSON Array
+//                            eventDetail.clear();
+//                            eventDetail = getEventDetail(eventArray);
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                    }
+//
+//                });
+//
+//        //Creating a request queue
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//
+//        //Adding request to the queue
+//        requestQueue.add(stringRequest);
+//        return eventDetail;
+//    }
+//
+//    private ArrayList getEventDetail(JSONArray j) {
+//        //Traversing through all the items in the json array
+//        ArrayList eventDetail = new ArrayList();
+//        for (int i = 0; i < j.length(); i++) {
+//            try {
+//                //Getting json object
+//                JSONObject json = j.getJSONObject(i);
+//
+//                //Adding the name of the event to array list
+//                eventDetail.add(json.getString(Config.EVENT_TITLE));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return eventDetail;
+//    }
+
+    //Method to get eventID of a particular position
+    private String getEventID(JSONArray eventArray, int position) {
+        String EventID = "";
+        try {
+            //Getting object of given index
+            JSONObject json = eventArray.getJSONObject(position);
+
+            //Fetching EventID from that object
+            EventID = json.getString(Config.EVENT_ID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returning the EventTitle
+        return EventID;
+    }
+
+//    //Method to get event title of a particular position
+//    private String getTitle(int position) {
+//        String EventTitle = "";
+//        try {
+//            //Getting object of given index
+//            JSONObject json = eventArray.getJSONObject(position);
+//
+//            //Fetching EventTitle from that object
+//            EventTitle = json.getString(Config.EVENT_TITLE);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        //Returning the EventTitle
+//        return EventTitle;
+//    }
+//
+//    //Method to get event Desc of a particular position
+//    private String getDesc(int position) {
+//        String eventDescription = "";
+//        try {
+//            JSONObject json = eventArray.getJSONObject(position);
+//            eventDescription = json.getString(Config.EVENT_DESC);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return eventDescription;
+//    }
+//
+//    //Method to get event Time of a particular position
+//    private String getEventTime(int position) {
+//        String eventTime = "";
+//        try {
+//            JSONObject json = eventArray.getJSONObject(position);
+//            eventTime = json.getString(Config.EVENT_TIME);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return eventTime;
+//    }
+
 
 //    protected boolean isLoggedIn() {
 //    //Fetching the boolean value form sharedPreferences

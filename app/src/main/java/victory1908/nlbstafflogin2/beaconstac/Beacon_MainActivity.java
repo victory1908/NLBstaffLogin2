@@ -13,11 +13,13 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -25,9 +27,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.mobstac.beaconstac.core.Beaconstac;
@@ -53,6 +58,7 @@ import victory1908.nlbstafflogin2.ActivityCheckIn;
 import victory1908.nlbstafflogin2.BaseActivity;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.LoginActivity;
+import victory1908.nlbstafflogin2.MainActivity;
 import victory1908.nlbstafflogin2.R;
 
 
@@ -65,6 +71,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     private ArrayList<MSBeacon> beacons = new ArrayList<>();
 
     private BeaconAdapter beaconAdapter;
+    private ArrayAdapter eventAdapter;
+
     private TextView bCount;
     private TextView testCamped;
     private Button checkIn;
@@ -83,10 +91,12 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     public Spinner spinner;
 
     //An ArrayList for Spinner Items
-    public ArrayList<String> eventDetail;
+    private ArrayList<String> eventDetail;
+    private ArrayList <String> tempArray;
+    private ArrayList <MSBeacon> tempBeacons;
 
     //JSON Array
-    public JSONArray eventArray;
+    private JSONArray eventArray;
 
     //TextViews to display details
     private TextView textViewEventTitle;
@@ -112,16 +122,13 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         eventView = (RelativeLayout) findViewById(R.id.event_View);
 
         eventDetail = new ArrayList<>();
+        eventArray = new JSONArray();
+        tempArray = new ArrayList<>();
 
         //initialize spinner
         spinner = (Spinner) findViewById(R.id.spinner);
 
         spinner.setOnItemSelectedListener(this);
-        spinner.setAdapter(null);
-
-        //Setting adapter to show the items in the spinner
-
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 
 
         //Initializing TextViews
@@ -170,10 +177,18 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
 
+
         //display list beacon
         if (savedInstanceState == null) {
             initList();
         }
+
+           //get event from server
+        getEventRespondTest(Volley.newRequestQueue(Beacon_MainActivity.this));
+        spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+
+
+
 
         // set region parameters (UUID and unique region identifier)
         bstacInstance = Beaconstac.getInstance(this);
@@ -284,8 +299,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         initList();
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
-        getEventRespond();
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+//        getEventRespond();
 
 //        // Call getEvent and display
 //        getEvent();
@@ -333,7 +347,15 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
         bCount = (TextView) findViewById(R.id.beaconCount);
         testCamped = (TextView) findViewById(R.id.CampedView);
+
+//        eventAdapter = new ArrayAdapter<>(Beacon_MainActivity.this,android.R.layout.simple_spinner_dropdown_item,eventDetail);
+//        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+//        spinner.setAdapter(eventAdapter);
+
         registerBroadcast();
+
+//        getEventRespond();
+//        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
 
 
@@ -406,30 +428,38 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             bCount.setText("" + rangedBeacons.size());
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
-            ArrayList temArray = eventDetail;
-            getEventRespond();
 
 
-            if (rangedBeacons.size() != tempRangedBeacon) {
-                tempRangedBeacon = rangedBeacons.size();
-                //Setting adapter to show the items in the spinner
-                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
-            }
+            getEventRespondTest(Volley.newRequestQueue(Beacon_MainActivity.this));
+//            spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+//            Toast.makeText(Beacon_MainActivity.this,eventDetail.toString(),Toast.LENGTH_LONG).show();
 
 
-//            if (temArray.contains(eventDetail) && eventDetail.contains(temArray) && !rangedBeacons.isEmpty()){
-//               return;
-//            }else {
+//            if (rangedBeacons.size() != tempRangedBeacon) {
+//                tempRangedBeacon = rangedBeacons.size();
 //                //Setting adapter to show the items in the spinner
 //                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 //            }
 
+            if (tempArray.equals(eventDetail) && tempBeacons.equals(beacons)){
+            }else {
+                Toast.makeText(Beacon_MainActivity.this, "Beacons or events have been changed, fetching new data",Toast.LENGTH_SHORT).show();
+                //Setting adapter to show the items in the spinner
+                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+                tempArray=eventDetail;
+                tempBeacons=beacons;
+
+            }
 
 
-            if (!eventDetail.isEmpty() && rangedBeacons.size()!=0) {
+
+            if (rangedBeacons.size()!=0) {
              checkIn.setVisibility(View.VISIBLE);
                 eventView.setVisibility(View.VISIBLE);
-            }else checkIn.setVisibility(View.INVISIBLE);
+            }else {
+                checkIn.setVisibility(View.INVISIBLE);
+                eventView.setVisibility(View.INVISIBLE);
+            }
 
         }
 
@@ -563,59 +593,58 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     };
 
 
-    private void getEventRespond() {
-        //Creating a string request
-        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONObject j;
-                        try {
-                            //Parsing the fetched Json String to JSON Object
-                            j = new JSONObject(response);
-
-                            //Storing the Array of JSON String to our JSON Array
-                            eventArray = j.getJSONArray(Config.JSON_ARRAY);
-
-                            //Calling method getEventDetail to get the eventDetail from the JSON Array
-                            getEventDetail(eventArray);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-
-                });
-
-        //Creating a request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        //Adding request to the queue
-        requestQueue.add(stringRequest);
-    }
-
-    private void getEventDetail(JSONArray j) {
-        //Traversing through all the items in the json array
-        eventDetail.clear();
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                //Adding the name of the event to array list
-                    eventDetail.add(json.getString(Config.EVENT_TITLE));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
+////    private void getEventRespond() {
+////        //Creating a string request
+////        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
+////                new Response.Listener<String>() {
+////                    @Override
+////                    public void onResponse(String response) {
+////                        JSONObject j;
+////                        try {
+////                            //Parsing the fetched Json String to JSON Object
+////                            j = new JSONObject(response);
+////
+////                            //Storing the Array of JSON String to our JSON Array
+////                            eventArray = j.getJSONArray(Config.JSON_ARRAY);
+////
+////                            //Calling method getEventDetail to get the eventDetail from the JSON Array
+////                            getEventDetail(eventArray);
+////                        } catch (JSONException e) {
+////                            e.printStackTrace();
+////                        }
+////                    }
+////                },
+////                new Response.ErrorListener() {
+////                    @Override
+////                    public void onErrorResponse(VolleyError error) {
+////
+////                    }
+////
+////                });
+////
+////        //Creating a request queue
+////        RequestQueue requestQueue = Volley.newRequestQueue(this);
+////
+////        //Adding request to the queue
+////        requestQueue.add(stringRequest);
+////    }
+////
+////    private void getEventDetail(JSONArray j) {
+////        //Traversing through all the items in the json array
+////        for (int i = 0; i < j.length(); i++) {
+////            try {
+////                //Getting json object
+////                JSONObject json = j.getJSONObject(i);
+////
+////                //Adding the name of the event to array list
+////                    eventDetail.add(json.getString(Config.EVENT_TITLE));
+////            } catch (JSONException e) {
+////                e.printStackTrace();
+////            }
+////        }
+////        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+////    }
+//
     //Method to get eventID of a particular position
     private String getEventID(int position) {
         String EventID = "";
@@ -676,6 +705,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     //this method will execute when we pic an item from the spinner
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
         //Setting the values to textViews for a selected item
         textViewEventTitle.setText(getTitle(position));
         textViewEventDesc.setText(getDesc(position));
@@ -686,9 +716,55 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     //When no item is selected this method would execute
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        textViewEventTitle.setText("");
-        textViewEventDesc.setText("");
-        textViewEventTime.setText("");
+//        textViewEventTitle.setText("");
+//        textViewEventDesc.setText("");
+//        textViewEventTime.setText("");
+    }
+
+
+    //testing
+    private void getEventRespondTest (RequestQueue requestQueue) {
+        //Creating a string request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject respond) {
+                            try {
+                                eventArray = respond.getJSONArray("result");
+                                eventDetail = getEventDetail(eventArray);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+//                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    }
+                );
+        //Adding request to the queue
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private ArrayList getEventDetail(JSONArray j) {
+        ArrayList event = new ArrayList();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                //Adding the name of the event to array list
+                event.add(json.getString(Config.EVENT_TITLE));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return event;
     }
 
 
