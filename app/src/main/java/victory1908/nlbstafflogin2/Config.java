@@ -34,6 +34,8 @@ public class Config {
     public static final String EVENT_TIME = "EventTime";
 
     public static final String BEACON_UUID = "beaconUUID";
+    public static final String BEACON_MAJOR = "beaconMajor";
+    public static final String BEACON_MINOR = "beaconMinor";
 
     //JSON array name
     public static final String JSON_ARRAY = "result";

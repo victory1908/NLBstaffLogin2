@@ -13,27 +13,23 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.mobstac.beaconstac.core.Beaconstac;
 import com.mobstac.beaconstac.core.BeaconstacReceiver;
@@ -53,6 +49,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import victory1908.nlbstafflogin2.ActivityCheckIn;
 import victory1908.nlbstafflogin2.BaseActivity;
@@ -92,6 +89,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     //An ArrayList for Spinner Items
     private ArrayList<String> eventDetail;
+    private ArrayList<String> eventIDBeacon;
     private ArrayList <String> tempArray;
     private ArrayList <MSBeacon> tempBeacons;
 
@@ -119,13 +117,14 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         setSupportActionBar(toolbar);
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
+
         textViewWelcome = (TextView) findViewById(R.id.textView_staffid);
 
         // initiate eventView;
         eventView = (RelativeLayout) findViewById(R.id.event_View);
 
-        eventDetail = new ArrayList<>();
-        eventArray = new JSONArray();
+//        eventDetail = new ArrayList<>();
+//        eventArray = new JSONArray();
         tempArray = new ArrayList<>();
 
         //initialize spinner
@@ -181,14 +180,17 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         }
 
 
-        //display list beacon
-        if (savedInstanceState == null) {
-            initList();
-        }
+        initList();
+//        beaconUUID = "f94dbb23-2266-7822-3782-57beac0952ac";
+//
+//        //display list beacon
+//        if (savedInstanceState == null) {
+//            initList();
+//        }
 
            //get event from server
-        getEventRespondTest(Volley.newRequestQueue(Beacon_MainActivity.this));
-        spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+//        getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+//        spinner.setAdapter(new ArrayAdapter<>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 
 
 
@@ -262,6 +264,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
             }
         });
+
+
 
     }
 
@@ -347,36 +351,42 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
         beaconAdapter = new BeaconAdapter(beacons, this);
         beaconList.setAdapter(beaconAdapter);
-        beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                beaconUUID= beacons.get(position).getBeaconUUID().toString();
-                beaconMajor = beacons.get(position).getMajor();
-                beaconMinor = beacons.get(position).getMinor();
-
-                Toast.makeText(getApplicationContext(),"Major: " +beaconMajor,Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(),"Minor: " +beaconMinor,Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
+        registerBroadcast();
         bCount = (TextView) findViewById(R.id.beaconCount);
         testCamped = (TextView) findViewById(R.id.CampedView);
+
+//        if (!beacons.isEmpty()) {
+//            Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
+//            beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                @Override
+//                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                    beaconUUID = beacons.get(position).getBeaconUUID().toString();
+//                    beaconMajor = beacons.get(position).getMajor();
+//                    beaconMinor = beacons.get(position).getMinor();
+////                Toast.makeText(Beacon_MainActivity.this,Integer.toString(beaconMajor),Toast.LENGTH_SHORT).show();
+//
+//                    eventIDBeacon = new ArrayList<>();
+//                    getEventIDRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+//                    Toast.makeText(Beacon_MainActivity.this, eventIDBeacon.toString(), Toast.LENGTH_SHORT).show();
+////                getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+//
+//                }
+//
+//                @Override
+//                public void onNothingSelected(AdapterView<?> parent) {
+//                }
+//            });
+//        }
+
 
 //        eventAdapter = new ArrayAdapter<>(Beacon_MainActivity.this,android.R.layout.simple_spinner_dropdown_item,eventDetail);
 //        Spinner spinner = (Spinner) findViewById(R.id.spinner);
 //        spinner.setAdapter(eventAdapter);
 
-        registerBroadcast();
 
 //        getEventRespond();
 //        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
     }
-
 
     private void registerBroadcast() {
         if (!registered) {
@@ -448,8 +458,30 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
 
+            if (!beacons.isEmpty()) {
+                Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
+                beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        beaconUUID = beacons.get(position).getBeaconUUID().toString();
+                        beaconMajor = beacons.get(position).getMajor();
+                        beaconMinor = beacons.get(position).getMinor();
+//                Toast.makeText(Beacon_MainActivity.this,Integer.toString(beaconMajor),Toast.LENGTH_SHORT).show();
 
-            getEventRespondTest(Volley.newRequestQueue(Beacon_MainActivity.this));
+                        getEventIDRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+
+//                getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+            }
+
+
+
 //            spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 //            Toast.makeText(Beacon_MainActivity.this,eventDetail.toString(),Toast.LENGTH_LONG).show();
 
@@ -460,15 +492,22 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 //                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
 //            }
 
-            if (tempArray.equals(eventDetail) && tempBeacons.equals(beacons)){
-            }else {
-                Toast.makeText(Beacon_MainActivity.this, "Beacons or events have been changed, fetching new data",Toast.LENGTH_SHORT).show();
-                //Setting adapter to show the items in the spinner
-                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
-                tempArray=eventDetail;
-                tempBeacons=beacons;
+//            //GetEventID from ranged Beacon
+//            getEventIDRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+//            Toast.makeText(Beacon_MainActivity.this,beaconUUID.toString(),Toast.LENGTH_LONG).show();
 
-            }
+//            if (tempArray.equals(eventDetail) && tempBeacons.equals(beacons)){
+//            }else {
+//                getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+//                Toast.makeText(Beacon_MainActivity.this, "Beacons or events have been changed, fetching new data",Toast.LENGTH_SHORT).show();
+//                //Setting adapter to show the items in the spinner
+////                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+//                tempArray=eventDetail;
+//                tempBeacons=beacons;
+//
+//            }
+            //GetEventID from ranged Beacon
+//            getEventIDRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
 
 
 
@@ -744,31 +783,43 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
 
     //testing
-    private void getEventRespondTest (RequestQueue requestQueue) {
-        //Creating a string request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,
+    private void getEventDetailRespond(RequestQueue requestQueue) {
+        JSONObject params = new JSONObject();
+        try {
+//            params.put(Config.EVENT_ID, eventIDBeacon.get(0));
+            params.put(Config.EVENT_ID, eventIDBeacon.get(0));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Creating a JSONObject request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
                             try {
+                                Toast.makeText(Beacon_MainActivity.this,"eventDetail respond "+respond.toString(),Toast.LENGTH_SHORT).show();
+                                eventArray = new JSONArray();
+                                eventDetail = new ArrayList<>();
                                 eventArray = respond.getJSONArray("result");
                                 eventDetail = getEventDetail(eventArray);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-//                        }
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
                         }
                     }
                 );
+
         //Adding request to the queue
         requestQueue.add(jsonObjectRequest);
+
     }
 
     private ArrayList getEventDetail(JSONArray j) {
@@ -781,6 +832,79 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
                 //Adding the name of the event to array list
                 event.add(json.getString(Config.EVENT_TITLE));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, event));
+        return event;
+    }
+
+
+
+    //getEventID from ranged beacon
+
+    private void getEventIDRespond(RequestQueue requestQueue) {
+
+        JSONObject params = new JSONObject();
+        try {
+            params.put(Config.BEACON_UUID, beaconUUID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Creating a JSONObject request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.EVENT_URL, params,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject respond) {
+                        Toast.makeText(Beacon_MainActivity.this, "eventID respond"+respond.toString(),Toast.LENGTH_SHORT).show();
+                        try {
+                            eventArray = new JSONArray();
+                            eventIDBeacon = new ArrayList<>();
+//                            eventIDBeacon.clear();
+                            eventArray = respond.getJSONArray("result");
+
+                            eventIDBeacon = getEventIDFromBeacon(eventArray);
+                            getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+//                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event ID: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                headers.put( "charset", "utf-8");
+                return headers;
+            }
+        };
+
+        //Adding request to the queue
+        requestQueue.add(jsonObjectRequest);
+
+    }
+
+    private ArrayList getEventIDFromBeacon(JSONArray j) {
+        ArrayList event = new ArrayList<>();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                //Adding the name of the event to array list
+                event.add(json.getString(Config.EVENT_ID));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

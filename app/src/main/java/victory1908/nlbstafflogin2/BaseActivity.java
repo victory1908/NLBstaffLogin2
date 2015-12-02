@@ -135,6 +135,7 @@ public class BaseActivity extends AppCompatActivity {
                         boolean shouldExit = true;
                         Intent result = new Intent();
                         result.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        result.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         result.putExtra(MainActivity.EXTRA_EXIT, shouldExit);
                         setResult(Activity.RESULT_OK, result);
                         finish();
@@ -212,22 +213,22 @@ public class BaseActivity extends AppCompatActivity {
 //        }
 //        return eventDetail;
 //    }
-
-    //Method to get eventID of a particular position
-    private String getEventID(JSONArray eventArray, int position) {
-        String EventID = "";
-        try {
-            //Getting object of given index
-            JSONObject json = eventArray.getJSONObject(position);
-
-            //Fetching EventID from that object
-            EventID = json.getString(Config.EVENT_ID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //Returning the EventTitle
-        return EventID;
-    }
+//
+//    //Method to get eventID of a particular position
+//    private String getEventID(JSONArray eventArray, int position) {
+//        String EventID = "";
+//        try {
+//            //Getting object of given index
+//            JSONObject json = eventArray.getJSONObject(position);
+//
+//            //Fetching EventID from that object
+//            EventID = json.getString(Config.EVENT_ID);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        //Returning the EventTitle
+//        return EventID;
+//    }
 
 //    //Method to get event title of a particular position
 //    private String getTitle(int position) {
