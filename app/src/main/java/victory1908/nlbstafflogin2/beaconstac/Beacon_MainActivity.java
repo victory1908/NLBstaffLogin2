@@ -849,6 +849,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         JSONObject params = new JSONObject();
         try {
             params.put(Config.BEACON_UUID, beaconUUID);
+            params.put(Config.BEACON_MAJOR, beaconMajor);
+            params.put(Config.BEACON_MINOR, beaconMinor);
         } catch (JSONException e) {
             e.printStackTrace();
         }
