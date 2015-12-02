@@ -511,13 +511,6 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
 
 
-            if (rangedBeacons.size()!=0) {
-             checkIn.setVisibility(View.VISIBLE);
-                eventView.setVisibility(View.VISIBLE);
-            }else {
-                checkIn.setVisibility(View.INVISIBLE);
-                eventView.setVisibility(View.INVISIBLE);
-            }
 
         }
 
@@ -784,46 +777,87 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
     //testing
     private void getEventDetailRespond(RequestQueue requestQueue) {
-        JSONObject params = new JSONObject();
-        try {
+        eventDetail = new ArrayList<>();
+        for (int i = 0; i <eventIDBeacon.size() ; i++) {
+            JSONObject params = new JSONObject();
+            try {
 //            params.put(Config.EVENT_ID, eventIDBeacon.get(0));
-            params.put(Config.EVENT_ID, eventIDBeacon.get(0));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //Creating a JSONObject request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject respond) {
+                    params.put(Config.EVENT_ID, eventIDBeacon.get(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            //Creating a JSONObject request
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,params.toString(),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject respond) {
                             try {
-                                Toast.makeText(Beacon_MainActivity.this,"eventDetail respond "+respond.toString(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Beacon_MainActivity.this,"eventDetail respond "+respond.toString(),Toast.LENGTH_LONG).show();
                                 eventArray = new JSONArray();
-                                eventDetail = new ArrayList<>();
+
                                 eventArray = respond.getJSONArray("result");
-                                eventDetail = getEventDetail(eventArray);
+                                getEventDetail(eventArray);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
                             Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
                         }
                     }
-                );
+            );
 
-        //Adding request to the queue
-        requestQueue.add(jsonObjectRequest);
+            //Adding request to the queue
+            requestQueue.add(jsonObjectRequest);
+        }
+
+//        JSONObject params = new JSONObject();
+//        try {
+////            params.put(Config.EVENT_ID, eventIDBeacon.get(0));
+//            for (int i=0; i <eventIDBeacon.size();i++){
+//                params.put(Config.EVENT_ID, eventIDBeacon.get(i));
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        //Creating a JSONObject request
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL,params.toString(),
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject respond) {
+//                            try {
+//                                Toast.makeText(Beacon_MainActivity.this,"eventDetail respond "+respond.toString(),Toast.LENGTH_LONG).show();
+//                                eventArray = new JSONArray();
+//                                eventDetail = new ArrayList<>();
+//                                eventArray = respond.getJSONArray("result");
+//                                eventDetail = getEventDetail(eventArray);
+//
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                            Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                );
+//
+//        //Adding request to the queue
+//        requestQueue.add(jsonObjectRequest);
 
     }
 
-    private ArrayList getEventDetail(JSONArray j) {
-        ArrayList event = new ArrayList();
+
+    private void getEventDetail(JSONArray j) {
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
             try {
@@ -831,14 +865,57 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 JSONObject json = j.getJSONObject(i);
 
                 //Adding the name of the event to array list
-                event.add(json.getString(Config.EVENT_TITLE));
+                eventDetail.add(json.getString(Config.EVENT_TITLE));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, event));
-        return event;
+
+        if (eventDetail.isEmpty()) eventView.setVisibility(View.INVISIBLE);
+        else {
+            if (beacons.size()!=0) {
+                checkIn.setVisibility(View.VISIBLE);
+                eventView.setVisibility(View.VISIBLE);
+
+                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
+            }else {
+                checkIn.setVisibility(View.INVISIBLE);
+                eventView.setVisibility(View.INVISIBLE);
+            }
+
+        }
     }
+
+//    private ArrayList getEventDetail(JSONArray j) {
+//        ArrayList event = new ArrayList();
+//        //Traversing through all the items in the json array
+//        for (int i = 0; i < j.length(); i++) {
+//            try {
+//                //Getting json object
+//                JSONObject json = j.getJSONObject(i);
+//
+//                //Adding the name of the event to array list
+//                event.add(json.getString(Config.EVENT_TITLE));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        if (event.isEmpty()) eventView.setVisibility(View.INVISIBLE);
+//        else {
+//            if (beacons.size()!=0) {
+//                checkIn.setVisibility(View.VISIBLE);
+//                eventView.setVisibility(View.VISIBLE);
+//
+//                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, event));
+//            }else {
+//                checkIn.setVisibility(View.INVISIBLE);
+//                eventView.setVisibility(View.INVISIBLE);
+//            }
+//
+//        }
+//        return event;
+//    }
 
 
 
@@ -860,7 +937,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
-                        Toast.makeText(Beacon_MainActivity.this, "eventID respond"+respond.toString(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Beacon_MainActivity.this, "eventID respond"+respond.toString(),Toast.LENGTH_LONG).show();
                         try {
                             eventArray = new JSONArray();
                             eventIDBeacon = new ArrayList<>();
