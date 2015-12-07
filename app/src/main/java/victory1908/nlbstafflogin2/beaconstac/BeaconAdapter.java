@@ -21,8 +21,6 @@ import victory1908.nlbstafflogin2.R;
 public class BeaconAdapter extends BaseAdapter {
 
 
-    public static ArrayList<String> beaconUUID;
-
     private ArrayList <MSBeacon> beacons;
     private Context ctx;
     private LayoutInflater myInflator;

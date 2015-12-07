@@ -263,7 +263,7 @@ public class BaseActivity extends AppCompatActivity {
 //        String eventTime = "";
 //        try {
 //            JSONObject json = eventArray.getJSONObject(position);
-//            eventTime = json.getString(Config.EVENT_TIME);
+//            eventTime = json.getString(Config.EVENT_START_TIME);
 //        } catch (JSONException e) {
 //            e.printStackTrace();
 //        }

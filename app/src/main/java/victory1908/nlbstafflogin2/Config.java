@@ -31,7 +31,8 @@ public class Config {
 
     public static final String EVENT_TITLE = "EventTitle";
     public static final String EVENT_DESC = "EventDesc";
-    public static final String EVENT_TIME = "EventTime";
+    public static final String EVENT_START_TIME = "EventStartTime";
+    public static final String EVENT_END_TIME = "EventEndTime";
 
     public static final String BEACON_UUID = "beaconUUID";
     public static final String BEACON_MAJOR = "beaconMajor";

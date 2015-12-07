@@ -29,8 +29,8 @@
         android:orientation="vertical"
         android:padding="10dp"
         android:id="@+id/event_View"
-        android:layout_below="@id/textView_staffid"
-        android:visibility="invisible">
+        android:layout_below="@id/textView_staffid">
+        <!--android:visibility="invisible">-->
 
         <Spinner
             android:layout_width="match_parent"
@@ -47,6 +47,16 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/spinner"
             android:padding="15dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventTitle"
+            android:padding="15dp"
+            android:layout_below="@+id/spinner"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/textView_EventDesc" />
+
 
 
         <TextView
@@ -59,14 +69,22 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:padding="15dp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventDesc"
+            android:padding="15dp"
+            android:layout_below="@+id/EventTitle"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/textView_EventDesc" />
 
         <TextView
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="EventTime"
+            android:text="EventStartTime"
             android:id="@+id/textView_EventTime"
             android:layout_below="@+id/textView_EventDesc"
             android:layout_alignParentLeft="true"
@@ -75,90 +93,98 @@
 
 
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewEventTitle"
+            android:id="@+id/EventStartTime"
             android:padding="15dp"
-            android:layout_alignBottom="@+id/textView_EventTitle"
+            android:layout_below="@+id/EventDesc"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@+id/textView_EventDesc"
-            android:layout_toRightOf="@+id/textView_EventDesc" />
+            android:layout_toRightOf="@+id/textView_EventDesc"/>
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventEndTime"
+            android:id="@+id/textView_EventEndTime"
+            android:layout_below="@+id/textView_EventTime"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textViewEventDesc"
+            android:id="@+id/EventEndTime"
             android:padding="15dp"
-            android:layout_below="@+id/textViewEventTitle"
+            android:layout_below="@+id/EventStartTime"
             android:layout_toRightOf="@+id/textView_EventDesc"
-            android:layout_alignRight="@+id/textViewEventTitle"
-            android:layout_alignEnd="@+id/textViewEventTitle" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewEventTime"
-            android:padding="15dp"
-            android:layout_below="@+id/textViewEventDesc"
-            android:layout_toRightOf="@+id/textView_EventDesc"
-            android:layout_alignRight="@+id/textViewEventTitle"
-            android:layout_alignEnd="@+id/textViewEventTitle" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Check In"
             android:id="@+id/Check_in"
-            android:layout_below="@id/textViewEventTime"
+            android:layout_below="@id/EventEndTime"
             android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 
 
-    <TextView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:id="@+id/beacon_View"
+        android:layout_below="@id/event_View"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20sp"
+            android:text="Beacons Ranged: "
+            android:id="@+id/RangedView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Camped: 0"
+            android:id="@+id/CampedView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+
+        <!--<ListView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/beaconSpinner-->
+        <!--android:layout_below="@id/RangedView"/>-->
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/beaconSpinner"
+            android:layout_below="@id/RangedView" />
+
+
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="20sp"
-        android:text="Beacons Ranged: "
-        android:id="@+id/RangedView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="300sp" />
+        android:text="0"
+        android:id="@+id/beaconCount"
+        android:layout_toRightOf="@id/RangedView"/>
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="300sp"
-        android:text="Camped: 0"
-        android:id="@+id/CampedView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-
-    <!--<ListView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:id="@+id/beaconSpinner-->
-    <!--android:layout_below="@id/RangedView"/>-->
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/beaconSpinner"
-        android:layout_below="@id/RangedView"/>
-
-
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="0"
-    android:id="@+id/beaconCount"
-    android:layout_toRightOf="@id/RangedView"
-    android:layout_marginTop="300sp"/>
-
+    </RelativeLayout>
 
 </RelativeLayout>
