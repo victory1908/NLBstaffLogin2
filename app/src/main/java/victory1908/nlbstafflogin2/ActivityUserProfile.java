@@ -64,7 +64,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
         checkIn.setOnClickListener(this);
     }
 
-//    // Display eventID from beaconUUID
+//    // Display EventID from beaconUUID
 //    private void getEvent() {
 //
 //        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.EVENT_URL,
@@ -79,7 +79,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 //                            //Storing the Array of JSON String to our JSON Array
 //                            result = j.getJSONArray(Config.JSON_ARRAY);
 //
-//                            //Calling method getEventID to get the eventID from the JSON Array
+//                            //Calling method getEventID to get the EventID from the JSON Array
 //                            getEventtID(result);
 //                        } catch (JSONException e) {
 //                            e.printStackTrace();

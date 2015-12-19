@@ -2,25 +2,20 @@ package victory1908.nlbstafflogin2.beaconstac;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 //import android.util.ArrayMap;
 import android.support.v4.util.ArrayMap;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,68 +43,61 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import victory1908.nlbstafflogin2.ActivityCheckIn;
 import victory1908.nlbstafflogin2.BaseActivity;
 import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.EditEventActivity;
 import victory1908.nlbstafflogin2.LoginActivity;
 import victory1908.nlbstafflogin2.R;
+import victory1908.nlbstafflogin2.event.Event;
+import victory1908.nlbstafflogin2.event.EventAdapter;
 
 
-public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class Beacon_MainActivity extends BaseActivity {
 
+    RequestQueue requestQueue;
+    ProgressBar progressBar;
     private TextView textViewWelcome;
+
+    private static final int REQUEST_ENABLE_BT = 1;
 
     private static final String TAG = Beacon_MainActivity.class.getSimpleName();
 
     private ArrayList<MSBeacon> beacons = new ArrayList<>();
+    MSBeacon beaconAction;
 
     private BeaconAdapter beaconAdapter;
-    private ArrayAdapter eventAdapter;
 
     private TextView bCount;
     private TextView testCamped;
-    private Button checkIn;
-    private RelativeLayout eventView;
     Beaconstac bstacInstance;
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private static final int REQUEST_ENABLE_BT = 1;
+//    private BluetoothAdapter mBluetoothAdapter;
+//    private static final int REQUEST_ENABLE_BT = 1;
 
     private boolean registered = false;
     private boolean isPopupVisible = false;
 
 
-    //Spinner
-    //Declaring an Spinner
-    public Spinner spinner;
-
-    //An ArrayList for Spinner Items
-    private ArrayList<String> eventDetail;
     private ArrayList<String> eventIDBeacon;
-    private ArrayList <String> tempArray;
-    private ArrayList <MSBeacon> tempBeacons;
+
 
     //JSON Array
     private JSONArray eventArray;
 
-    //TextViews to display details
-    private TextView EventTitle;
-    private TextView EventDesc;
-    private TextView EventStartTime;
-    private TextView EventEndTime;
     private String staffID;
-    private String eventCheckIN;
-    private String beaconUUID;
-    private int beaconMajor;
-    private int beaconMinor;
 
-    public int tempRangedBeacon = 0;
+    //Creating a List of event
+    private List<Event> listEvents;
+
+    //Creating Views
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
 
 
     @Override
@@ -121,28 +109,18 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
 
-        textViewWelcome = (TextView) findViewById(R.id.textView_staffid);
+        //Initializing Views
+        recyclerView = (RecyclerView) findViewById(R.id.recycleView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
-        // initiate eventView;
-        eventView = (RelativeLayout) findViewById(R.id.event_View);
+        //Initializing our listEvents list
+        listEvents = new ArrayList();
 
-//        eventDetail = new ArrayList<>();
-//        eventArray = new JSONArray();
-        tempArray = new ArrayList<>();
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        //initialize spinner
-        spinner = (Spinner) findViewById(R.id.spinner);
-
-        spinner.setOnItemSelectedListener(this);
-
-
-        //Initializing TextViews
-        EventTitle = (TextView) findViewById(R.id.EventTitle);
-        EventDesc = (TextView) findViewById(R.id.EventDesc);
-        EventStartTime = (TextView) findViewById(R.id.EventStartTime);
-        EventEndTime = (TextView) findViewById(R.id.EventEndTime);
-
-
+        textViewWelcome = (TextView) findViewById(R.id.textView_Staffid);
 
 
         //checkLogged In
@@ -150,7 +128,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         //If we will get true
         if (!loggedIn) {
             //We will start the Beacon_Main Activity
-            Intent intent = new Intent(Beacon_MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
 
@@ -160,31 +138,32 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         textViewWelcome.setText("Welcome User " + staffID);
 
 
-        // Use this check to determine whether BLE is supported on the device.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-        }
+//        // Use this check to determine whether BLE is supported on the device.
+//        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+//            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+//        }
+//
+//        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+//        // BluetoothAdapter through BluetoothManager.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+//            mBluetoothAdapter = mBluetoothManager.getAdapter();
+//        }
+//
+//        // Checks if Bluetooth is supported on the device.
+//        if (mBluetoothAdapter == null) {
+//            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+//            Toast.makeText(this, "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
+//        } else {
+//            if (!mBluetoothAdapter.isEnabled()) {
+//                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//            }
+//        }
 
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            mBluetoothAdapter = mBluetoothManager.getAdapter();
-        }
-
-        // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-            Toast.makeText(this, "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
-
-
+//        eventView.setVisibility(View.INVISIBLE);
         initList();
+
 
         // set region parameters (UUID and unique region identifier)
         bstacInstance = Beaconstac.getInstance(this);
@@ -202,6 +181,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             testCamped.setVisibility(View.GONE);
             e.printStackTrace();
         }
+
 
 //        // if location is enabled
 //        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -243,19 +223,22 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 //        }
 
 
-        // display Check In event when beacon in range
-        checkIn = (Button) findViewById(R.id.Check_in);
-        checkIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
-                intent.putExtra(Config.STAFF_ID, staffID);
-                intent.putExtra(Config.EVENT_ID, eventCheckIN);
-                startActivity(intent);
+//        checkIn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
+//                intent.putExtra(Config.STAFF_ID, staffID);
+//                intent.putExtra(Config.EVENT_ID, eventCheckIN);
+//                intent.putExtra("event",event);
+//                startActivity(intent);
+//
+//            }
+//        });
 
-            }
-        });
 
+        listEvents.clear();
+        adapter = new EventAdapter(Beacon_MainActivity.this, listEvents);
+        recyclerView.setAdapter(adapter);
 
 
     }
@@ -269,16 +252,10 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         super.onPause();
         beaconAdapter.clear();
         beaconAdapter.notifyDataSetChanged();
-
-        eventView.setVisibility(View.INVISIBLE);
-        checkIn.setVisibility(View.INVISIBLE);
-
-        tempRangedBeacon =0;
+        adapter.notifyDataSetChanged();
         bCount.setText("" + beacons.size());
         unregisterBroadcast();
         isPopupVisible = true;
-
-
     }
 
     @Override
@@ -289,15 +266,10 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
     @Override
     protected void onResume() {
         super.onResume();
-
-        tempRangedBeacon = 0;
-
         registerBroadcast();
-
         initList();
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
-
     }
 
     @Override
@@ -330,6 +302,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
     }
+
 
     //method display ListBeacon
     private void initList() {
@@ -400,8 +373,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         public void exitedBeacon(Context context, MSBeacon beacon) {
             testCamped.setText("Exited: " + beacon.getMajor() + ":" + beacon.getMinor());
             beaconAdapter.notifyDataSetChanged();
-            eventView.setVisibility(View.INVISIBLE);
-            checkIn.setVisibility(View.INVISIBLE);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -410,21 +382,18 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             bCount.setText("" + rangedBeacons.size());
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
 
             if (!beacons.isEmpty()) {
                 Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
                 beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        beaconUUID = beacons.get(position).getBeaconUUID().toString();
-                        beaconMajor = beacons.get(position).getMajor();
-                        beaconMinor = beacons.get(position).getMinor();
-//                Toast.makeText(Beacon_MainActivity.this,Integer.toString(beaconMajor),Toast.LENGTH_SHORT).show();
-
-                        getEventIDRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
-
-//                getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
-
+                        beaconAction = beacons.get(position);
+                        requestQueue = Volley.newRequestQueue(Beacon_MainActivity.this);
+                        listEvents.clear();
+                        recyclerView.setAdapter(adapter);
+                        getEventIDRespond(requestQueue);
                     }
 
                     @Override
@@ -440,6 +409,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             testCamped.setText("Camped: " + beacon.getMajor() + ":" + beacon.getMinor());
             beaconAdapter.addBeacon(beacon);
             beaconAdapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -538,6 +508,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         public void enteredRegion(Context context, String region) {
             beaconAdapter.clear();
             beaconAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
             Toast.makeText(getApplicationContext(), "Entered region", Toast.LENGTH_SHORT).show();
         }
@@ -546,10 +517,9 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         public void exitedRegion(Context context, String region) {
             beaconAdapter.clear();
             beaconAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
             Toast.makeText(getApplicationContext(), "Exited region", Toast.LENGTH_SHORT).show();
-            eventView.setVisibility(View.INVISIBLE);
-            checkIn.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -560,104 +530,14 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         @Override
         public void exitedGeofence(Context context, ArrayList<MSPlace> places) {
             Toast.makeText(getApplicationContext(), "Exited Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
-            checkIn.setVisibility(View.INVISIBLE);
         }
     };
 
 
-    //Method to get eventID of a particular position
-    private String getEventID(int position) {
-        String EventID = "";
-        try {
-            //Getting object of given index
-            JSONObject json = eventArray.getJSONObject(position);
-
-            //Fetching EventID from that object
-            EventID = json.getString(Config.EVENT_ID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //Returning the EventTitle
-        return EventID;
-    }
-
-    //Method to get event title of a particular position
-    private String getTitle(int position) {
-        String EventTitle = "";
-        try {
-            //Getting object of given index
-            JSONObject json = eventArray.getJSONObject(position);
-
-            //Fetching EventTitle from that object
-            EventTitle = json.getString(Config.EVENT_TITLE);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        //Returning the EventTitle
-        return EventTitle;
-    }
-
-    //Method to get event Desc of a particular position
-    private String getDesc(int position) {
-        String eventDescription = "";
-        try {
-            JSONObject json = eventArray.getJSONObject(position);
-            eventDescription = json.getString(Config.EVENT_DESC);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return eventDescription;
-    }
-
-    //Method to get event Time of a particular position
-    private String getEventStartTime(int position) {
-        String eventStartTime = "";
-        try {
-            JSONObject json = eventArray.getJSONObject(position);
-            eventStartTime = json.getString(Config.EVENT_START_TIME);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return eventStartTime;
-    }
-
-    private String getEventEndTime(int position) {
-        String eventEndTime = "";
-        try {
-            JSONObject json = eventArray.getJSONObject(position);
-            eventEndTime = json.getString(Config.EVENT_END_TIME);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return eventEndTime;
-    }
-
-    //this method will execute when we pic an item from the spinner
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //Setting the values to textViews for a selected item
-        EventTitle.setText(getTitle(position));
-        EventDesc.setText(getDesc(position));
-        EventStartTime.setText(getEventStartTime(position));
-        EventEndTime.setText(getEventEndTime(position));
-
-        eventCheckIN = getEventID(position);
-    }
-
-    //When no item is selected this method would execute
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-//        EventTitle.setText("");
-//        EventDesc.setText("");
-//        EventStartTime.setText("");
-    }
-
-
-
     //testing
     private void getEventDetailRespond(RequestQueue requestQueue) {
-        eventDetail = new ArrayList<>();
 
+        progressBar.setVisibility(View.VISIBLE);
         Map<String, Object> jsonParams = new ArrayMap<>();
         jsonParams.put(Config.EVENT_ID, eventIDBeacon);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL, new JSONObject(jsonParams),
@@ -670,6 +550,8 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
 
                                 eventArray = respond.getJSONArray("result");
                                 getEventDetail(eventArray);
+                                progressBar.setVisibility(View.GONE);
+
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -681,6 +563,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
 
@@ -693,41 +576,39 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
         for (int i = 0; i < j.length(); i++) {
             try {
                 //Getting json object
+                Event event = new Event();
                 JSONObject json = j.getJSONObject(i);
 
-                //Adding the name of the event to array list
-                eventDetail.add(json.getString(Config.EVENT_TITLE));
+                event.setEventID(json.getString(Config.EVENT_ID));
+                event.setEventTitle(json.getString(Config.EVENT_TITLE));
+                event.setEventDesc(json.getString(Config.EVENT_DESC));
+                event.setEventStartTime(json.getString(Config.EVENT_START_TIME));
+                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
+
+                //Adding the event object to the list
+                listEvents.add(event);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
-
-        if (eventDetail.isEmpty()) eventView.setVisibility(View.INVISIBLE);
-        else {
-            if (beacons.size()!=0) {
-                checkIn.setVisibility(View.VISIBLE);
-                eventView.setVisibility(View.VISIBLE);
-
-//                spinner.setAdapter(new ArrayAdapter<String>(Beacon_MainActivity.this, android.R.layout.simple_spinner_dropdown_item, eventDetail));
-            }else {
-                checkIn.setVisibility(View.INVISIBLE);
-                eventView.setVisibility(View.INVISIBLE);
-            }
-
-        }
+        //Notifying the adapter that data has been added or changed
+        adapter.notifyDataSetChanged();
     }
 
     //getEventID from ranged beacon
 
-    private void getEventIDRespond(RequestQueue requestQueue) {
+    private void getEventIDRespond(final RequestQueue requestQueue) {
 
-        JSONObject params = new JSONObject();
+        //Displaying Progressbar
+        progressBar.setVisibility(View.VISIBLE);
+        setProgressBarIndeterminateVisibility(true);
+
+        final JSONObject params = new JSONObject();
         try {
-            params.put(Config.BEACON_UUID, beaconUUID);
-            params.put(Config.BEACON_MAJOR, beaconMajor);
-            params.put(Config.BEACON_MINOR, beaconMinor);
+            params.put(Config.BEACON_UUID, beaconAction.getBeaconUUID().toString());
+            params.put(Config.BEACON_MAJOR, beaconAction.getMajor());
+            params.put(Config.BEACON_MINOR, beaconAction.getMinor());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -737,15 +618,15 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
-//                        Toast.makeText(Beacon_MainActivity.this, "eventID respond"+respond.toString(),Toast.LENGTH_LONG).show();
+//                        Toast.makeText(Beacon_MainActivity.this, "EventID respond"+respond.toString(),Toast.LENGTH_LONG).show();
                         try {
                             eventArray = new JSONArray();
                             eventIDBeacon = new ArrayList<>();
-//                            eventIDBeacon.clear();
                             eventArray = respond.getJSONArray("result");
-
                             eventIDBeacon = getEventIDFromBeacon(eventArray);
-                            getEventDetailRespond(Volley.newRequestQueue(Beacon_MainActivity.this));
+
+                            if (!eventIDBeacon.isEmpty())
+                                getEventDetailRespond(requestQueue);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -757,6 +638,7 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event ID: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
         ) {
@@ -789,6 +671,11 @@ public class Beacon_MainActivity extends BaseActivity implements AdapterView.OnI
             }
         }
         return event;
+    }
+
+    public void editEvent (View view){
+        Intent intent = new Intent(this,EditEventActivity.class);
+        startActivity(intent);
     }
 
     @Override

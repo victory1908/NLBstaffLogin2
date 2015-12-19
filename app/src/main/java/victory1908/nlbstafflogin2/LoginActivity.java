@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,9 +23,7 @@ import java.util.Map;
 import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
-
-
+public class LoginActivity extends BaseActivity {
 
     private EditText editTextStaffID;
     private EditText editTextPassword;
@@ -47,8 +46,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
-        //Set buttonOnClick
-        buttonLogin.setOnClickListener(this);
+//        //Set buttonOnClick
+//        buttonLogin.setOnClickListener(this);
 
     }
 
@@ -66,7 +65,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
 
-     private void userLogin() {
+     public void userLogin(View view) {
+         final ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar_Login);
+         progressBar.setVisibility(View.VISIBLE);
+
 
          //        Getting values from edit texts
          staffID = editTextStaffID.getText().toString().trim();
@@ -78,6 +80,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     @Override
                     public void onResponse(String response) {
                         //If we are getting success from server
+                        progressBar.setVisibility(View.GONE);
+
                         if(response.trim().equals(Config.LOGIN_SUCCESS)){
 
                             editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, true);
@@ -102,6 +106,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(LoginActivity.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 }){
             @Override
@@ -118,10 +123,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     }
 
 
-    @Override
-    public void onClick(View v) {
-        userLogin();
-    }
 
     @Override
     public void onBackPressed() {

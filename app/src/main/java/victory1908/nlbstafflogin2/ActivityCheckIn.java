@@ -1,6 +1,8 @@
 package victory1908.nlbstafflogin2;
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
@@ -13,12 +15,26 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import victory1908.nlbstafflogin2.event.Event;
+import victory1908.nlbstafflogin2.event.EventAdapter;
+import victory1908.nlbstafflogin2.event.EventAdapterDetail;
 
 
 public class ActivityCheckIn extends BaseActivity {
+
+    //Creating a List of event
+    private List<Event> listEvents;
+    Event event;
+
+    //Creating Views
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +45,22 @@ public class ActivityCheckIn extends BaseActivity {
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
 
+        //Initializing Views
+        recyclerView = (RecyclerView) findViewById(R.id.recycleView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        //Initializing our listEvents list
+        listEvents = new ArrayList();
+
+        adapter = new EventAdapterDetail(this, listEvents);
+        recyclerView.setAdapter(adapter);
+
+
         //perform checkIn
         checkIn();
+
 
 
 
@@ -63,9 +93,13 @@ public class ActivityCheckIn extends BaseActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.STAFF_ID,getIntent().getStringExtra(Config.STAFF_ID));
-                map.put(Config.EVENT_ID,getIntent().getStringExtra(Config.EVENT_ID));
-
+                map.put(Config.STAFF_ID, sharedPreferences.getString(Config.STAFF_ID,"Not Available"));
+//                map.put(Config.EVENT_ID,getIntent().getStringExtra(Config.EVENT_ID));
+                event = getIntent().getParcelableExtra("event");
+                listEvents.clear();
+                listEvents.add(event);
+                adapter.notifyDataSetChanged();
+                map.put(Config.EVENT_ID, event.getEventID());
                 return map;
             }
         };

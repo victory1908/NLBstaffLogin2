@@ -32,19 +32,20 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityUserProfile"
             android:label="@string/title_activity_activity_user_profile"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityCheckIn"
             android:label="@string/title_activity_activity_check_in"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".beaconstac.Beacon_MainActivity"
             android:label="@string/title_Beacon_MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
             android:name=".beaconstac.BeaconReceiver"
@@ -73,9 +74,14 @@
             android:exported="false"
             android:grantUriPermissions="true"
             android:multiprocess="true"
-            android:syncable="true"></provider>
+            android:syncable="true" />
 
-        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".BaseActivity" />
+        <activity
+            android:name=".EditEventActivity"
+            android:label="@string/title_activity_edit_event"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".EditEventDetailActivity"></activity>
     </application>
 
 </manifest>

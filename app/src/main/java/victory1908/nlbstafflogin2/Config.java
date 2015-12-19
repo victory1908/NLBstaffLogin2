@@ -5,7 +5,11 @@ public class Config {
     //JSON URL
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
     public static final String EVENT_URL = "http://vinhvumobile.com/phpconnect/getevent.php";
+
     public static final String DATA_URL = "http://vinhvumobile.com/phpconnect/geteventdetail.php";
+    public static final String DATA_ALL_URL = "http://vinhvumobile.com/phpconnect/getAllEvent.php";
+
+    public static final String DATA_BEACON_URL = "http://vinhvumobile.com/phpconnect/getBeacon.php";
 
     public static final String CHECK_IN_URL = "http://vinhvumobile.com/phpconnect/checkIn.php";
 

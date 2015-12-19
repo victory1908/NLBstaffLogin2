@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.mobstac.beaconstac.core.MSPlace;
@@ -80,11 +81,12 @@ public class BeaconReceiver extends com.mobstac.beaconstac.core.BeaconstacReceiv
                     activityIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT
             );
-            Notification mBuilder = new Notification.Builder(context.getApplicationContext())
+            Notification mBuilder = new NotificationCompat.Builder(context.getApplicationContext())
                     .setContentText(text)
                     .setContentTitle("NLBBeacon")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(pendingIntent).build();
+
             notificationManager = (NotificationManager)
                     context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(1, mBuilder);
