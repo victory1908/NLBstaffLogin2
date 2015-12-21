@@ -19,7 +19,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Welcome"
         android:layout_centerHorizontal="true"
-        android:id="@+id/textView_Staffid"/>
+        android:id="@+id/textView_StaffId"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -30,8 +30,9 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="wrap_content"
-        android:layout_height="300sp"
-        android:id="@+id/recycleView">
+        android:layout_height="250sp"
+        android:id="@+id/recycleView"
+        android:layout_marginTop="35dp">
     </android.support.v7.widget.RecyclerView>
 
     <RelativeLayout
@@ -82,14 +83,56 @@
         android:id="@+id/beaconCount"
         android:layout_toRightOf="@id/RangedView"/>
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/admin"
+        android:layout_below="@id/beacon_View"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true">
+
         <android.support.v7.widget.AppCompatButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/beaconSpinner"
-            android:layout_centerHorizontal="true"
+            android:id="@+id/createEvent"
+            android:text="create Event"
+            android:onClick="createEvent"
+            android:layout_alignTop="@+id/editEvent_Button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="edit Event"
             android:id="@+id/editEvent_Button"
-            android:onClick="editEvent"/>
+            android:onClick="editEvent"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/createEvent"
+            android:layout_toEndOf="@+id/createEvent" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register Beacon"
+            android:id="@+id/registerBeacon"
+            android:onClick="registerBeacon"
+            android:layout_below="@+id/createEvent"
+            android:layout_toLeftOf="@+id/editEvent_Button"
+            android:layout_toStartOf="@+id/editEvent_Button" />
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Assign Beacon"
+            android:id="@+id/assignBeacon"
+            android:onClick="assignBeacon"
+            android:layout_alignTop="@+id/registerBeacon"
+            android:layout_toRightOf="@+id/registerBeacon"
+            android:layout_toEndOf="@+id/registerBeacon" />
 
     </RelativeLayout>
 

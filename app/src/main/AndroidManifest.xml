@@ -81,7 +81,11 @@
             android:name=".EditEventActivity"
             android:label="@string/title_activity_edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EditEventDetailActivity"></activity>
+        <activity android:name=".EditEventDetailActivity" />
+        <activity
+            android:name=".CreateEventActivity"
+            android:label="@string/title_activity_create_event"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package victory1908.nlbstafflogin2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -71,6 +72,7 @@ public class EditEventActivity extends AppCompatActivity {
 
         //Initializing our listEvents list
         listEvents = new ArrayList();
+        listEvents.clear();
         eventChange = new Event();
         beacons = new ArrayList<>();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -86,6 +88,30 @@ public class EditEventActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(this);
         getEventDetailRespond(requestQueue);
+    }
+
+    @Override
+    protected void onResume() {
+        listEvents.clear();
+        getEventDetailRespond(requestQueue);
+        adapter.notifyDataSetChanged();
+        super.onResume();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        listEvents.clear();
+        getEventDetailRespond(requestQueue);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        listEvents.clear();
+        getEventDetailRespond(requestQueue);
+        adapter.notifyDataSetChanged();
     }
 
     private void getEventDetailRespond(RequestQueue requestQueue) {
@@ -117,6 +143,7 @@ public class EditEventActivity extends AppCompatActivity {
     }
 
     private void getEventDetail(JSONArray j) {
+        listEvents.clear();
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
             try {

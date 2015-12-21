@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,12 +8,19 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="victory1908.nlbstafflogin2.EditEventDetailActivity">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="victory1908.nlbstafflogin2.CreateEventActivity"
+    tools:showIn="@layout/activity_create_event">
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -99,11 +107,10 @@
                 android:text="EventEndTime"
                 android:id="@+id/textView_EventEndTime"
                 android:padding="15dp"
-                android:layout_above="@+id/Update"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
+                android:layout_above="@+id/createEvent"
                 android:layout_toLeftOf="@+id/EventEndTime"
-                android:layout_toStartOf="@+id/EventEndTime" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <android.support.v7.widget.AppCompatEditText
                 android:layout_width="wrap_content"
@@ -118,19 +125,34 @@
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Update"
-                android:id="@+id/Update"
-                android:layout_below="@id/EventEndTime"
+                android:text="Create"
+                android:id="@+id/createEvent"
+                android:onClick="createEvent"
+                android:layout_below="@+id/EventEndTime"
                 android:layout_centerHorizontal="true"
-                android:onClick="updateEvent"/>
-            <android.support.v7.widget.AppCompatButton
+                android:layout_marginTop="83dp" />
+
+            <android.support.v7.widget.AppCompatEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/EventID"
+                android:layout_below="@+id/textView_EventEndTime"
+                android:layout_alignLeft="@+id/EventEndTime"
+                android:layout_alignStart="@+id/EventEndTime" />
+
+            <android.support.v7.widget.AppCompatTextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete"
-                android:id="@+id/Delete"
-                android:layout_below="@id/Update"
-                android:layout_centerHorizontal="true"
-                android:onClick="deleteEvent"/>
+                android:textStyle="bold"
+                android:text="EventID"
+                android:id="@+id/textView_EventID"
+                android:layout_below="@id/EventEndTime"
+                android:padding="15dp"
+                android:layout_toLeftOf="@+id/EventEndTime"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
 
         </RelativeLayout>
 

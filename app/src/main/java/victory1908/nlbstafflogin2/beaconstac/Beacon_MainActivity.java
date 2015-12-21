@@ -16,6 +16,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ import java.util.Map;
 
 import victory1908.nlbstafflogin2.BaseActivity;
 import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.CreateEventActivity;
 import victory1908.nlbstafflogin2.EditEventActivity;
 import victory1908.nlbstafflogin2.LoginActivity;
 import victory1908.nlbstafflogin2.R;
@@ -99,6 +101,7 @@ public class Beacon_MainActivity extends BaseActivity {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter adapter;
 
+    RelativeLayout admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,11 @@ public class Beacon_MainActivity extends BaseActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        textViewWelcome = (TextView) findViewById(R.id.textView_Staffid);
+        textViewWelcome = (TextView) findViewById(R.id.textView_StaffId);
+
+        admin = (RelativeLayout) findViewById(R.id.admin);
+
+
 
 
         //checkLogged In
@@ -136,6 +143,12 @@ public class Beacon_MainActivity extends BaseActivity {
 
         //Showing the current logged in email to textview
         textViewWelcome.setText("Welcome User " + staffID);
+
+        if (staffID.contains("admin"))
+            admin.setVisibility(View.VISIBLE);
+        else admin.setVisibility(View.GONE);
+
+//        admin.setVisibility(View.VISIBLE);
 
 
 //        // Use this check to determine whether BLE is supported on the device.
@@ -675,6 +688,11 @@ public class Beacon_MainActivity extends BaseActivity {
 
     public void editEvent (View view){
         Intent intent = new Intent(this,EditEventActivity.class);
+        startActivity(intent);
+    }
+
+    public void createEvent (View view){
+        Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
     }
 
