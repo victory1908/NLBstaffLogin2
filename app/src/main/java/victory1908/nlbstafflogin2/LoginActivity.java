@@ -20,8 +20,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
-
 
 public class LoginActivity extends BaseActivity {
 

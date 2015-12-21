@@ -1,4 +1,4 @@
-package victory1908.nlbstafflogin2.beaconstac;
+package victory1908.nlbstafflogin2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,12 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import victory1908.nlbstafflogin2.BaseActivity;
-import victory1908.nlbstafflogin2.Config;
-import victory1908.nlbstafflogin2.CreateEventActivity;
-import victory1908.nlbstafflogin2.EditEventActivity;
-import victory1908.nlbstafflogin2.LoginActivity;
-import victory1908.nlbstafflogin2.R;
+import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.event.EventAdapter;
 
@@ -283,6 +278,8 @@ public class Beacon_MainActivity extends BaseActivity {
         initList();
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
+        listEvents.clear();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -411,6 +408,8 @@ public class Beacon_MainActivity extends BaseActivity {
 
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
+                        listEvents.clear();
+                        adapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -530,9 +529,12 @@ public class Beacon_MainActivity extends BaseActivity {
         public void exitedRegion(Context context, String region) {
             beaconAdapter.clear();
             beaconAdapter.notifyDataSetChanged();
+
+            listEvents.clear();
             adapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
             Toast.makeText(getApplicationContext(), "Exited region", Toast.LENGTH_SHORT).show();
+
         }
 
         @Override
@@ -693,6 +695,16 @@ public class Beacon_MainActivity extends BaseActivity {
 
     public void createEvent (View view){
         Intent intent = new Intent(this, CreateEventActivity.class);
+        startActivity(intent);
+    }
+
+    public void registerBeacon (View view){
+        Intent intent = new Intent(this, RegisterBeacon.class);
+        startActivity(intent);
+    }
+
+    public void assignBeacon (View view){
+        Intent intent = new Intent(this, AssignBeacon.class);
         startActivity(intent);
     }
 

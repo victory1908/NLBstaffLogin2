@@ -79,8 +79,7 @@ public class EventAdapterEdit extends RecyclerView.Adapter<EventAdapterEdit.View
         holder.EventDesc.setText(event.getEventDesc());
         holder.EventStartTime.setText(event.getEventStartTime());
         holder.EventEndTime.setText(event.getEventEndTime());
-        holder.EventID = event.getEventID();
-        holder.BeaconAssigned.setText(event.getEventID());
+        holder.EventID.setText(event.getEventID());
 
     }
 
@@ -96,8 +95,7 @@ public class EventAdapterEdit extends RecyclerView.Adapter<EventAdapterEdit.View
         public TextView EventDesc;
         public TextView EventStartTime;
         public TextView EventEndTime;
-        public TextView BeaconAssigned;
-        private String EventID;
+        public TextView EventID;
         public Button Edit;
 
 
@@ -112,7 +110,7 @@ public class EventAdapterEdit extends RecyclerView.Adapter<EventAdapterEdit.View
             EventDesc = (TextView)itemView.findViewById(R.id.EventDesc);
             EventStartTime = (TextView)itemView.findViewById(R.id.EventStartTime);
             EventEndTime = (TextView)itemView.findViewById(R.id.EventEndTime);
-            BeaconAssigned = (TextView)itemView.findViewById(R.id.BeaconAssigned);
+            EventID = (TextView)itemView.findViewById(R.id.EventID);
 
 //            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
 

@@ -1,17 +1,12 @@
 package victory1908.nlbstafflogin2;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

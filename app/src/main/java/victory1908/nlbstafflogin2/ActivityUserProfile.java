@@ -7,25 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 
 
 public class ActivityUserProfile extends AppCompatActivity implements View.OnClickListener{
@@ -122,7 +107,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, victory1908.nlbstafflogin2.beaconstac.Beacon_MainActivity.class);
+        Intent intent = new Intent(this, Beacon_MainActivity.class);
         intent.putExtra(Config.STAFF_ID,LoginActivity.class);
         startActivity(intent);
     }

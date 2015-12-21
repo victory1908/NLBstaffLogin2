@@ -8,9 +8,13 @@ public class Config {
 
     public static final String DATA_URL = "http://vinhvumobile.com/phpconnect/geteventdetail.php";
     public static final String DATA_ALL_URL = "http://vinhvumobile.com/phpconnect/getAllEvent.php";
+
+
     public static final String UPDATE_EVENT_URL = "http://vinhvumobile.com/phpconnect/updateEvent.php";
     public static final String DELETE_EVENT_URL = "http://vinhvumobile.com/phpconnect/deleteEvent.php";
     public static final String CREATE_EVENT_URL = "http://vinhvumobile.com/phpconnect/createEvent.php";
+
+    public static final String REGISTER_BEACON_URL = "http://vinhvumobile.com/phpconnect/registerBeacon.php";
 
 
     public static final String DATA_BEACON_URL = "http://vinhvumobile.com/phpconnect/getBeacon.php";

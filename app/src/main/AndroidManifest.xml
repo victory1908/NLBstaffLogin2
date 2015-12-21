@@ -42,7 +42,7 @@
             android:label="@string/title_activity_activity_check_in"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".beaconstac.Beacon_MainActivity"
+            android:name=".Beacon_MainActivity"
             android:label="@string/title_Beacon_MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -85,6 +85,14 @@
         <activity
             android:name=".CreateEventActivity"
             android:label="@string/title_activity_create_event"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegisterBeacon"
+            android:label="@string/title_activity_register_beacon"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AssignBeacon"
+            android:label="@string/title_activity_assign_beacon"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -20,4 +20,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_edit_event">EditEventActivity</string>
     <string name="title_activity_create_event">CreateEventActivity</string>
+    <string name="title_activity_register_beacon">RegisterBeacon</string>
+    <string name="title_activity_assign_beacon">AssignBeacon</string>
 </resources>
