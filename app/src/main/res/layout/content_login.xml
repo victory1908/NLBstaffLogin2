@@ -44,8 +44,7 @@
         android:id="@+id/buttonLogin"
         android:layout_below="@+id/editTextPassword"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="userLogin"/>
+        android:layout_alignParentStart="true"/>
 
     <ProgressBar
         android:layout_width="wrap_content"

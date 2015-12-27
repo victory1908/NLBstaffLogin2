@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class EventAdapterAssign extends RecyclerView.Adapter<EventAdapterAssign.
     @Override
     public void onBindViewHolder(EventAdapterAssign.ViewHolder holder, int position) {
         //Getting the particular item from the list
-        Event event = events.get(position);
+        final Event event = events.get(position);
 
         //Showing data on the views
         holder.EventTitle.setHint(event.getEventTitle());
@@ -56,6 +57,25 @@ public class EventAdapterAssign extends RecyclerView.Adapter<EventAdapterAssign.
         holder.EventStartTime.setText(event.getEventStartTime());
         holder.EventEndTime.setText(event.getEventEndTime());
         holder.EventID.setText(event.getEventID());
+
+        //in some case, it will prevent unwanted situations;
+        holder.selectCheckBox.setOnCheckedChangeListener(null);
+
+        //if true, your check box will be selected, else unselected
+        holder.selectCheckBox.setChecked(event.isSelected());
+
+        holder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                event.setIsSelected(isChecked);
+                if (isChecked) {
+                    eventSelected.add(event);
+                } else {
+                    eventSelected.remove(event);
+                }
+            }
+        });
 
     }
 
@@ -65,7 +85,7 @@ public class EventAdapterAssign extends RecyclerView.Adapter<EventAdapterAssign.
         return events.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         //View
         public EditText EventTitle;
         public TextView EventDesc;
@@ -87,20 +107,19 @@ public class EventAdapterAssign extends RecyclerView.Adapter<EventAdapterAssign.
             EventID = (TextView)itemView.findViewById(R.id.EventID);
 
             selectCheckBox = (CheckBox)itemView.findViewById(R.id.selectCheckBox);
-            selectCheckBox.setOnClickListener(this);
 
-        }
+//            editBeacon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    if (isChecked){
+//                        eventSelected.add(events.get(getLayoutPosition()));
+//                    }else
+//                        eventSelected.remove(events.get(getLayoutPosition()));
+//                }
+//            });
 
-        @Override
-        public void onClick(View v) {
-            boolean checked = ((CheckBox) v).isChecked();
-            if (checked){
-                eventSelected.add(events.get(getLayoutPosition()));
-            }else {
-                if (eventSelected.contains(events.get(getLayoutPosition())))
-                eventSelected.remove(events.get(getLayoutPosition()));
-            }
         }
     }
+
 
 }

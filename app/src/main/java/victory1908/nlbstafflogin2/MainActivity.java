@@ -1,56 +1,29 @@
 package victory1908.nlbstafflogin2;
 
+import android.support.v4.app.Fragment;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import victory1908.nlbstafflogin2.ManageBeaconFragment.EditRegisteredBeacon;
+import victory1908.nlbstafflogin2.ManageBeaconFragment.ManageBeaconFragment;
+import victory1908.nlbstafflogin2.ManageEventBeaconFragment.ManageRule;
+import victory1908.nlbstafflogin2.ManageEventFragment.EditEventFragment;
+import victory1908.nlbstafflogin2.ManageEventFragment.ManageEventFragment;
 
-
-//    @Override
-//    public void onBackPressed() {
-//        exit();
-//    }
-//
-//    //exit function
-//    private void exit(){
-//        //Creating an alert dialog to confirm exit
-//        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
-//        alertDialogBuilder.setMessage("Are you sure you want to exit?");
-//        alertDialogBuilder.setPositiveButton("Yes",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                        finish();
-//                    }
-//                });
-//
-//        alertDialogBuilder.setNegativeButton("No",
-//                new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface arg0, int arg1) {
-//                    }
-//                });
-//        //Showing the alert dialog
-//        android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
-//        alertDialog.show();
-//
-//    }
-
-    private static final String REGISTER_URL = "http://simplifiedcoding.16mb.com/UserRegistration/volleyRegister.php";
-
-    public static final String KEY_USERNAME = "username";
-    public static final String KEY_PASSWORD = "password";
-    public static final String KEY_EMAIL = "email";
+public class MainActivity extends BaseActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener  {
 
 
-    private EditText editTextUsername;
-    private EditText editTextEmail;
-    private EditText editTextPassword;
 
     //    private Button buttonRegister;
     private Button buttonLogin;
@@ -63,127 +36,74 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    public static final int RESULT_CODE = 0;
     public static final String EXTRA_EXIT = "exit";
 
-    boolean loggedIn = false;
+
+    TextView staffID;
+    Menu body;
+
+    Boolean homeFlag =true;
+    Fragment fragment = new Fragment();
+    FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_nlbattendance);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("NLB-StaffAttendance");
         toolbar.setLogo(R.drawable.nlblogo);
 
+        if (!loggedIn) {
             //We will start the Login Activity
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
             startActivity(intent);
             finish();
-
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("com.package.ACTION_EXIT");
-//        registerReceiver(myBroadcastReceiver, intentFilter);
-
-//        registerReceiver(new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                Log.d("onReceive", "Logout in progress");
-//                finish();
-//            }
-//        }, intentFilter);
+        }
 
 
-//        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
-//        editTextPassword = (EditText) findViewById(R.id.editTextPassword);
-//        editTextEmail= (EditText) findViewById(R.id.editTextEmail);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-//        buttonRegister = (Button) findViewById(R.id.buttonRegister);
-        buttonLogin = (Button) findViewById(R.id.buttonLogin);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-//        buttonRegister.setOnClickListener(this);
-        buttonLogin.setOnClickListener(this);
+        View header = navigationView.getHeaderView(0);
+//
+        staffID = (TextView)header.findViewById(R.id.StaffID);
+//
+        staffID.setText(sharedPreferences.getString(Config.STAFF_ID, "Not Available"));
+
+        body = navigationView.getMenu();
+
+        //View admin console
+        if (staffID.getText().toString().contains("admin")) {
+            body.findItem(R.id.manageBeacon).setVisible(true);
+            body.findItem(R.id.manageEvent).setVisible(true);
+            body.findItem(R.id.assignEventToBeaconMenu).setVisible(true);
+        }else {
+            body.findItem(R.id.manageBeacon).setVisible(false);
+            body.findItem(R.id.manageEvent).setVisible(false);
+            body.findItem(R.id.assignEventToBeaconMenu).setVisible(false);
+        }
+
+
     }
 
     // end oncreate
 
 
-    //BroadcastReceiver
 
-//    private void registerReceiver(){
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("com.package.ACTION_EXIT");
-//        registerReceiver(myBroadcastReceiver, intentFilter);
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        registerReceiver();
-//        super.onResume();
-//
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        registerReceiver();
-////        unregisterReceiver(myBroadcastReceiver);
-//    }
-//
-//    BroadcastReceiver myBroadcastReceiver =
-//            new BroadcastReceiver() {
-//                @Override
-//                public void onReceive(Context context, Intent intent) {
-//                    Log.d("onReceive", "Logout in progress");
-//                    Toast.makeText(MainActivity.this, "what the fuck", Toast.LENGTH_SHORT).show();
-//                    finish();
-//                }
-//            };
-
-
-//    private void registerUser(){
-//        final String username = editTextUsername.getText().toString().trim();
-//        final String password = editTextPassword.getText().toString().trim();
-//        final String email = editTextEmail.getText().toString().trim();
-//
-//        StringRequest stringRequest = new StringRequest(Request.Method.POST, REGISTER_URL,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-//                    }
-//                }){
-//            @Override
-//            protected Map<String,String> getParams(){
-//                Map<String,String> params = new HashMap<>();
-//                params.put(KEY_USERNAME,username);
-//                params.put(PASSWORD,password);
-//                params.put(KEY_EMAIL, email);
-//                return params;
-//            }
-//
-//        };
-//
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        requestQueue.add(stringRequest);
-//    }
 
     @Override
-    public void onClick(View v) {
-//        if(v == buttonRegister){
-//            registerUser();
-//        }
-//        if(v == buttonLogin){
+    public void onClick(View view) {
 
-        Intent actLogin = new Intent(this, LoginActivity.class);
-        startActivityForResult(actLogin, REQUEST_CODE);
+//        Intent actLogin = new Intent(this, LoginActivity.class);
+//        startActivityForResult(actLogin, REQUEST_CODE);
 
-//        }
     }
 
     //handle exit
@@ -202,94 +122,79 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (!homeFlag){
+                fragment = new MainFragment();
+                fragmentManager.popBackStack();
+                fragmentManager.beginTransaction().replace(R.id.contentMainDrawer, fragment).commit();
+                homeFlag = true;
+            }else exit();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main2, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.scan_beacon:
+                fragment = new Beacon_MainFragment();
+                homeFlag = true;
+                break;
+            case R.id.manageBeacon:
+//                fragment = new ManageBeaconFragment();
+                fragment = new ManageBeaconFragment();
+                homeFlag = false;
+                break;
+            case R.id.manageEvent:
+                fragment = new ManageEventFragment();
+                homeFlag = false;
+                break;
+            case R.id.assignEventToBeaconMenu:
+                fragment = new ManageRule();
+                homeFlag = false;
+                break;
+            case R.id.action_logout:
+                logout();
+                break;
+        }
+
+        fragmentManager.popBackStack();
+        fragmentManager.beginTransaction().replace(R.id.contentMainDrawer,fragment).commit();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_logout) {
-//            clearSharePreferences();
-////            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//    public void clearSharePreferences() {
-//        //Getting out sharedPreferences
-//        SharedPreferences preferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-//        //Getting editor
-//        SharedPreferences.Editor editor = preferences.edit();
-//
-//        //Puting the value false for logged_in
-//        editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
-//
-//        //Putting blank value to password
-//        editor.putString(Config.PASSWORD, "");
-//
-//        //Saving the SharedPreferences
-//        editor.apply();
-//    }
-
-
-//import android.os.Bundle;
-//import android.support.design.widget.FloatingActionButton;
-//import android.support.design.widget.Snackbar;
-//import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.Toolbar;
-//import android.view.View;
-//import android.view.Menu;
-//import android.view.MenuItem;
-//
-//public class Beacon_MainActivity extends AppCompatActivity {
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-//    }
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-//}

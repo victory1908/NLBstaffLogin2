@@ -13,7 +13,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mobstac.beaconstac.models.MSBeacon;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,20 +36,15 @@ public class Event implements Parcelable {
     private String EventStartTime;
     private String EventEndTime;
 
-    private ArrayList<Beacon> beacons;
-    private JSONArray beaconArray;
-    private ProgressBar progressBar;
     private Context context;
-    RequestQueue requestQueue;
+    private boolean isSelected;
 
-
-    public ArrayList<Beacon> getBeacons() {
-//        getBeaconRespond(requestQueue, EventID );
-        return beacons;
+    public boolean isSelected() {
+        return isSelected;
     }
 
-    public void setBeacons(ArrayList<Beacon> beacons) {
-        this.beacons = beacons;
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     public String getEventID() {
@@ -128,82 +122,5 @@ public class Event implements Parcelable {
         }
     };
 
-
-    private void getBeaconRespond(RequestQueue requestQueue, String EventID) {
-        progressBar = new ProgressBar(context);
-        //Displaying Progressbar
-        progressBar.setVisibility(View.VISIBLE);
-//        setProgressBarIndeterminateVisibility(true);
-
-        final JSONObject params = new JSONObject();
-        try {
-            params.put(Config.EVENT_ID, EventID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //Creating a JSONObject request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_BEACON_URL, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject respond) {
-                        try {
-                            beaconArray = new JSONArray();
-                            beacons = new ArrayList<>();
-
-                            beaconArray = respond.getJSONArray("result");
-                            Toast.makeText(context, beaconArray.toString(), Toast.LENGTH_LONG).show();
-                            getBeaconFromEventID(beaconArray);
-
-                            Toast.makeText(context, beacons.toString(),Toast.LENGTH_LONG).show();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-//                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "Unable to fetch data beacon Info: " +error.getMessage(),Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }
-        ) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
-                headers.put( "charset", "utf-8");
-                return headers;
-            }
-        };
-
-        //Adding request to the queue
-        requestQueue.add(jsonObjectRequest);
-
-    }
-
-    private void getBeaconFromEventID(JSONArray jsonArray) {
-        //Traversing through all the items in the json array
-        for (int i = 0; i < jsonArray.length(); i++) {
-            Beacon beacon = new Beacon();
-            JSONObject jsonObject = null;
-            try {
-                //Getting json object
-                jsonObject = jsonArray.getJSONObject(i);
-
-                //Adding the name of the event to array list
-                beacon.setBeaconUUID(jsonObject.getString(Config.BEACON_UUID));
-                beacon.setBeaconMajor(jsonObject.getString(Config.BEACON_MAJOR));
-                beacon.setBeaconMinor(jsonObject.getString(Config.BEACON_MINOR));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            beacons.add(beacon);
-        }
-//        Toast.makeText(context, beacons.toString(),Toast.LENGTH_LONG).show();
-    }
 
 }

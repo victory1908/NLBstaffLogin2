@@ -44,34 +44,34 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.beacon_activity_main);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
 
-        // Use this check to determine whether BLE is supported on the device.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-        }
-
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            mBluetoothAdapter = mBluetoothManager.getAdapter();
-        }
-
-        // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-            Toast.makeText(this, "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
+//        // Use this check to determine whether BLE is supported on the device.
+//        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+//            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+//        }
+//
+//        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+//        // BluetoothAdapter through BluetoothManager.
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+//            mBluetoothAdapter = mBluetoothManager.getAdapter();
+//        }
+//
+//        // Checks if Bluetooth is supported on the device.
+//        if (mBluetoothAdapter == null) {
+//            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+//            Toast.makeText(this, "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
+//        } else {
+//            if (!mBluetoothAdapter.isEnabled()) {
+//                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//            }
+//        }
 
         //Creating a shared preference
         sharedPreferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -86,7 +86,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
 
@@ -107,7 +107,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     //Logout function
-    private void logout() {
+    protected void logout() {
         //Creating an alert dialog to confirm logout
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Are you sure you want to logout?");
@@ -116,12 +116,7 @@ public class BaseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
 
-//                        //Getting out sharedPreferences
-//                        SharedPreferences preferences = getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-//                        //Getting editor
-//                        SharedPreferences.Editor editor = preferences.edit();
-
-                        //Puting the value false for loggedin
+                        //Puting the value false for loggedIn
                         editor.putBoolean(Config.LOGGED_IN_SHARED_PREF, false);
 
                         //Putting blank value to password
@@ -131,9 +126,6 @@ public class BaseActivity extends AppCompatActivity {
                         editor.apply();
 
                         //Starting login activity
-////                        Intent intent = new Intent(Beacon_MainActivity.this, LoginActivity.class);
-//                        startActivity(intent);
-
                         Intent goToLoginActivity = new Intent(getApplicationContext(), LoginActivity.class);
                         goToLoginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Will clear out your activity history stack till now
                         startActivity(goToLoginActivity);
@@ -157,7 +149,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     //exit function
-    protected void exit() {
+    public void exit() {
         //Creating an alert dialog to confirm exit
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Are you sure you want to exit?");
@@ -188,126 +180,4 @@ public class BaseActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
-
-//    public static ArrayList eventDetail;
-//
-//    private ArrayList getEventRespondTest(MSBeacon beacon) {
-//        //Creating a string request
-//        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        JSONObject j;
-//                        JSONArray eventArray;
-//                        try {
-//                            //Parsing the fetched Json String to JSON Object
-//                            j = new JSONObject(response);
-//
-//                            //Storing the Array of JSON String to our JSON Array
-//                            eventArray = j.getJSONArray(Config.JSON_ARRAY);
-//
-//                            //Calling method getEventDetail to get the eventDetail from the JSON Array
-//                            eventDetail.clear();
-//                            eventDetail = getEventDetail(eventArray);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//
-//                });
-//
-//        //Creating a request queue
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//
-//        //Adding request to the queue
-//        requestQueue.add(stringRequest);
-//        return eventDetail;
-//    }
-//
-//    private ArrayList getEventDetail(JSONArray j) {
-//        //Traversing through all the items in the json array
-//        ArrayList eventDetail = new ArrayList();
-//        for (int i = 0; i < j.length(); i++) {
-//            try {
-//                //Getting json object
-//                JSONObject json = j.getJSONObject(i);
-//
-//                //Adding the name of the event to array list
-//                eventDetail.add(json.getString(Config.EVENT_TITLE));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return eventDetail;
-//    }
-//
-//    //Method to get EventID of a particular position
-//    private String getEventID(JSONArray eventArray, int position) {
-//        String EventID = "";
-//        try {
-//            //Getting object of given index
-//            JSONObject json = eventArray.getJSONObject(position);
-//
-//            //Fetching EventID from that object
-//            EventID = json.getString(Config.EVENT_ID);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        //Returning the EventTitle
-//        return EventID;
-//    }
-
-//    //Method to get event title of a particular position
-//    private String getTitle(int position) {
-//        String EventTitle = "";
-//        try {
-//            //Getting object of given index
-//            JSONObject json = eventArray.getJSONObject(position);
-//
-//            //Fetching EventTitle from that object
-//            EventTitle = json.getString(Config.EVENT_TITLE);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        //Returning the EventTitle
-//        return EventTitle;
-//    }
-//
-//    //Method to get event Desc of a particular position
-//    private String getDesc(int position) {
-//        String eventDescription = "";
-//        try {
-//            JSONObject json = eventArray.getJSONObject(position);
-//            eventDescription = json.getString(Config.EVENT_DESC);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return eventDescription;
-//    }
-//
-//    //Method to get event Time of a particular position
-//    private String getEventTime(int position) {
-//        String eventTime = "";
-//        try {
-//            JSONObject json = eventArray.getJSONObject(position);
-//            eventTime = json.getString(Config.EVENT_START_TIME);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return eventTime;
-//    }
-
-
-//    protected boolean isLoggedIn() {
-//    //Fetching the boolean value form sharedPreferences
-//        return sharedPreferences.getBoolean(Config.LOGGED_IN_SHARED_PREF,false);
-//    }
-
 }

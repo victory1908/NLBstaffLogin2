@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -43,12 +44,35 @@ public class BeaconAdapterAssign extends RecyclerView.Adapter<BeaconAdapterAssig
     @Override
     public void onBindViewHolder(BeaconAdapterAssign.ViewHolder holder, int position) {
         //Getting the particular item from the list
-        Beacon beacon = beacons.get(position);
+        final Beacon beacon = beacons.get(position);
 
         //Showing data on the views
+        holder.BeaconName.setText(beacon.getBeaconName());
+        holder.BeaconID.setText(beacon.getBeaconID());
+        holder.BeaconSN.setText(beacon.getBeaconSN());
         holder.BeaconUUID.setText(beacon.getBeaconUUID());
-        holder.BeaconMajor.setText(beacon.getBeaconMajor());
-        holder.BeaconMinor.setText(beacon.getBeaconMinor());
+        holder.BeaconMajor.setText(String.valueOf(beacon.getMajor()));
+        holder.BeaconMinor.setText(String.valueOf(beacon.getMinor()));
+
+        //in some case, it will prevent unwanted situations;
+        holder.selectCheckBox.setOnCheckedChangeListener(null);
+
+        //if true, your check box will be selected, else unselected
+        holder.selectCheckBox.setChecked(beacon.isSelected());
+
+        holder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                beacon.setIsSelected(isChecked);
+                if (isChecked) {
+                    beaconSelected.add(beacon);
+                } else {
+                    beaconSelected.remove(beacon);
+                }
+            }
+        });
+
 
     }
 
@@ -58,11 +82,15 @@ public class BeaconAdapterAssign extends RecyclerView.Adapter<BeaconAdapterAssig
         return beacons.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         //View
-        public EditText BeaconUUID;
-        public EditText BeaconMajor;
-        public EditText BeaconMinor;
+
+        public TextView BeaconName;
+        public TextView BeaconID;
+        public TextView BeaconSN;
+        public TextView BeaconUUID;
+        public TextView BeaconMajor;
+        public TextView BeaconMinor;
         public CheckBox selectCheckBox;
 
         //initiating View
@@ -71,25 +99,28 @@ public class BeaconAdapterAssign extends RecyclerView.Adapter<BeaconAdapterAssig
 
             // display Check In event when beacon in range
 
-            BeaconUUID = (EditText)itemView.findViewById(R.id.beaconUUID);
-            BeaconMajor = (EditText)itemView.findViewById(R.id.beaconMajor);
-            BeaconMinor = (EditText)itemView.findViewById(R.id.beaconMinor);
+            BeaconName = (TextView)itemView.findViewById(R.id.beaconName);
+            BeaconID = (TextView)itemView.findViewById(R.id.beaconID);
+            BeaconSN = (TextView)itemView.findViewById(R.id.beaconSN);
+            BeaconUUID = (TextView)itemView.findViewById(R.id.beaconUUID);
+            BeaconMajor = (TextView)itemView.findViewById(R.id.beaconMajor);
+            BeaconMinor = (TextView)itemView.findViewById(R.id.beaconMinor);
 
             selectCheckBox = (CheckBox)itemView.findViewById(R.id.beaconChecked);
-            selectCheckBox.setOnClickListener(this);
+
+//            editBeacon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    if (isChecked){
+//                        beaconSelected.add(beacons.get(getLayoutPosition()));
+//                    }else {
+//                        beaconSelected.remove(beaconSelected.get(getLayoutPosition()));
+//                    }
+//                }
+//            });
 
         }
 
-        @Override
-        public void onClick(View v) {
-            boolean checked = ((CheckBox) v).isChecked();
-            if (checked){
-                beaconSelected.add(beacons.get(getLayoutPosition()));
-            }else {
-                if (beaconSelected.contains(beacons.get(getLayoutPosition())))
-                    beaconSelected.remove(beacons.get(getLayoutPosition()));
-            }
-        }
     }
 }
 

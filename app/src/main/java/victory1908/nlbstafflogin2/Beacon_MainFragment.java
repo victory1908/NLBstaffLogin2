@@ -9,14 +9,15 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 //import android.util.ArrayMap;
 import android.support.v4.util.ArrayMap;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.mobstac.beaconstac.core.Beaconstac;
 import com.mobstac.beaconstac.core.BeaconstacReceiver;
@@ -49,23 +51,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.event.EventAdapter;
 
 
-public class Beacon_MainActivity extends BaseActivity {
+public class Beacon_MainFragment extends BaseFragment implements View.OnClickListener {
 
+    public Beacon_MainFragment(){
+        //Constructor;
+    }
+
+    Button fetchEvent;
     RequestQueue requestQueue;
     ProgressBar progressBar;
     private TextView textViewWelcome;
 
     private static final int REQUEST_ENABLE_BT = 1;
 
-    private static final String TAG = Beacon_MainActivity.class.getSimpleName();
+    private static final String TAG = Beacon_MainFragment.class.getSimpleName();
 
     private ArrayList<MSBeacon> beacons = new ArrayList<>();
     MSBeacon beaconAction;
+    Beacon beaconInRange;
+
+    Event eventInAction;
 
     private BeaconAdapter beaconAdapter;
 
@@ -84,64 +95,105 @@ public class Beacon_MainActivity extends BaseActivity {
 
 
     //JSON Array
-    private JSONArray eventArray;
-
-    private String staffID;
+    private JSONArray eventArray,beaconArray;
 
     //Creating a List of event
     private List<Event> listEvents;
+    private List<Beacon> listBeacons;
 
     //Creating Views
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter adapter;
 
-    RelativeLayout admin;
+    Spinner beaconList;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.beacon_activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("NLBstaffAttedance");
-        toolbar.setLogo(R.drawable.nlblogo);
+    Button dailyCheckIn;
+    String staffID;
 
-        //Initializing Views
-        recyclerView = (RecyclerView) findViewById(R.id.recycleView);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        //Initializing our listEvents list
-        listEvents = new ArrayList();
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        textViewWelcome = (TextView) findViewById(R.id.textView_StaffId);
-
-        admin = (RelativeLayout) findViewById(R.id.admin);
-
-
-
+        View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
 
         //checkLogged In
         //Fetching StaffID from shared preferences
         //If we will get true
         if (!loggedIn) {
             //We will start the Beacon_Main Activity
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(getContext(), LoginActivity.class);
             startActivity(intent);
         }
 
+        //Initializing our listEvents list
+        listEvents = new ArrayList();
+        listBeacons = new ArrayList<>();
+
+        beaconInRange = new Beacon();
+        requestQueue = Volley.newRequestQueue(getContext());
+
+        //Initializing Views
+        recyclerView = (RecyclerView)viewFragment.findViewById(R.id.recycleView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+
+        adapter = new EventAdapter(getContext(), listEvents);
+        recyclerView.setAdapter(adapter);
+
+        progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
+
+        fetchEvent = (Button)viewFragment.findViewById(R.id.fetchEvent);
+        fetchEvent.setOnClickListener(this);
+
+        dailyCheckIn = (Button)viewFragment.findViewById(R.id.buttonCheckIN);
+
+        beaconList = (Spinner)viewFragment.findViewById(R.id.beaconSpinner);
+
+        bCount = (TextView)viewFragment.findViewById(R.id.beaconCount);
+        testCamped = (TextView)viewFragment.findViewById(R.id.CampedView);
+
+
         staffID = sharedPreferences.getString(Config.STAFF_ID, "Not Available");
 
-        //Showing the current logged in email to textview
-        textViewWelcome.setText("Welcome User " + staffID);
+        dailyCheckIn.setOnClickListener(this);
 
-        if (staffID.contains("admin"))
-            admin.setVisibility(View.VISIBLE);
-        else admin.setVisibility(View.GONE);
+
+        // set region parameters (UUID and unique region identifier)
+        bstacInstance = Beaconstac.getInstance(getContext());
+        bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
+                "com.mobstac.beaconstac");
+        bstacInstance.syncRules();
+
+        try {
+            bstacInstance.startRangingBeacons();
+            bstacInstance.setIsAutoManageBluetooth(true);
+        } catch (MSException e) {
+            // handle for older devices
+            TextView rangedView = (TextView)viewFragment.findViewById(R.id.RangedView);
+            rangedView.setText(R.string.ble_not_supported);
+            bCount.setVisibility(View.GONE);
+            testCamped.setVisibility(View.GONE);
+            e.printStackTrace();
+        }
+
+        if ((!beacons.isEmpty()) && (listEvents.isEmpty())){
+            fetchEvent.setVisibility(View.VISIBLE);
+        }else fetchEvent.setVisibility(View.GONE);
+
+
+
+        return viewFragment;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+//        setContentView(R.layout.beacon_activity_main);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle("NLBstaffAttedance");
+//        toolbar.setLogo(R.drawable.nlblogo);
+
 
 //        admin.setVisibility(View.VISIBLE);
 
@@ -170,25 +222,7 @@ public class Beacon_MainActivity extends BaseActivity {
 //        }
 
 //        eventView.setVisibility(View.INVISIBLE);
-        initList();
 
-
-        // set region parameters (UUID and unique region identifier)
-        bstacInstance = Beaconstac.getInstance(this);
-        bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
-                "com.mobstac.beaconstac");
-        bstacInstance.syncRules();
-
-        try {
-            bstacInstance.startRangingBeacons();
-        } catch (MSException e) {
-            // handle for older devices
-            TextView rangedView = (TextView) findViewById(R.id.RangedView);
-            rangedView.setText(R.string.ble_not_supported);
-            bCount.setVisibility(View.GONE);
-            testCamped.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
 
 
 //        // if location is enabled
@@ -234,7 +268,7 @@ public class Beacon_MainActivity extends BaseActivity {
 //        checkIn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                Intent intent = new Intent(Beacon_MainActivity.this, ActivityCheckIn.class);
+//                Intent intent = new Intent(Beacon_MainFragment.this, ActivityCheckIn.class);
 //                intent.putExtra(Config.STAFF_ID, staffID);
 //                intent.putExtra(Config.EVENT_ID, eventCheckIN);
 //                intent.putExtra("event",event);
@@ -243,12 +277,7 @@ public class Beacon_MainActivity extends BaseActivity {
 //            }
 //        });
 
-
-        listEvents.clear();
-        adapter = new EventAdapter(Beacon_MainActivity.this, listEvents);
-        recyclerView.setAdapter(adapter);
-
-
+        initList();
     }
 
     // end OnCreate
@@ -256,34 +285,36 @@ public class Beacon_MainActivity extends BaseActivity {
 
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         beaconAdapter.clear();
         beaconAdapter.notifyDataSetChanged();
+        listEvents.clear();
         adapter.notifyDataSetChanged();
         bCount.setText("" + beacons.size());
         unregisterBroadcast();
         isPopupVisible = true;
+        dailyCheckIn.setVisibility(View.GONE);
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         registerBroadcast();
         initList();
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
-        listEvents.clear();
+
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         unregisterBroadcast();
 
@@ -296,13 +327,14 @@ public class Beacon_MainActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+        dailyCheckIn.setVisibility(View.GONE);
     }
 
     // Callback intent results
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            finish();
+            getActivity().finish();
         }
         if (bstacInstance != null) {
             try {
@@ -316,12 +348,9 @@ public class Beacon_MainActivity extends BaseActivity {
 
     //method display ListBeacon
     private void initList() {
-        Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
-        beaconAdapter = new BeaconAdapter(beacons, this);
+        beaconAdapter = new BeaconAdapter(beacons,getContext());
         beaconList.setAdapter(beaconAdapter);
         registerBroadcast();
-        bCount = (TextView) findViewById(R.id.beaconCount);
-        testCamped = (TextView) findViewById(R.id.CampedView);
     }
 
     private void registerBroadcast() {
@@ -336,13 +365,13 @@ public class Beacon_MainActivity extends BaseActivity {
             intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_REGION);
             intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_ENTERED_GEOFENCE);
             intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_GEOFENCE);
-            registerReceiver(beaconstacReceiver, intentFilter);
+            getContext().registerReceiver(beaconstacReceiver, intentFilter);
 
             //register place sync receiver
             IntentFilter iFilter = new IntentFilter();
             iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_SUCCESS);
             iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_FAILURE);
-            registerReceiver(placeSyncReceiver, iFilter);
+            getContext().registerReceiver(placeSyncReceiver, iFilter);
 
             registered = true;
         }
@@ -351,9 +380,9 @@ public class Beacon_MainActivity extends BaseActivity {
     private void unregisterBroadcast() {
         if (registered) {
             // unregister beaconstac receiver
-            unregisterReceiver(beaconstacReceiver);
+            getContext().unregisterReceiver(beaconstacReceiver);
             // unregister place sync receiver
-            unregisterReceiver(placeSyncReceiver);
+            getContext().unregisterReceiver(placeSyncReceiver);
             registered = false;
         }
     }
@@ -384,6 +413,7 @@ public class Beacon_MainActivity extends BaseActivity {
             testCamped.setText("Exited: " + beacon.getMajor() + ":" + beacon.getMinor());
             beaconAdapter.notifyDataSetChanged();
             adapter.notifyDataSetChanged();
+            dailyCheckIn.setVisibility(View.GONE);
         }
 
         @Override
@@ -392,24 +422,29 @@ public class Beacon_MainActivity extends BaseActivity {
             bCount.setText("" + rangedBeacons.size());
             beacons.addAll(rangedBeacons);
             beaconAdapter.notifyDataSetChanged();
-//            adapter.notifyDataSetChanged();
 
             if (!beacons.isEmpty()) {
-                Spinner beaconList = (Spinner) findViewById(R.id.beaconSpinner);
+
                 beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         beaconAction = beacons.get(position);
-                        requestQueue = Volley.newRequestQueue(Beacon_MainActivity.this);
-                        listEvents.clear();
+                        beaconInRange.setBeaconUUID(beaconAction.getBeaconUUID().toString());
+                        beaconInRange.setMajor(beaconAction.getMajor());
+                        beaconInRange.setMinor(beaconAction.getMinor());
+
                         recyclerView.setAdapter(adapter);
-                        getEventIDRespond(requestQueue);
+
+                        requestQueue.add(getBeaconIDInRange(beaconInRange));
+
+                        dailyCheckIn.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
                         listEvents.clear();
                         adapter.notifyDataSetChanged();
+                        dailyCheckIn.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -512,7 +547,7 @@ public class Beacon_MainActivity extends BaseActivity {
                             break;
                     }
                 }
-                Toast.makeText(getApplicationContext(), "Rule " + ruleName, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Rule " + ruleName, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -522,7 +557,7 @@ public class Beacon_MainActivity extends BaseActivity {
             beaconAdapter.notifyDataSetChanged();
             adapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
-            Toast.makeText(getApplicationContext(), "Entered region", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Entered region", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -533,65 +568,64 @@ public class Beacon_MainActivity extends BaseActivity {
             listEvents.clear();
             adapter.notifyDataSetChanged();
             bCount.setText("" + beacons.size());
-            Toast.makeText(getApplicationContext(), "Exited region", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Exited region", Toast.LENGTH_SHORT).show();
+
+            dailyCheckIn.setVisibility(View.GONE);
 
         }
 
         @Override
         public void enteredGeofence(Context context, ArrayList<MSPlace> places) {
-            Toast.makeText(getApplicationContext(), "Entered Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Entered Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void exitedGeofence(Context context, ArrayList<MSPlace> places) {
-            Toast.makeText(getApplicationContext(), "Exited Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Exited Geofence " + places.get(0).getName(), Toast.LENGTH_SHORT).show();
+            dailyCheckIn.setVisibility(View.GONE);
         }
     };
 
 
-    //testing
-    private void getEventDetailRespond(RequestQueue requestQueue) {
-
+    //getEventDetail
+    private JsonObjectRequest getEventDetailRespond(Event event) {
+//        Toast.makeText(getContext(),event.getEventID(),Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.VISIBLE);
-        Map<String, Object> jsonParams = new ArrayMap<>();
-        jsonParams.put(Config.EVENT_ID, eventIDBeacon);
+        Map<String, Object> jsonParams = new HashMap<>();
+        jsonParams.put(Config.EVENT_ID,event.getEventID());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL, new JSONObject(jsonParams),
                 new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject respond) {
                             try {
-//                                Toast.makeText(Beacon_MainActivity.this,"eventDetail respond "+respond.toString(),Toast.LENGTH_LONG).show();
                                 eventArray = new JSONArray();
-
                                 eventArray = respond.getJSONArray("result");
                                 getEventDetail(eventArray);
+//                                Toast.makeText(getContext(),respond.toString(),Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 });
-
-        //Adding request to the queue
-        requestQueue.add(jsonObjectRequest);
+//        //Adding request to the queue
+//        requestQueue.add(jsonObjectRequest);
+        return jsonObjectRequest;
     }
 
     private void getEventDetail(JSONArray j) {
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
             try {
-                //Getting json object
                 Event event = new Event();
+                //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
                 event.setEventID(json.getString(Config.EVENT_ID));
@@ -611,19 +645,67 @@ public class Beacon_MainActivity extends BaseActivity {
         adapter.notifyDataSetChanged();
     }
 
-    //getEventID from ranged beacon
 
-    private void getEventIDRespond(final RequestQueue requestQueue) {
+
+    //getBeaconID from RangedBeacon
+    private JsonObjectRequest getBeaconIDInRange(Beacon beacon) {
+
+        progressBar.setVisibility(View.VISIBLE);
+        Map<String, Object> jsonParams = new HashMap<>();
+        jsonParams.put(Config.BEACON_UUID, beacon.getBeaconUUID());
+        jsonParams.put(Config.BEACON_MAJOR, beacon.getMajor());
+        jsonParams.put(Config.BEACON_MINOR, beacon.getMinor());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.GET_BEACON_ID, new JSONObject(jsonParams),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject respond) {
+                        try {
+                            beaconArray = new JSONArray();
+                            beaconArray = respond.getJSONArray("result");
+                            getBeaconID(beaconArray);
+
+                            requestQueue.add(getEventIDFromBeacon(beaconInRange));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+        return jsonObjectRequest;
+    }
+
+    private void getBeaconID(JSONArray j) {
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+                beaconInRange.setBeaconID(json.getString(Config.BEACON_ID));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //getEventID from ranged beacon
+    private JsonObjectRequest getEventIDFromBeacon(Beacon beacon) {
 
         //Displaying Progressbar
         progressBar.setVisibility(View.VISIBLE);
-        setProgressBarIndeterminateVisibility(true);
+        getActivity().setProgressBarIndeterminateVisibility(true);
 
-        final JSONObject params = new JSONObject();
+        JSONObject params = new JSONObject();
         try {
-            params.put(Config.BEACON_UUID, beaconAction.getBeaconUUID().toString());
-            params.put(Config.BEACON_MAJOR, beaconAction.getMajor());
-            params.put(Config.BEACON_MINOR, beaconAction.getMinor());
+            params.put(Config.BEACON_ID, beacon.getBeaconID());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -633,30 +715,22 @@ public class Beacon_MainActivity extends BaseActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
-//                        Toast.makeText(Beacon_MainActivity.this, "EventID respond"+respond.toString(),Toast.LENGTH_LONG).show();
                         try {
                             eventArray = new JSONArray();
-                            eventIDBeacon = new ArrayList<>();
                             eventArray = respond.getJSONArray("result");
-                            eventIDBeacon = getEventIDFromBeacon(eventArray);
-
-                            if (!eventIDBeacon.isEmpty())
-                                getEventDetailRespond(requestQueue);
-
+                            getEventIDFromBeacon(eventArray);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Beacon_MainActivity.this, "Unable to fetch data event ID: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Unable to fetch data event ID: " +error.getMessage(),Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
-                }
-        ) {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
@@ -665,51 +739,61 @@ public class Beacon_MainActivity extends BaseActivity {
                 return headers;
             }
         };
-
-        //Adding request to the queue
-        requestQueue.add(jsonObjectRequest);
-
+        return jsonObjectRequest;
     }
 
-    private ArrayList getEventIDFromBeacon(JSONArray j) {
-        ArrayList event = new ArrayList<>();
+    private void getEventIDFromBeacon(JSONArray j) {
+        listEvents.clear();
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
+            eventInAction = new Event();
             try {
                 //Getting json object
                 JSONObject json = j.getJSONObject(i);
 
                 //Adding the name of the event to array list
-                event.add(json.getString(Config.EVENT_ID));
+                eventInAction.setEventID(json.getString(Config.EVENT_ID));
+                requestQueue.add(getEventDetailRespond(eventInAction));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return event;
-    }
-
-    public void editEvent (View view){
-        Intent intent = new Intent(this,EditEventActivity.class);
-        startActivity(intent);
-    }
-
-    public void createEvent (View view){
-        Intent intent = new Intent(this, CreateEventActivity.class);
-        startActivity(intent);
-    }
-
-    public void registerBeacon (View view){
-        Intent intent = new Intent(this, RegisterBeacon.class);
-        startActivity(intent);
-    }
-
-    public void assignBeacon (View view){
-        Intent intent = new Intent(this, AssignBeacon.class);
-        startActivity(intent);
     }
 
     @Override
-    public void onBackPressed() {
-        exit();
+    public void onClick(View view) {
+        if (view == fetchEvent) getEventIDFromBeacon(beaconInRange);
+        if (view == dailyCheckIn) dailyCheckIn();
+    }
+
+    private void dailyCheckIn() {
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setIndeterminate(true);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.DAILY_CHECK_IN_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(),response,Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(),error.toString(),Toast.LENGTH_LONG ).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+                map.put(Config.STAFF_ID, sharedPreferences.getString(Config.STAFF_ID, "Not Available"));
+                return map;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
     }
 }

@@ -4,11 +4,11 @@
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_camara" android:icon="@android:drawable/ic_menu_camera"
             android:title="Import" />
-        <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
+        <item android:id="@+id/manageBeacon" android:icon="@android:drawable/ic_menu_gallery"
             android:title="Gallery" />
-        <item android:id="@+id/nav_slideshow" android:icon="@android:drawable/ic_menu_slideshow"
+        <item android:id="@+id/manageEvent" android:icon="@android:drawable/ic_menu_slideshow"
             android:title="Slideshow" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
+        <item android:id="@+id/assignBeaconEvent" android:icon="@android:drawable/ic_menu_manage"
             android:title="Tools" />
     </group>
 

@@ -1,12 +1,16 @@
-package victory1908.nlbstafflogin2;
+package victory1908.nlbstafflogin2.ManageEventFragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,25 +27,34 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.event.Event;
 
-public class CreateEventActivity extends AppCompatActivity implements View.OnClickListener{
+public class CreateEventFragment extends Fragment implements View.OnClickListener{
+
+    public CreateEventFragment(){
+        //Constructor
+    }
 
     Event event;
-    Beacon beacon;
     EditText eventTitle;
     EditText eventDesc;
     EditText eventStartTime;
     EditText eventEndTime;
     EditText eventID;
 
+    Button createEvent;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View viewFragment = inflater.inflate(R.layout.activity_create_event, container, false);
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -51,20 +64,28 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
 //                        .setAction("Action", null).show();
 //            }
 //        });
+        eventTitle = (EditText)viewFragment.findViewById(R.id.EventTitle);
+        eventDesc = (EditText)viewFragment.findViewById(R.id.EventDesc);
+        eventStartTime = (EditText)viewFragment.findViewById(R.id.EventStartTime);
+        eventEndTime = (EditText)viewFragment.findViewById(R.id.EventEndTime);
+        eventID = (EditText)viewFragment.findViewById(R.id.EventID);
+        createEvent = (Button)viewFragment.findViewById(R.id.createEvent);
+
+        return viewFragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         event = new Event();
-        eventTitle = (EditText) (findViewById(R.id.EventTitle));
-        eventDesc = (EditText) (findViewById(R.id.EventDesc));
-        eventStartTime = (EditText) (findViewById(R.id.EventStartTime));
-        eventEndTime = (EditText) (findViewById(R.id.EventEndTime));
-        eventID = (EditText) (findViewById(R.id.EventID));
-
         eventStartTime.setOnClickListener(this);
         eventEndTime.setOnClickListener(this);
+        createEvent.setOnClickListener(this);
 
     }
 
-    public void createEvent (View view){
+    public void createEvent (){
 
         event.setEventTitle(eventTitle.getText().toString());
         event.setEventDesc(eventDesc.getText().toString());
@@ -85,7 +106,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
 
     private void createConfirm() {
         //Creating an alert dialog to confirm update
-        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
         alertDialogBuilder.setMessage("Are you sure you want to create Event?");
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
@@ -116,13 +137,13 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(CreateEventActivity.this, response, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(CreateEventActivity.this,error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(getContext(),error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
@@ -137,7 +158,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
 
@@ -152,7 +173,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         int mMinute = c.get(Calendar.MINUTE);
 
         selectDate.setText("");
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {
                 selectDate.append(hourOfDay + ":" +minute+":00");
@@ -160,7 +181,7 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
         },mHour,mMinute,true);
         timePickerDialog.show();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 // dd.MM.yyyy
@@ -176,8 +197,8 @@ public class CreateEventActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         if (v==eventStartTime) eventStartTime = setDateTime(eventStartTime);
         if (v==eventEndTime) eventEndTime = setDateTime(eventEndTime);
+        if (v==createEvent) createEvent();
     }
-
 
 }
 

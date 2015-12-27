@@ -45,6 +45,8 @@ public class ActivityCheckIn extends BaseActivity {
         toolbar.setTitle("NLBstaffAttedance");
         toolbar.setLogo(R.drawable.nlblogo);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //Initializing Views
         recyclerView = (RecyclerView) findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);

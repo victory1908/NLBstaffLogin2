@@ -97,7 +97,7 @@ public class RegisterBeacon extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-                map.put(Config.BEACON_UUID, beaconUUID.getText().toString());
+//                map.put(Config.BEACON_UUID, beaconUUID.getText().toString());
                 map.put(Config.BEACON_MAJOR, beaconMajor.getText().toString());
                 map.put(Config.BEACON_MINOR, beaconMinor.getText().toString());
                 return map;

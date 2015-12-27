@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,7 +29,7 @@ import java.util.Map;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.event.Event;
 
-public class EditEventDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class EditEventDetailActivity extends BaseActivity implements View.OnClickListener {
 
     Event event;
     Beacon beacon;
@@ -43,6 +44,11 @@ public class EditEventDetailActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_event_detail);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         event = getIntent().getParcelableExtra("event");
         eventTitle = (EditText) (findViewById(R.id.EventTitle));

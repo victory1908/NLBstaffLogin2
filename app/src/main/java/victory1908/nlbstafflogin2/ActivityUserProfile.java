@@ -107,7 +107,7 @@ public class ActivityUserProfile extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, Beacon_MainActivity.class);
+        Intent intent = new Intent(this, Beacon_MainFragment.class);
         intent.putExtra(Config.STAFF_ID,LoginActivity.class);
         startActivity(intent);
     }
