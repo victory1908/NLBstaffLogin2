@@ -27,6 +27,11 @@ public class Config {
 
     public static final String GET_ALL_BEACON_URL = "http://vinhvumobile.com/phpconnect/getBeacon.php";
     public static final String GET_BEACON_ID = "http://vinhvumobile.com/phpconnect/getBeaconID.php";
+    public static final String GET_BEACON_FROM_EVENT = "http://vinhvumobile.com/phpconnect/getBeaconFromEvent.php";
+    public static final String GET_AVAILABLE_BEACON = "http://vinhvumobile.com/phpconnect/getAvailableBeacon.php";
+
+
+    public static final String GET_BEACON_DETAIL_FROM_EVENT = "http://vinhvumobile.com/phpconnect/getBeaconDetailFromEvent.php";
 
 
     public static final String CHECK_IN_URL = "http://vinhvumobile.com/phpconnect/checkIn.php";

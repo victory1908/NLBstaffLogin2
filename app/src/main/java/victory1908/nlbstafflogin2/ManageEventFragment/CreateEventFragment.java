@@ -71,17 +71,26 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         eventID = (EditText)viewFragment.findViewById(R.id.EventID);
         createEvent = (Button)viewFragment.findViewById(R.id.createEvent);
 
+        event = new Event();
+        eventStartTime.setOnClickListener(this);
+        eventEndTime.setOnClickListener(this);
+        createEvent.setOnClickListener(this);
+
         return viewFragment;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+//            Toast.makeText(getContext(),"Create event fragment",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        event = new Event();
-        eventStartTime.setOnClickListener(this);
-        eventEndTime.setOnClickListener(this);
-        createEvent.setOnClickListener(this);
 
     }
 

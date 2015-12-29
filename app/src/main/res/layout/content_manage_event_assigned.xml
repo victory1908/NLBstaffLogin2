@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
-    tools:context="victory1908.nlbstafflogin2.EditEventDetailActivity">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/appbarLayout"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
+    tools:context=".ManageEventAssignedBeacon"
+    tools:showIn="@layout/activity_manage_event_assigned">
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appbarLayout">
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@id/progressBar"
+                style="@style/Base.AlertDialog.AppCompat"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:id="@+id/event_View"
-            android:paddingBottom="15sp">
+            android:id="@+id/event_View">
             <!--android:visibility="invisible">-->
 
 
@@ -51,20 +45,17 @@
                 android:text="EventTitle"
                 android:id="@+id/textView_EventTitle"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:padding="15dp"
-                android:layout_toLeftOf="@+id/EventTitle"
-                android:layout_toStartOf="@+id/EventTitle" />
+                android:padding="15dp"/>
 
             <android.support.v7.widget.AppCompatEditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/EventTitle"
-                android:padding="15dp"
+                android:textColor="#FF1744"
+                android:textColorHint="#FF1744"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:layout_toRightOf="@+id/textView_EventDesc" />
-
 
 
             <android.support.v7.widget.AppCompatTextView
@@ -73,11 +64,11 @@
                 android:textStyle="bold"
                 android:text="EventDescription"
                 android:id="@+id/textView_EventDesc"
-                android:padding="15dp"
-                android:layout_alignBottom="@+id/EventDesc"
+                android:layout_below="@+id/EventTitle"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-            <android.support.v7.widget.AppCompatEditText
+                android:layout_alignParentStart="true"
+                android:padding="15dp"/>
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/EventDesc"
@@ -94,14 +85,12 @@
                 android:textStyle="bold"
                 android:text="EventStartTime"
                 android:id="@+id/textView_EventTime"
-                android:padding="15dp"
-                android:layout_above="@+id/EventEndTime"
+                android:layout_below="@+id/EventDesc"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/EventStartTime"
-                android:layout_toStartOf="@+id/EventStartTime" />
+                android:padding="15dp"/>
 
-            <android.support.v7.widget.AppCompatEditText
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/EventStartTime"
@@ -118,14 +107,24 @@
                 android:textStyle="bold"
                 android:text="EventEndTime"
                 android:id="@+id/textView_EventEndTime"
-                android:padding="15dp"
-                android:layout_above="@+id/Update"
+                android:layout_below="@+id/EventStartTime"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_toLeftOf="@+id/EventEndTime"
-                android:layout_toStartOf="@+id/EventEndTime" />
+                android:padding="15dp"/>
 
-            <android.support.v7.widget.AppCompatEditText
+            <android.support.v7.widget.AppCompatTextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="EventID"
+                android:id="@+id/textView_EventID"
+                android:layout_below="@+id/EventEndTime"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:padding="15dp"/>
+
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/EventEndTime"
@@ -135,26 +134,53 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"/>
 
-            <android.support.v7.widget.AppCompatButton
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Update"
-                android:id="@+id/Update"
-                android:layout_below="@id/EventEndTime"
-                android:layout_centerHorizontal="true"
-                android:onClick="updateEvent"/>
-            <android.support.v7.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delete"
-                android:id="@+id/Delete"
-                android:layout_below="@id/Update"
-                android:layout_centerHorizontal="true"
-                android:onClick="deleteEvent"/>
+                android:id="@+id/EventID"
+                android:padding="15dp"
+                android:layout_below="@+id/EventEndTime"
+                android:layout_toRightOf="@+id/textView_EventDesc"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"/>
+
+            <!--<android.support.v7.widget.AppCompatButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Edit"-->
+                <!--android:id="@+id/EditButton"-->
+                <!--android:layout_below="@id/EventID"-->
+                <!--android:layout_centerHorizontal="true" />-->
+
+            <!--<ProgressBar-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@id/progressBar"-->
+            <!--android:layout_below="@+id/EventEndTime"-->
+            <!--android:layout_toRightOf="@+id/EditButton"-->
+            <!--android:layout_toEndOf="@+id/EditButton" />-->
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/beaconAssignedRecycleView"
+            android:layout_below="@id/event_View">
+        </android.support.v7.widget.RecyclerView>
+
+        <android.support.v7.widget.RecyclerView
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/beaconAvailable"
+            android:layout_below="@id/beaconAssignedRecycleView">
+            </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
-    </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+
+</ScrollView>

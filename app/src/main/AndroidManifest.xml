@@ -81,13 +81,16 @@
             android:name=".ManageEventFragment.EditEventFragment"
             android:label="@string/title_activity_edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EditEventDetailActivity"
+        <activity
+            android:name=".EditEventDetailActivity"
             android:label="Edit Event Detail"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity"></activity>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="victory1908.nlbstafflogin2.MainActivity" />/>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="victory1908.nlbstafflogin2.MainActivity" />
+        />
         <activity
             android:name=".ManageEventFragment.CreateEventFragment"
             android:label="@string/title_activity_create_event"
@@ -113,6 +116,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="victory1908.nlbstafflogin2.MainActivity" />
         </activity>
+        <activity
+            android:name=".ManageEventAssignedBeacon"
+            android:label="@string/title_activity_manage_event_assigned"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

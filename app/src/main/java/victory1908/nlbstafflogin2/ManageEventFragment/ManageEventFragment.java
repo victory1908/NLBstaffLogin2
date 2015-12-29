@@ -43,12 +43,6 @@ public class ManageEventFragment extends Fragment {
         viewPager.setAdapter(new CustomAdapter(getChildFragmentManager(), getContext()));
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
-        return viewFragment;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-
         //        tabLayout.setupWithViewPager(viewPager);
         tabLayout.post(new Runnable() {
             @Override
@@ -85,6 +79,14 @@ public class ManageEventFragment extends Fragment {
                 }
             });
         }
+
+//        viewPager.setOffscreenPageLimit(0);
+
+        return viewFragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
 

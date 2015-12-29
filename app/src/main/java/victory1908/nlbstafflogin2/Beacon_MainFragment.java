@@ -125,7 +125,7 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
             startActivity(intent);
         }
 
-        //Initializing our listEvents list
+        //Initializing our listBeacons list
         listEvents = new ArrayList();
         listBeacons = new ArrayList<>();
 
@@ -792,7 +792,6 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
                 return map;
             }
         };
-
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }

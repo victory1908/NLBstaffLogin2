@@ -86,34 +86,22 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        return viewFragment;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        //Initializing our listEvents list
         listEvents = new ArrayList();
 
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new EventAdapterEdit(getContext(),listEvents);
+        adapter = new EventAdapterEdit(getContext(), listEvents);
         recyclerView.setAdapter(adapter);
 
+        adapter = new EventAdapterEdit(getContext(), listEvents);
+        recyclerView.setAdapter(adapter);
 
         requestQueue = Volley.newRequestQueue(getContext());
 
-        adapter = new EventAdapterEdit(getContext(),listEvents);
-        recyclerView.setAdapter(adapter);
-
         getEventDetailRespond(requestQueue);
-
-//        Toast.makeText(getContext(),listEvents.get(0).getEventTitle(),Toast.LENGTH_SHORT).show();
         tempListEvents = listEvents;
-//        adapter.notifyDataSetChanged();
 
         //refresh when scroll till bottom
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -124,7 +112,7 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
                     //IfScrolled at last then
                     if (isLastItemDisplaying(recyclerView)) {
                         getEventDetailRespond(requestQueue);
-                        if (!(listEvents.equals(tempListEvents))){
+                        if (!(listEvents.equals(tempListEvents))) {
                             adapter.notifyDataSetChanged();
                             tempListEvents = listEvents;
                         }
@@ -138,7 +126,7 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
                     //IfScrolled at last then
                     if (isLastItemDisplaying(recyclerView)) {
                         getEventDetailRespond(requestQueue);
-                        if (!(listEvents.equals(tempListEvents))){
+                        if (!(listEvents.equals(tempListEvents))) {
                             adapter.notifyDataSetChanged();
                             tempListEvents = listEvents;
                         }
@@ -147,6 +135,20 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
             });
         }
 
+        return viewFragment;
+    }
+
+//    @Override
+//    public void onActivityCreated(Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+//            Toast.makeText(getContext(),"Edit event fragment",Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -160,8 +162,8 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
                             eventArray = new JSONArray();
                             eventArray = respond.getJSONArray("result");
                             progressBar.setVisibility(View.GONE);
-                            listEvents.clear();
-                            listEvents.addAll(getEventDetail(eventArray));
+
+                            getEventDetail(eventArray);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -178,8 +180,8 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
         requestQueue.add(jsonObjectRequest);
     }
 
-    private List<Event> getEventDetail(JSONArray j) {
-        List<Event> eventRespond= new ArrayList<>();
+    private void getEventDetail(JSONArray j) {
+        listEvents.clear();
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
             try {
@@ -194,13 +196,13 @@ public class EditEventFragment extends Fragment implements SwipeRefreshLayout.On
                 event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
 
                 //Adding the event object to the list
-                eventRespond.add(event);
+                listEvents.add(event);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        return eventRespond;
+        adapter.notifyDataSetChanged();
     }
 
     //This method would check that the recyclerView scroll has reached the bottom or not

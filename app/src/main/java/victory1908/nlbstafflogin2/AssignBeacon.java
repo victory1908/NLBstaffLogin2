@@ -27,7 +27,7 @@ public class AssignBeacon extends AppCompatActivity {
 //    private JSONArray eventArray,beaconArray;
 //
 //    //Creating a List of event
-//    private List<Event> listEvents, eventSelected;
+//    private List<Event> listBeacons, eventSelected;
 //    private List<Beacon> listBeacons, beaconSelected;
 //
 //
@@ -119,11 +119,11 @@ public class AssignBeacon extends AppCompatActivity {
 
 
 
-//        //Initializing our listEvents list
-//        listEvents = new ArrayList();
+//        //Initializing our listBeacons list
+//        listBeacons = new ArrayList();
 //        listBeacons = new ArrayList<>();
 //
-//        listEvents.clear();
+//        listBeacons.clear();
 //        listBeacons.clear();
 //
 //        eventSelected = new ArrayList<>();
@@ -147,7 +147,7 @@ public class AssignBeacon extends AppCompatActivity {
 //        recyclerView.setLayoutManager(layoutManager);
 //        beaconRecyclerView.setLayoutManager(layoutMangerBeacon);
 //
-//        adapter = new EventAdapterAssign(this,listEvents,eventSelected);
+//        adapter = new EventAdapterAssign(this,listBeacons,eventSelected);
 //        beaconAdapter = new BeaconAdapterAssign(this,listBeacons,beaconSelected);
 //
 //        recyclerView.setAdapter(adapter);
@@ -161,7 +161,7 @@ public class AssignBeacon extends AppCompatActivity {
 
 //    @Override
 //    protected void onResume() {
-//        listEvents.clear();
+//        listBeacons.clear();
 //        listBeacons.clear();
 //
 //        getEventDetailRespond(requestQueue);
@@ -175,7 +175,7 @@ public class AssignBeacon extends AppCompatActivity {
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //
-//        listEvents.clear();
+//        listBeacons.clear();
 //        listBeacons.clear();
 //        eventSelected.clear();
 //        beaconSelected.clear();
@@ -192,7 +192,7 @@ public class AssignBeacon extends AppCompatActivity {
 //    @Override
 //    protected void onPause() {
 //        super.onPause();
-//        listEvents.clear();
+//        listBeacons.clear();
 //        listBeacons.clear();
 //        eventSelected.clear();
 //        beaconSelected.clear();
@@ -233,7 +233,7 @@ public class AssignBeacon extends AppCompatActivity {
 //    }
 //
 //    private void getEventDetail(JSONArray j) {
-//        listEvents.clear();
+//        listBeacons.clear();
 //        //Traversing through all the items in the json array
 //        for (int i = 0; i < j.length(); i++) {
 //            try {
@@ -248,7 +248,7 @@ public class AssignBeacon extends AppCompatActivity {
 //                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
 //
 //                //Adding the event object to the list
-//                listEvents.add(event);
+//                listBeacons.add(event);
 //
 //            } catch (JSONException e) {
 //                e.printStackTrace();

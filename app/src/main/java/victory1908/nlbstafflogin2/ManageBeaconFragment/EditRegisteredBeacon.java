@@ -69,15 +69,8 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
         beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
         swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
-//        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-        // Inflate the layout for this fragment
-        return viewFragment;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         listBeacons = new ArrayList<>();
 
@@ -128,6 +121,15 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
                 }
             });
         }
+
+        // Inflate the layout for this fragment
+        return viewFragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     private void getBeaconRespond(RequestQueue requestQueue) {
@@ -181,8 +183,8 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
                 e.printStackTrace();
             }
         }
-//        //Notifying the adapter that data has been added or changed
-//        beaconAdapter.notifyDataSetChanged();
+        //Notifying the adapter that data has been added or changed
+        beaconAdapter.notifyDataSetChanged();
     }
 
     private boolean isLastItemDisplaying(RecyclerView recyclerView) {

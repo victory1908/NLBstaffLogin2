@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="victory1908.nlbstafflogin2.EditRegisterBeacon"
-    tools:showIn="@layout/activity_edit_register_beacon">
-
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -29,16 +20,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.AppCompatTextView
-                    android:text="Beacon Name"
-                    android:padding="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/beaconName"
-                    android:padding="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                <TableRow>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:text="Beacon Name"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/beaconName"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </TableRow>
 
                 <TableRow>
                     <android.support.v7.widget.AppCompatTextView
@@ -46,10 +39,10 @@
                         android:padding="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-                    <android.support.v7.widget.AppCompatEditText
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/beaconID"
                         android:padding="5dp"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                 </TableRow>
                 <TableRow>
@@ -58,10 +51,10 @@
                         android:padding="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <android.support.v7.widget.AppCompatEditText
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/beaconSN"
                         android:padding="5dp"
-                        android:layout_width="60dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                 </TableRow>
 
@@ -69,25 +62,26 @@
                     <android.support.v7.widget.AppCompatTextView
                         android:text="Beacon Major"
                         android:padding="5dp"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <android.support.v7.widget.AppCompatEditText
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/beaconMajor"
                         android:padding="5dp"
-                        android:layout_width="60dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
                 </TableRow>
+
                 <TableRow>
                     <android.support.v7.widget.AppCompatTextView
                         android:text="Beacon Minor"
                         android:padding="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
-                    <android.support.v7.widget.AppCompatEditText
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/beaconMinor"
                         android:padding="5dp"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </TableRow>
 
@@ -97,33 +91,47 @@
                         android:padding="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
+
                 </TableRow>
-                <android.support.v7.widget.AppCompatEditText
+                <android.support.v7.widget.AppCompatTextView
                     android:id="@+id/beaconUUID"
                     android:padding="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-
+                <TableRow>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:text="RSSI"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/beaconRSSI"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <android.support.v7.widget.AppCompatTextView
+                        android:text="Motion"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/beaconMotion"
+                        android:padding="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
 
             </TableLayout>
-
+            <android.support.v7.widget.AppCompatCheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/beaconUnAssign"
+                android:layout_gravity="center_horizontal"
+                android:text="Un assign"
+                android:checked="false" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.AppCompatButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editRegisterBeacon"
-        android:layout_below="@+id/tableLayout"
-        android:layout_centerHorizontal="true"
-        android:text="Edit Register Beacon"/>
-    <android.support.v7.widget.AppCompatButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/deleteRegisterBeacon"
-        android:layout_below="@+id/editRegisterBeacon"
-        android:layout_centerHorizontal="true"
-        android:text="Delete Register Beacon"/>
-
 </RelativeLayout>
+

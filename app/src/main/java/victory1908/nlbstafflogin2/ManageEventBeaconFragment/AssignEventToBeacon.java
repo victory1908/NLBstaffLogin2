@@ -100,6 +100,12 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+
         View viewFragment = inflater.inflate(R.layout.fragment_assign_beacon_to_event, container, false);
 
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
@@ -108,34 +114,16 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
 
         eventSelectedButton = (Button)viewFragment.findViewById(R.id.eventSelected);
 
-        beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
-
         beaconSelectedButton = (Button)viewFragment.findViewById(R.id.beaconSelected);
 
         //Initializing Views
         recyclerView = (RecyclerView)viewFragment.findViewById(R.id.eventList);
 
-
-        // Inflate the layout for this fragment
-        return viewFragment;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
+        beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
 
         //Initializing our listEvents list
         listEvents = new ArrayList();
         listBeacons = new ArrayList<>();
-
-        listEvents.clear();
-        listBeacons.clear();
 
         eventSelected = new ArrayList<>();
         beaconSelected = new ArrayList<>();
@@ -166,6 +154,14 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
         requestQueue = Volley.newRequestQueue(getActivity());
         getEventDetailRespond(requestQueue);
         getBeaconRespond(requestQueue);
+
+        // Inflate the layout for this fragment
+        return viewFragment;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

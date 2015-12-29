@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/event_View">
+        <!--android:visibility="invisible">-->
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventTitle"
+            android:id="@+id/textView_EventTitle"
+            android:layout_alignParentLeft="true"
+            android:padding="15dp"/>
+
+        <android.support.v7.widget.AppCompatEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventTitle"
+            android:textColor="#FF1744"
+            android:textColorHint="#FF1744"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/textView_EventDesc" />
+
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventDescription"
+            android:id="@+id/textView_EventDesc"
+            android:layout_below="@+id/EventTitle"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventDesc"
+            android:padding="15dp"
+            android:layout_below="@+id/EventTitle"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/textView_EventDesc" />
+
+        <android.support.v7.widget.AppCompatTextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventStartTime"
+            android:id="@+id/textView_EventTime"
+            android:layout_below="@+id/EventDesc"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventStartTime"
+            android:padding="15dp"
+            android:layout_below="@+id/EventDesc"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@+id/textView_EventDesc"/>
+
+        <android.support.v7.widget.AppCompatTextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventEndTime"
+            android:id="@+id/textView_EventEndTime"
+            android:layout_below="@+id/EventStartTime"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
+
+        <android.support.v7.widget.AppCompatTextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="EventID"
+            android:id="@+id/textView_EventID"
+            android:layout_below="@+id/EventEndTime"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:padding="15dp"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventEndTime"
+            android:padding="15dp"
+            android:layout_below="@+id/EventStartTime"
+            android:layout_toRightOf="@+id/textView_EventDesc"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/EventID"
+            android:padding="15dp"
+            android:layout_below="@+id/EventEndTime"
+            android:layout_toRightOf="@+id/textView_EventDesc"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select"
+            android:id="@+id/selectCheckBox"
+            android:layout_below="@id/EventID"
+            android:layout_centerHorizontal="true" />
+
+        <!--<ProgressBar-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@id/progressBar"-->
+            <!--android:layout_below="@+id/EventEndTime"-->
+            <!--android:layout_toRightOf="@+id/EditButton"-->
+            <!--android:layout_toEndOf="@+id/EditButton" />-->
+
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

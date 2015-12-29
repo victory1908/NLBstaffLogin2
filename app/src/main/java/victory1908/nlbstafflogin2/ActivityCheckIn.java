@@ -53,7 +53,7 @@ public class ActivityCheckIn extends BaseActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        //Initializing our listEvents list
+        //Initializing our listBeacons list
         listEvents = new ArrayList();
 
         adapter = new EventAdapterDetail(this, listEvents);

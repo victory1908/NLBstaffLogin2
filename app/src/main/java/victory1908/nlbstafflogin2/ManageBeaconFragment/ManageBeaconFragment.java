@@ -12,10 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import victory1908.nlbstafflogin2.ManageEventBeaconFragment.AssignEventToBeacon;
-import victory1908.nlbstafflogin2.ManageEventBeaconFragment.ManageEventAssigned;
 import victory1908.nlbstafflogin2.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
