@@ -150,7 +150,13 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                         try {
                             beaconArray = new JSONArray();
                             beaconArray = respond.getJSONArray("result");
-                            getBeaconDetail(beaconArray);
+                            beaconAssigned.clear();
+                            beaconAssigned.addAll(getBeaconDetail(beaconArray));
+                            //Notifying the adapter that data has been added or changed
+                            assignedBeaconAdapter.notifyDataSetChanged();
+
+                            requestQueue.add(getAllBeaconRespond());
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -174,8 +180,8 @@ public class ManageEventAssignedBeacon extends BaseActivity {
         return jsonObjectRequest;
     }
 
-    private void getBeaconDetail(JSONArray j) {
-        beaconAssigned.clear();
+    private List<Beacon> getBeaconDetail(JSONArray j) {
+        List<Beacon> beacons = new ArrayList<>();
         //Traversing through all the items in the json array
         for (int i = 0; i < j.length(); i++) {
             Beacon beacon = new Beacon();
@@ -195,9 +201,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                 e.printStackTrace();
             }
         }
-        requestQueue.add(getAllBeaconRespond());
-        //Notifying the adapter that data has been added or changed
-        assignedBeaconAdapter.notifyDataSetChanged();
+        return beacons;
     }
 
     //get All Beacon
@@ -211,10 +215,16 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                         try {
                             beaconArrayAll = new JSONArray();
                             beaconArrayAll = respond.getJSONArray("result");
+                            listBeacons.clear();
+                            listBeacons.addAll(getBeaconDetail(beaconArrayAll));
 
-                            getAllBeaconDetail(beaconArrayAll);
+                            listBeacons.removeAll(beaconAssigned);
+
+                            for (int i = 0; i <listBeacons.size() ; i++) {
+                                Toast.makeText(getApplicationContext(),listBeacons.get(i).getBeaconSN(),Toast.LENGTH_SHORT).show();
+                            }
+
                             progressBar.setVisibility(View.GONE);
-//                            Toast.makeText(getContext(),listBeacons.get(0).getBeaconSN(),Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -229,43 +239,6 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                 });
         return jsonObjectRequest;
     }
-
-    private void getAllBeaconDetail(JSONArray j) {
-        listBeacons.clear();beaconAvailable.clear();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                JSONObject json = j.getJSONObject(i);
-                Beacon beacon = new Beacon();
-                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
-                beacon.setBeaconID(json.getString(Config.BEACON_ID));
-                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
-                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
-                beacon.setMajor(Integer.parseInt(json.getString(Config.BEACON_MAJOR)));
-                beacon.setMinor(Integer.parseInt(json.getString(Config.BEACON_MINOR)));
-                //Adding the event object to the list
-                listBeacons.add(beacon);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        for (int k = 0; k <beaconAssigned.size() ; k++) {
-            listBeacons.remove(beaconAssigned.get(k));
-        }
-        for (int l = 0; l <listBeacons.size() ; l++) {
-            beaconAvailable.add(listBeacons.get(l));
-            Toast.makeText(getApplicationContext(),beaconAvailable.get(l).getBeaconID(),Toast.LENGTH_LONG).show();
-        }
-        availableBeaconAdapter.notifyDataSetChanged();
-
-    }
-
-
-
-
 
 
 
