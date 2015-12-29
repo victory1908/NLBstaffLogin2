@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -22,13 +21,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterAssignedEvent;
+import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterEventReAssign;
 import victory1908.nlbstafflogin2.event.Event;
+import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 
 public class ManageEventAssignedBeacon extends BaseActivity {
@@ -93,7 +93,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
 
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
-        requestQueue = Volley.newRequestQueue(this);
+        requestQueue = CustomVolleyRequest.getInstance(this.getApplicationContext()).getRequestQueue();
         requestQueue1 = Volley.newRequestQueue(this);
 
         listBeacons = new ArrayList<>();
@@ -113,13 +113,10 @@ public class ManageEventAssignedBeacon extends BaseActivity {
         availableBeaconRecycleView.setHasFixedSize(true);
         layoutAvailableBeacon = new LinearLayoutManager(this);
         availableBeaconRecycleView.setLayoutManager(layoutAvailableBeacon);
-        availableBeaconAdapter = new BeaconAdapterAssignedEvent(this,beaconAvailable, beaconAvailableSelected);
-        availableBeaconRecycleView.setAdapter(assignedBeaconAdapter);
+        availableBeaconAdapter = new BeaconAdapterEventReAssign(this,listBeacons, beaconAvailableSelected);
+        availableBeaconRecycleView.setAdapter(availableBeaconAdapter);
 
         requestQueue.add(getBeaconFromEvent(event));
-
-        requestQueue1.add(getAllBeaconRespond());
-
 
     }
 
@@ -128,11 +125,11 @@ public class ManageEventAssignedBeacon extends BaseActivity {
         super.onResume();
         assignedBeaconAdapter.notifyDataSetChanged();
 
-
     }
 
+
     //getBeaconID from EventID
-    private JsonObjectRequest getBeaconFromEvent(Event event) {
+    private CustomJsonObjectRequest getBeaconFromEvent(Event event) {
         //Displaying Progressbar
         progressBar.setVisibility(View.VISIBLE);
         setProgressBarIndeterminateVisibility(true);
@@ -143,65 +140,32 @@ public class ManageEventAssignedBeacon extends BaseActivity {
             e.printStackTrace();
         }
         //Creating a JSONObject request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.GET_BEACON_FROM_EVENT, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject respond) {
-                        try {
-                            beaconArray = new JSONArray();
-                            beaconArray = respond.getJSONArray("result");
-                            beaconAssigned.clear();
-                            beaconAssigned.addAll(getBeaconDetail(beaconArray));
-                            //Notifying the adapter that data has been added or changed
-                            assignedBeaconAdapter.notifyDataSetChanged();
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST,Config.GET_BEACON_FROM_EVENT, params,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject respond) {
+                   try {
+                       beaconArray = new JSONArray();
+                       beaconArray = respond.getJSONArray("result");
+                       beaconAssigned.clear();
+                       beaconAssigned.addAll(getBeaconDetail(beaconArray));
+                       //Notifying the adapter that data has been added or changed
+                       assignedBeaconAdapter.notifyDataSetChanged();
+                       requestQueue.add(getAllBeaconRespond());
 
-//                            requestQueue.add(getAllBeaconRespond());
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Unable to fetch data event ID: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
-                headers.put( "charset", "utf-8");
-                return headers;
-            }
-        };
+                   } catch (JSONException e) {
+                       e.printStackTrace();
+                   }
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), "Unable to fetch data event ID: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         return jsonObjectRequest;
-    }
-
-    private List<Beacon> getBeaconDetail(JSONArray j) {
-        List<Beacon> beacons = new ArrayList<>();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            Beacon beacon = new Beacon();
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
-                beacon.setBeaconID(json.getString(Config.BEACON_ID));
-                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
-                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
-                beacon.setMajor(Integer.valueOf(json.getString(Config.BEACON_MAJOR)));
-                beacon.setMinor(Integer.valueOf(json.getString(Config.BEACON_MINOR)));
-
-                beaconAssigned.add(beacon);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return beacons;
     }
 
     //get All Beacon
@@ -217,12 +181,22 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                             beaconArrayAll = respond.getJSONArray("result");
                             listBeacons.clear();
                             listBeacons.addAll(getBeaconDetail(beaconArrayAll));
-
                             listBeacons.removeAll(beaconAssigned);
 
-                            for (int i = 0; i <listBeacons.size() ; i++) {
-                                Toast.makeText(getApplicationContext(),listBeacons.get(i).getBeaconSN(),Toast.LENGTH_SHORT).show();
+
+                            for (int i = 0; i<beaconAssigned.size(); i++) {
+
+                                Toast.makeText(getApplicationContext(),beaconAssigned.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
+
                             }
+
+                            for (int j = 0; j <listBeacons.size() ; j++) {
+                                Toast.makeText(getApplicationContext(),listBeacons.get(j).getBeaconID(),Toast.LENGTH_SHORT).show();
+                            }
+
+
+
+                            availableBeaconAdapter.notifyDataSetChanged();
 
                             progressBar.setVisibility(View.GONE);
                         } catch (JSONException e) {
@@ -239,7 +213,5 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                 });
         return jsonObjectRequest;
     }
-
-
 
 }

@@ -29,12 +29,9 @@ import java.util.List;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
-import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterAssign;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterReAssign;
 import victory1908.nlbstafflogin2.event.Event;
-import victory1908.nlbstafflogin2.event.EventAdapterEdit;
 import victory1908.nlbstafflogin2.event.EventAdapterReAssign;
-import victory1908.nlbstafflogin2.event.EventAdapterReAssignTest;
 
 /**
  * A simple {@link Fragment} subclass.

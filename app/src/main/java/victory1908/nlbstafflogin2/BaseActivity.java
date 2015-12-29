@@ -2,34 +2,25 @@ package victory1908.nlbstafflogin2;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.mobstac.beaconstac.models.MSBeacon;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import victory1908.nlbstafflogin2.beaconstac.Beacon;
+import victory1908.nlbstafflogin2.event.Event;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -180,4 +171,56 @@ public class BaseActivity extends AppCompatActivity {
         alertDialog.show();
 
     }
+
+
+    protected List<Beacon> getBeaconDetail(JSONArray j) {
+        List<Beacon> beacons = new ArrayList<>();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            Beacon beacon = new Beacon();
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
+                beacon.setBeaconID(json.getString(Config.BEACON_ID));
+                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
+                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
+                beacon.setMajor(Integer.valueOf(json.getString(Config.BEACON_MAJOR)));
+                beacon.setMinor(Integer.valueOf(json.getString(Config.BEACON_MINOR)));
+
+                beacons.add(beacon);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return beacons;
+    }
+
+    protected List<Event> getEventDetail(JSONArray j) {
+        List<Event> events = new ArrayList<>();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                Event event = new Event();
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                event.setEventID(json.getString(Config.EVENT_ID));
+                event.setEventTitle(json.getString(Config.EVENT_TITLE));
+                event.setEventDesc(json.getString(Config.EVENT_DESC));
+                event.setEventStartTime(json.getString(Config.EVENT_START_TIME));
+                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
+
+                //Adding the event object to the list
+                events.add(event);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return events;
+    }
+
+
 }

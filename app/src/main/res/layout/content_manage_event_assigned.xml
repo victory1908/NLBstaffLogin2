@@ -173,7 +173,7 @@
         <android.support.v7.widget.RecyclerView
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:id="@+id/beaconAvailable"
             android:layout_below="@id/beaconAssignedRecycleView">
             </android.support.v7.widget.RecyclerView>

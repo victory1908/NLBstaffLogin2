@@ -14,12 +14,12 @@ import java.util.List;
 import victory1908.nlbstafflogin2.R;
 
 
-public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapterAssignedEvent.ViewHolder> {
+public class BeaconAdapterEventReAssign extends RecyclerView.Adapter<BeaconAdapterEventReAssign.ViewHolder> {
 
     private Context context;
     List<Beacon> beacons, beaconSelected;
 
-    public BeaconAdapterAssignedEvent(Context context, List<Beacon> beacons, List<Beacon> beaconSelected) {
+    public BeaconAdapterEventReAssign(Context context, List<Beacon> beacons, List<Beacon> beaconSelected) {
         this.context = context;
         this.beacons = beacons;
         this.beaconSelected = beaconSelected;
@@ -27,12 +27,12 @@ public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapt
 
 
     @Override
-    public BeaconAdapterAssignedEvent.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BeaconAdapterEventReAssign.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View beaconView = inflater.inflate(R.layout.beacon_view_assigned_event_un_assign, parent, false);
+        View beaconView = inflater.inflate(R.layout.beacon_view_assigned_event_re_assign, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(beaconView);
@@ -40,7 +40,7 @@ public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapt
     }
 
     @Override
-    public void onBindViewHolder(BeaconAdapterAssignedEvent.ViewHolder holder, int position) {
+    public void onBindViewHolder(BeaconAdapterEventReAssign.ViewHolder holder, int position) {
         //Getting the particular item from the list
         final Beacon beacon = beacons.get(position);
 
