@@ -155,7 +155,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                             //Notifying the adapter that data has been added or changed
                             assignedBeaconAdapter.notifyDataSetChanged();
 
-                            requestQueue.add(getAllBeaconRespond());
+//                            requestQueue.add(getAllBeaconRespond());
 
                         } catch (JSONException e) {
                             e.printStackTrace();
