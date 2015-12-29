@@ -14,14 +14,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import victory1908.nlbstafflogin2.event.Event;
-import victory1908.nlbstafflogin2.event.EventAdapter;
 import victory1908.nlbstafflogin2.event.EventAdapterDetail;
 
 
