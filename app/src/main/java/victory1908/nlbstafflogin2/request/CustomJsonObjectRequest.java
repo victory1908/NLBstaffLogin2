@@ -13,13 +13,16 @@ import java.util.Map;
 /**
  * Created by Victory1908 on 29-Dec-15.
  */
-public class CustomJsonObjectRequest extends JsonObjectRequest {
+public class CustomJsonObjectRequest extends JsonObjectRequest{
     private Priority mPriority;
 
-    public CustomJsonObjectRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
+    public CustomJsonObjectRequest(int method, String url, JSONObject jsonRequest,
+                                   Response.Listener<JSONObject> listener,
+                                   Response.ErrorListener errorListener) {
         super(method, url, jsonRequest, listener, errorListener);
         //this.setShouldCache(true);
     }
+
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
@@ -42,4 +45,5 @@ public class CustomJsonObjectRequest extends JsonObjectRequest {
     public Priority getPriority() {
         return mPriority == null ? Priority.NORMAL : mPriority;
     }
+
 }

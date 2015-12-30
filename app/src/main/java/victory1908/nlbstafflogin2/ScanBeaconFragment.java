@@ -2,15 +2,19 @@ package victory1908.nlbstafflogin2;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-//import android.util.ArrayMap;
-import android.support.v4.util.ArrayMap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +31,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.mobstac.beaconstac.core.Beaconstac;
@@ -55,22 +58,25 @@ import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.event.EventAdapter;
+import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
+
+//import android.util.ArrayMap;
 
 
-public class Beacon_MainFragment extends BaseFragment implements View.OnClickListener {
+public class ScanBeaconFragment extends BaseFragment implements View.OnClickListener {
 
-    public Beacon_MainFragment(){
+    public ScanBeaconFragment(){
         //Constructor;
     }
+
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final String TAG = ScanBeaconFragment.class.getSimpleName();
 
     Button fetchEvent;
     RequestQueue requestQueue;
     ProgressBar progressBar;
-    private TextView textViewWelcome;
-
-    private static final int REQUEST_ENABLE_BT = 1;
-
-    private static final String TAG = Beacon_MainFragment.class.getSimpleName();
 
     private ArrayList<MSBeacon> beacons = new ArrayList<>();
     MSBeacon beaconAction;
@@ -84,22 +90,12 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
     private TextView testCamped;
     Beaconstac bstacInstance;
 
-//    private BluetoothAdapter mBluetoothAdapter;
-//    private static final int REQUEST_ENABLE_BT = 1;
 
     private boolean registered = false;
     private boolean isPopupVisible = false;
 
-
-    private ArrayList<String> eventIDBeacon;
-
-
-    //JSON Array
-    private JSONArray eventArray,beaconArray;
-
     //Creating a List of event
     private List<Event> listEvents;
-    private List<Beacon> listBeacons;
 
     //Creating Views
     private RecyclerView recyclerView;
@@ -111,10 +107,35 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
     Button dailyCheckIn;
     String staffID;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
+
+        // Use this check to determine whether BLE is supported on the device.
+        if (!getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(getContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+        }
+
+        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+        // BluetoothAdapter through BluetoothManager.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            BluetoothManager mBluetoothManager = (BluetoothManager)getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
+            mBluetoothAdapter = mBluetoothManager.getAdapter();
+        }
+
+        // Checks if Bluetooth is supported on the device.
+        if (mBluetoothAdapter == null) {
+            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+            Toast.makeText(getContext(), "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+        }
 
         //checkLogged In
         //Fetching StaffID from shared preferences
@@ -127,19 +148,16 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
 
         //Initializing our listBeacons list
         listEvents = new ArrayList();
-        listBeacons = new ArrayList<>();
 
         beaconInRange = new Beacon();
-        requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
         //Initializing Views
         recyclerView = (RecyclerView)viewFragment.findViewById(R.id.recycleView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-
         adapter = new EventAdapter(getContext(), listEvents);
-        recyclerView.setAdapter(adapter);
 
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
 
@@ -158,6 +176,7 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
 
         dailyCheckIn.setOnClickListener(this);
 
+        swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
 
         // set region parameters (UUID and unique region identifier)
         bstacInstance = Beaconstac.getInstance(getContext());
@@ -181,7 +200,8 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
             fetchEvent.setVisibility(View.VISIBLE);
         }else fetchEvent.setVisibility(View.GONE);
 
-
+        //Initialize list of Beacon in range
+        initList();
 
         return viewFragment;
     }
@@ -193,35 +213,6 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
 //        setSupportActionBar(toolbar);
 //        toolbar.setTitle("NLBstaffAttedance");
 //        toolbar.setLogo(R.drawable.nlblogo);
-
-
-//        admin.setVisibility(View.VISIBLE);
-
-
-//        // Use this check to determine whether BLE is supported on the device.
-//        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-//            Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-//        }
-//
-//        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-//        // BluetoothAdapter through BluetoothManager.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//            BluetoothManager mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-//            mBluetoothAdapter = mBluetoothManager.getAdapter();
-//        }
-//
-//        // Checks if Bluetooth is supported on the device.
-//        if (mBluetoothAdapter == null) {
-//            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-//            Toast.makeText(this, "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
-//        } else {
-//            if (!mBluetoothAdapter.isEnabled()) {
-//                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//            }
-//        }
-
-//        eventView.setVisibility(View.INVISIBLE);
 
 
 
@@ -263,21 +254,6 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
 //                e.printStackTrace();
 //            }
 //        }
-
-
-//        checkIn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(Beacon_MainFragment.this, ActivityCheckIn.class);
-//                intent.putExtra(Config.STAFF_ID, staffID);
-//                intent.putExtra(Config.EVENT_ID, eventCheckIN);
-//                intent.putExtra("event",event);
-//                startActivity(intent);
-//
-//            }
-//        });
-
-        initList();
     }
 
     // end OnCreate
@@ -289,9 +265,11 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
         super.onPause();
         beaconAdapter.clear();
         beaconAdapter.notifyDataSetChanged();
+        bCount.setText("" + beacons.size());
+
         listEvents.clear();
         adapter.notifyDataSetChanged();
-        bCount.setText("" + beacons.size());
+
         unregisterBroadcast();
         isPopupVisible = true;
         dailyCheckIn.setVisibility(View.GONE);
@@ -310,7 +288,6 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
         bCount.setText("" + beacons.size());
         isPopupVisible = false;
 
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -428,16 +405,51 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
                 beaconList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        dailyCheckIn.setVisibility(View.VISIBLE);
+
                         beaconAction = beacons.get(position);
                         beaconInRange.setBeaconUUID(beaconAction.getBeaconUUID().toString());
                         beaconInRange.setMajor(beaconAction.getMajor());
                         beaconInRange.setMinor(beaconAction.getMinor());
 
                         recyclerView.setAdapter(adapter);
+                        requestQueue.add(getEventFromBeacon(beaconInRange));
 
-                        requestQueue.add(getBeaconIDInRange(beaconInRange));
+                        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                            @Override
+                            public void onRefresh() {
+                                requestQueue.add(getEventFromBeacon(beaconInRange));
+                                adapter.notifyDataSetChanged();
+                                if (swipeRefreshLayout.isRefreshing())
+                                    swipeRefreshLayout.setRefreshing(false);
+                            }
+                        });
 
-                        dailyCheckIn.setVisibility(View.VISIBLE);
+                        //refresh when scroll till bottom
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                                @Override
+                                public void onScrolled(RecyclerView recyclerView1, int dx, int dy) {
+                                    super.onScrolled(recyclerView, dx, dy);
+                                    //IfScrolled at last then
+                                    if (isLastItemDisplaying(recyclerView)) {
+                                        requestQueue.add(getEventFromBeacon(beaconInRange));
+                                    }
+                                }
+                            });
+                        } else {
+                            recyclerView.setOnScrollChangeListener(new RecyclerView.OnScrollChangeListener() {
+                                @Override
+                                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                                    //IfScrolled at last then
+                                    if (isLastItemDisplaying(recyclerView)) {
+                                        requestQueue.add(getEventFromBeacon(beaconInRange));
+                                    }
+                                }
+                            });
+                        }
+
                     }
 
                     @Override
@@ -571,7 +583,6 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
             Toast.makeText(getContext(), "Exited region", Toast.LENGTH_SHORT).show();
 
             dailyCheckIn.setVisibility(View.GONE);
-
         }
 
         @Override
@@ -587,183 +598,9 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
     };
 
 
-    //getEventDetail
-    private JsonObjectRequest getEventDetailRespond(Event event) {
-//        Toast.makeText(getContext(),event.getEventID(),Toast.LENGTH_SHORT).show();
-        progressBar.setVisibility(View.VISIBLE);
-        Map<String, Object> jsonParams = new HashMap<>();
-        jsonParams.put(Config.EVENT_ID,event.getEventID());
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.DATA_URL, new JSONObject(jsonParams),
-                new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject respond) {
-                            try {
-                                eventArray = new JSONArray();
-                                eventArray = respond.getJSONArray("result");
-                                getEventDetail(eventArray);
-//                                Toast.makeText(getContext(),respond.toString(),Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.GONE);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-//        //Adding request to the queue
-//        requestQueue.add(jsonObjectRequest);
-        return jsonObjectRequest;
-    }
-
-    private void getEventDetail(JSONArray j) {
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                Event event = new Event();
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                event.setEventID(json.getString(Config.EVENT_ID));
-                event.setEventTitle(json.getString(Config.EVENT_TITLE));
-                event.setEventDesc(json.getString(Config.EVENT_DESC));
-                event.setEventStartTime(json.getString(Config.EVENT_START_TIME));
-                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
-
-                //Adding the event object to the list
-                listEvents.add(event);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        //Notifying the adapter that data has been added or changed
-        adapter.notifyDataSetChanged();
-    }
-
-
-
-    //getBeaconID from RangedBeacon
-    private JsonObjectRequest getBeaconIDInRange(Beacon beacon) {
-
-        progressBar.setVisibility(View.VISIBLE);
-        Map<String, Object> jsonParams = new HashMap<>();
-        jsonParams.put(Config.BEACON_UUID, beacon.getBeaconUUID());
-        jsonParams.put(Config.BEACON_MAJOR, beacon.getMajor());
-        jsonParams.put(Config.BEACON_MINOR, beacon.getMinor());
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.GET_BEACON_ID, new JSONObject(jsonParams),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject respond) {
-                        try {
-                            beaconArray = new JSONArray();
-                            beaconArray = respond.getJSONArray("result");
-                            getBeaconID(beaconArray);
-
-                            requestQueue.add(getEventIDFromBeacon(beaconInRange));
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        progressBar.setVisibility(View.GONE);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-        return jsonObjectRequest;
-    }
-
-    private void getBeaconID(JSONArray j) {
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-                beaconInRange.setBeaconID(json.getString(Config.BEACON_ID));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //getEventID from ranged beacon
-    private JsonObjectRequest getEventIDFromBeacon(Beacon beacon) {
-
-        //Displaying Progressbar
-        progressBar.setVisibility(View.VISIBLE);
-        getActivity().setProgressBarIndeterminateVisibility(true);
-
-        JSONObject params = new JSONObject();
-        try {
-            params.put(Config.BEACON_ID, beacon.getBeaconID());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //Creating a JSONObject request
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.EVENT_URL, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject respond) {
-                        try {
-                            eventArray = new JSONArray();
-                            eventArray = respond.getJSONArray("result");
-                            getEventIDFromBeacon(eventArray);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Unable to fetch data event ID: " +error.getMessage(),Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
-                headers.put( "charset", "utf-8");
-                return headers;
-            }
-        };
-        return jsonObjectRequest;
-    }
-
-    private void getEventIDFromBeacon(JSONArray j) {
-        listEvents.clear();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            eventInAction = new Event();
-            try {
-                //Getting json object
-                JSONObject json = j.getJSONObject(i);
-
-                //Adding the name of the event to array list
-                eventInAction.setEventID(json.getString(Config.EVENT_ID));
-                requestQueue.add(getEventDetailRespond(eventInAction));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public void onClick(View view) {
-        if (view == fetchEvent) getEventIDFromBeacon(beaconInRange);
+        if (view == fetchEvent) getEventFromBeacon(beaconInRange);
         if (view == dailyCheckIn) dailyCheckIn();
     }
 
@@ -795,4 +632,40 @@ public class Beacon_MainFragment extends BaseFragment implements View.OnClickLis
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
+
+    //getBeaconID from RangedBeacon
+    private CustomJsonObjectRequest getEventFromBeacon(Beacon beacon) {
+
+        progressBar.setVisibility(View.VISIBLE);
+        Map<String, Object> jsonParams = new HashMap<>();
+        jsonParams.put(Config.BEACON_UUID, beacon.getBeaconUUID());
+        jsonParams.put(Config.BEACON_MAJOR, beacon.getMajor());
+        jsonParams.put(Config.BEACON_MINOR, beacon.getMinor());
+
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST,Config.GET_EVENT_FROM_BEACON, new JSONObject(jsonParams),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject respond) {
+                        try {
+                            JSONArray eventArray = new JSONArray();
+                            eventArray = respond.getJSONArray("result");
+                            listEvents.clear();
+                            listEvents.addAll(getEventDetail(eventArray));
+                            adapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        progressBar.setVisibility(View.GONE);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " +error.getMessage(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+        return jsonObjectRequest;
+    }
+
 }

@@ -12,13 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManageBeaconFragment extends Fragment {
+public class ManageBeaconFragment extends BaseFragment {
 
 
     public ManageBeaconFragment() {
@@ -103,7 +105,7 @@ public class ManageBeaconFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new EditRegisteredBeacon();
+                    return new EditBeaconFragment();
                 case 1:
                     return new RegisterBeaconFragment();
                 default:

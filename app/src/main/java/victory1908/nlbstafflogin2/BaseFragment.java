@@ -1,25 +1,39 @@
 package victory1908.nlbstafflogin2;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import victory1908.nlbstafflogin2.beaconstac.Beacon;
+import victory1908.nlbstafflogin2.event.Event;
+import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
 
 public class BaseFragment extends Fragment {
 
@@ -27,8 +41,8 @@ public class BaseFragment extends Fragment {
     protected SharedPreferences.Editor editor;
     protected boolean loggedIn;
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private static final int REQUEST_ENABLE_BT = 1;
+    ProgressBar progressBar;
+
     private static final String TAG = BaseFragment.class.getSimpleName();
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,28 +63,6 @@ public class BaseFragment extends Fragment {
 //        toolbar.setTitle("NLBstaffAttedance");
 //        toolbar.setLogo(R.drawable.nlblogo);
 
-        // Use this check to determine whether BLE is supported on the device.
-        if (!getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(getContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-        }
-
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            BluetoothManager mBluetoothManager = (BluetoothManager)getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-            mBluetoothAdapter = mBluetoothManager.getAdapter();
-        }
-
-        // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-            Toast.makeText(getContext(), "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
 
         //Creating a shared preference
         sharedPreferences = getActivity().getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -129,7 +121,7 @@ public class BaseFragment extends Fragment {
                         editor.apply();
 
                         //Starting login activity
-////                        Intent intent = new Intent(Beacon_MainFragment.this, LoginActivity.class);
+////                        Intent intent = new Intent(ScanBeaconFragment.this, LoginActivity.class);
 //                        startActivity(intent);
 
                         Intent goToLoginActivity = new Intent(getContext(), LoginActivity.class);
@@ -187,125 +179,105 @@ public class BaseFragment extends Fragment {
 
     }
 
-//    public static ArrayList eventDetail;
-//
-//    private ArrayList getEventRespondTest(MSBeacon beacon) {
-//        //Creating a string request
-//        StringRequest stringRequest = new StringRequest(Config.DATA_URL,
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        JSONObject j;
-//                        JSONArray eventArray;
-//                        try {
-//                            //Parsing the fetched Json String to JSON Object
-//                            j = new JSONObject(response);
-//
-//                            //Storing the Array of JSON String to our JSON Array
-//                            eventArray = j.getJSONArray(Config.JSON_ARRAY);
-//
-//                            //Calling method getEventDetail to get the eventDetail from the JSON Array
-//                            eventDetail.clear();
-//                            eventDetail = getEventDetail(eventArray);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//
-//                    }
-//
-//                });
-//
-//        //Creating a request queue
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//
-//        //Adding request to the queue
-//        requestQueue.add(stringRequest);
-//        return eventDetail;
-//    }
-//
-//    private ArrayList getEventDetail(JSONArray j) {
-//        //Traversing through all the items in the json array
-//        ArrayList eventDetail = new ArrayList();
-//        for (int i = 0; i < j.length(); i++) {
-//            try {
-//                //Getting json object
-//                JSONObject json = j.getJSONObject(i);
-//
-//                //Adding the name of the event to array list
-//                eventDetail.add(json.getString(Config.EVENT_TITLE));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return eventDetail;
-//    }
-//
-//    //Method to get EventID of a particular position
-//    private String getEventID(JSONArray eventArray, int position) {
-//        String EventID = "";
-//        try {
-//            //Getting object of given index
-//            JSONObject json = eventArray.getJSONObject(position);
-//
-//            //Fetching EventID from that object
-//            EventID = json.getString(Config.EVENT_ID);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        //Returning the EventTitle
-//        return EventID;
-//    }
 
-//    //Method to get event title of a particular position
-//    private String getTitle(int position) {
-//        String EventTitle = "";
-//        try {
-//            //Getting object of given index
-//            JSONObject json = eventArray.getJSONObject(position);
-//
-//            //Fetching EventTitle from that object
-//            EventTitle = json.getString(Config.EVENT_TITLE);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        //Returning the EventTitle
-//        return EventTitle;
-//    }
-//
-//    //Method to get event Desc of a particular position
-//    private String getDesc(int position) {
-//        String eventDescription = "";
-//        try {
-//            JSONObject json = eventArray.getJSONObject(position);
-//            eventDescription = json.getString(Config.EVENT_DESC);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return eventDescription;
-//    }
-//
-//    //Method to get event Time of a particular position
-//    private String getEventTime(int position) {
-//        String eventTime = "";
-//        try {
-//            JSONObject json = eventArray.getJSONObject(position);
-//            eventTime = json.getString(Config.EVENT_START_TIME);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return eventTime;
-//    }
+    protected List<Beacon> getBeaconDetail(JSONArray j) {
+        List<Beacon> beacons = new ArrayList<>();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            Beacon beacon = new Beacon();
+            try {
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
+                beacon.setBeaconID(json.getString(Config.BEACON_ID));
+                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
+                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
+                beacon.setMajor(Integer.valueOf(json.getString(Config.BEACON_MAJOR)));
+                beacon.setMinor(Integer.valueOf(json.getString(Config.BEACON_MINOR)));
+
+                beacons.add(beacon);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return beacons;
+    }
+
+    protected List<Event> getEventDetail(JSONArray j) {
+        List<Event> events = new ArrayList<>();
+        //Traversing through all the items in the json array
+        for (int i = 0; i < j.length(); i++) {
+            try {
+                Event event = new Event();
+                //Getting json object
+                JSONObject json = j.getJSONObject(i);
+
+                event.setEventID(json.getString(Config.EVENT_ID));
+                event.setEventTitle(json.getString(Config.EVENT_TITLE));
+                event.setEventDesc(json.getString(Config.EVENT_DESC));
+                event.setEventStartTime(json.getString(Config.EVENT_START_TIME));
+                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
+
+                //Adding the event object to the list
+                events.add(event);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return events;
+    }
+
+    //This method would check that the recyclerView scroll has reached the bottom or not
+    protected boolean isLastItemDisplaying(RecyclerView recyclerView) {
+        if (recyclerView.getAdapter().getItemCount() != 0) {
+            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
+                return true;
+        }
+        return false;
+    }
 
 
-//    protected boolean isLoggedIn() {
-//    //Fetching the boolean value form sharedPreferences
-//        return sharedPreferences.getBoolean(Config.LOGGED_IN_SHARED_PREF,false);
-//    }
+    //Test fetching data template (Currently not work as need final variable)
+    protected List<Event> getEventRespond(RequestQueue requestQueue, String url, Beacon beacon) {
+        progressBar.setVisibility(View.VISIBLE);
+        final List<Event> listEvents = new ArrayList<>();
+
+        Map<String, Object> jsonParams = new HashMap<>();
+        jsonParams.put(Config.BEACON_UUID, beacon.getBeaconUUID());
+        jsonParams.put(Config.BEACON_MAJOR, beacon.getMajor());
+        jsonParams.put(Config.BEACON_MINOR, beacon.getMinor());
+
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST,url, new JSONObject(jsonParams),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject respond) {
+                        try {
+                            JSONArray eventArray = new JSONArray();
+                            eventArray = respond.getJSONArray("result");
+                            listEvents.clear();
+                            listEvents.addAll(getEventDetail(eventArray));
+                            progressBar.setVisibility(View.GONE);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(getContext(), "Unable to fetch data event Detail: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+        //Adding request to the queue
+        requestQueue.add(jsonObjectRequest);
+        return listEvents;
+    }
+
+
+
 
 }

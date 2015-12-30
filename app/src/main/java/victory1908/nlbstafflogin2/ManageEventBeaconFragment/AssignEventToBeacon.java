@@ -1,15 +1,13 @@
 package victory1908.nlbstafflogin2.ManageEventBeaconFragment;
 
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +20,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -34,19 +31,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterAssign;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.event.EventAdapterAssign;
+import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AssignEventToBeacon extends Fragment implements View.OnClickListener{
+public class AssignEventToBeacon extends BaseFragment implements View.OnClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -77,18 +76,17 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
 
     RequestQueue requestQueue;
 
-    //JSON Array
-    private JSONArray eventArray,beaconArray;
-
     //Creating a List of event
     private List<Event> listEvents, eventSelected;
     private List<Beacon> listBeacons, beaconSelected;
 
 
     //Creating Views
-    private RecyclerView recyclerView, beaconRecyclerView;
-    private RecyclerView.LayoutManager layoutManager, layoutMangerBeacon;
-    private RecyclerView.Adapter adapter, beaconAdapter;
+    private RecyclerView eventRecyclerView, beaconRecyclerView;
+    private RecyclerView.LayoutManager eventLayoutManager, beaconLayoutManger;
+    private RecyclerView.Adapter eventAdapter, beaconAdapter;
+
+    SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayoutBeacon;
 
 
     ProgressBar progressBar;
@@ -100,24 +98,37 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
+//        if (getArguments() != null) {
+//            mParam1 = getArguments().getString(ARG_PARAM1);
+//            mParam2 = getArguments().getString(ARG_PARAM2);
+//        }
 
         View viewFragment = inflater.inflate(R.layout.fragment_assign_beacon_to_event, container, false);
 
+        swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayoutBeacon = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayoutBeacon);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getEventRespond(requestQueue);
+                if (swipeRefreshLayout.isRefreshing()) swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        swipeRefreshLayoutBeacon.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getBeaconRespond(requestQueue);
+                if (swipeRefreshLayoutBeacon.isRefreshing()) swipeRefreshLayoutBeacon.setRefreshing(false);
+            }
+        });
+
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
-
         assignBeaconToEvent = (Button)viewFragment.findViewById(R.id.assignEventBeacon);
-
         eventSelectedButton = (Button)viewFragment.findViewById(R.id.eventSelected);
-
         beaconSelectedButton = (Button)viewFragment.findViewById(R.id.beaconSelected);
 
         //Initializing Views
-        recyclerView = (RecyclerView)viewFragment.findViewById(R.id.eventList);
+        eventRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.eventList);
 
         beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
 
@@ -130,31 +141,29 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
 
 
         assignBeaconToEvent.setOnClickListener(this);
-
         eventSelectedButton.setOnClickListener(this);
-
         beaconSelectedButton.setOnClickListener(this);
 
 
-        recyclerView.setHasFixedSize(true);
+        eventRecyclerView.setHasFixedSize(true);
         beaconRecyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(getContext());
-        layoutMangerBeacon = new LinearLayoutManager(getContext());
+        eventLayoutManager = new LinearLayoutManager(getContext());
+        beaconLayoutManger = new LinearLayoutManager(getContext());
 
-        recyclerView.setLayoutManager(layoutManager);
-        beaconRecyclerView.setLayoutManager(layoutMangerBeacon);
+        eventRecyclerView.setLayoutManager(eventLayoutManager);
+        beaconRecyclerView.setLayoutManager(beaconLayoutManger);
 
-        adapter = new EventAdapterAssign(getContext(),listEvents,eventSelected);
+        eventAdapter = new EventAdapterAssign(getContext(),listEvents,eventSelected);
         beaconAdapter = new BeaconAdapterAssign(getContext(),listBeacons,beaconSelected);
 
-        recyclerView.setAdapter(adapter);
+        eventRecyclerView.setAdapter(eventAdapter);
         beaconRecyclerView.setAdapter(beaconAdapter);
 
-        requestQueue = Volley.newRequestQueue(getActivity());
-        getEventDetailRespond(requestQueue);
-        getBeaconRespond(requestQueue);
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
+        getEventRespond(requestQueue);
+        getBeaconRespond(requestQueue);
         // Inflate the layout for this fragment
         return viewFragment;
     }
@@ -166,14 +175,8 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
 
     @Override
     public void onResume() {
-        listEvents.clear();
-        listBeacons.clear();
-
-        getEventDetailRespond(requestQueue);
+        getEventRespond(requestQueue);
         getBeaconRespond(requestQueue);
-
-        adapter.notifyDataSetChanged();
-        beaconAdapter.notifyDataSetChanged();
         super.onResume();
     }
 
@@ -185,41 +188,32 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
         eventSelected.clear();
         beaconSelected.clear();
 
-        getEventDetailRespond(requestQueue);
-        adapter.notifyDataSetChanged();
+        getEventRespond(requestQueue);
 
         getBeaconRespond(requestQueue);
-        beaconAdapter.notifyDataSetChanged();
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        listEvents.clear();
-        listBeacons.clear();
         eventSelected.clear();
         beaconSelected.clear();
-
-        getEventDetailRespond(requestQueue);
-        adapter.notifyDataSetChanged();
-
-        getBeaconRespond(requestQueue);
-        beaconAdapter.notifyDataSetChanged();
+        super.onPause();
     }
 
-    private void getEventDetailRespond(RequestQueue requestQueue) {
-
+    private void getEventRespond(RequestQueue requestQueue) {
         progressBar.setVisibility(View.VISIBLE);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.GET_ALL_EVENT_URL,
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST, Config.GET_ALL_EVENT_URL,null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
                         try {
-                            eventArray = new JSONArray();
+                            JSONArray eventArray = new JSONArray();
                             eventArray = respond.getJSONArray("result");
-                            getEventDetail(eventArray);
+                            listEvents.clear();
+                            listEvents.addAll(getEventDetail(eventArray));
+                            eventAdapter.notifyDataSetChanged();
                             progressBar.setVisibility(View.GONE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -237,44 +231,19 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void getEventDetail(JSONArray j) {
-        listEvents.clear();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                //Getting json object
-                Event event = new Event();
-                JSONObject json = j.getJSONObject(i);
-
-                event.setEventID(json.getString(Config.EVENT_ID));
-                event.setEventTitle(json.getString(Config.EVENT_TITLE));
-                event.setEventDesc(json.getString(Config.EVENT_DESC));
-                event.setEventStartTime(json.getString(Config.EVENT_START_TIME));
-                event.setEventEndTime(json.getString(Config.EVENT_END_TIME));
-
-                //Adding the event object to the list
-                listEvents.add(event);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        //Notifying the adapter that data has been added or changed
-        adapter.notifyDataSetChanged();
-    }
-
     private void getBeaconRespond(RequestQueue requestQueue) {
-
         progressBar.setVisibility(View.VISIBLE);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,Config.GET_ALL_BEACON_URL,
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST,Config.GET_ALL_BEACON_URL,null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
                         try {
-                            beaconArray = new JSONArray();
-                            beaconArray = respond.getJSONArray("result");
-                            getBeaconDetail(beaconArray);
                             progressBar.setVisibility(View.GONE);
+                            JSONArray beaconArray = new JSONArray();
+                            beaconArray = respond.getJSONArray("result");
+                            listBeacons.clear();
+                            listBeacons.addAll(getBeaconDetail(beaconArray));
+                            beaconAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -290,36 +259,6 @@ public class AssignEventToBeacon extends Fragment implements View.OnClickListene
         //Adding request to the queue
         requestQueue.add(jsonObjectRequest);
     }
-
-    private void getBeaconDetail(JSONArray j) {
-        listBeacons.clear();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                //Getting json object
-                Beacon beacon = new Beacon();
-                JSONObject json = j.getJSONObject(i);
-
-                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
-                beacon.setBeaconID(json.getString(Config.BEACON_ID));
-                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
-                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
-                beacon.setMajor(Integer.valueOf(json.getString(Config.BEACON_MAJOR)));
-                beacon.setMinor(Integer.valueOf(json.getString(Config.BEACON_MINOR)));
-
-                //Adding the event object to the list
-                listBeacons.add(beacon);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        //Notifying the adapter that data has been added or changed
-        beaconAdapter.notifyDataSetChanged();
-    }
-
-
-
 
     public void eventSelected (){
         for (int i = 0; i <eventSelected.size() ; i++) {

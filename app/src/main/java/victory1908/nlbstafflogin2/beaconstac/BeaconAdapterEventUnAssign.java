@@ -14,12 +14,12 @@ import java.util.List;
 import victory1908.nlbstafflogin2.R;
 
 
-public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapterAssignedEvent.ViewHolder> {
+public class BeaconAdapterEventUnAssign extends RecyclerView.Adapter<BeaconAdapterEventUnAssign.ViewHolder> {
 
     private Context context;
     List<Beacon> beacons, beaconSelected;
 
-    public BeaconAdapterAssignedEvent(Context context, List<Beacon> beacons, List<Beacon> beaconSelected) {
+    public BeaconAdapterEventUnAssign(Context context, List<Beacon> beacons, List<Beacon> beaconSelected) {
         this.context = context;
         this.beacons = beacons;
         this.beaconSelected = beaconSelected;
@@ -27,7 +27,7 @@ public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapt
 
 
     @Override
-    public BeaconAdapterAssignedEvent.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BeaconAdapterEventUnAssign.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -40,7 +40,7 @@ public class BeaconAdapterAssignedEvent extends RecyclerView.Adapter<BeaconAdapt
     }
 
     @Override
-    public void onBindViewHolder(BeaconAdapterAssignedEvent.ViewHolder holder, int position) {
+    public void onBindViewHolder(BeaconAdapterEventUnAssign.ViewHolder holder, int position) {
         //Getting the particular item from the list
         final Beacon beacon = beacons.get(position);
 

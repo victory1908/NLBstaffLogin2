@@ -17,8 +17,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,18 +25,21 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterDetail;
+import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class EditBeaconFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
 
-    public EditRegisteredBeacon() {
+    public EditBeaconFragment() {
         // Required empty public constructor
     }
 
@@ -47,7 +48,7 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
     //JSON Array
     private JSONArray beaconArray;
 
-    private List<Beacon> listBeacons,temListBeacon;
+    private List<Beacon> listBeacons;
 
     //Creating Views
     private RecyclerView beaconRecyclerView;
@@ -66,27 +67,21 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
 
         View viewFragment = inflater.inflate(R.layout.fragment_edit_registered_beacon, container, false);
 
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
+        listBeacons = new ArrayList<>();
+
         beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
         swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-
-        listBeacons = new ArrayList<>();
-
         beaconRecyclerView.setHasFixedSize(true);
         layoutMangerBeacon = new LinearLayoutManager(getContext());
         beaconRecyclerView.setLayoutManager(layoutMangerBeacon);
-
-        requestQueue = Volley.newRequestQueue(getContext());
-
-        getBeaconRespond(requestQueue);
-
         beaconAdapter = new BeaconAdapterDetail(getContext(),listBeacons);
         beaconRecyclerView.setAdapter(beaconAdapter);
 
-        temListBeacon = listBeacons;
-
+        getBeaconRespond(requestQueue);
 
         //refresh when scroll till bottom
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -96,12 +91,7 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
                     super.onScrolled(recyclerView, dx, dy);
                     //IfScrolled at last then
                     if (isLastItemDisplaying(beaconRecyclerView)) {
-
                         getBeaconRespond(requestQueue);
-                        if (!(listBeacons.equals(temListBeacon))) {
-                            beaconAdapter.notifyDataSetChanged();
-                            temListBeacon = listBeacons;
-                        }
                     }
                 }
             });
@@ -111,12 +101,7 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
                 public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                     //IfScrolled at last then
                     if (isLastItemDisplaying(beaconRecyclerView)) {
-
                         getBeaconRespond(requestQueue);
-                        if (!(listBeacons.equals(temListBeacon))) {
-                            beaconAdapter.notifyDataSetChanged();
-                            temListBeacon = listBeacons;
-                        }
                     }
                 }
             });
@@ -135,18 +120,20 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
     private void getBeaconRespond(RequestQueue requestQueue) {
 
         progressBar.setVisibility(View.VISIBLE);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.GET_ALL_BEACON_URL,
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST, Config.GET_ALL_BEACON_URL,null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
                         try {
+                            progressBar.setVisibility(View.GONE);
+
                             beaconArray = new JSONArray();
                             beaconArray = respond.getJSONArray("result");
 
                             listBeacons.clear();
-                            getBeaconDetail(beaconArray);
-                            progressBar.setVisibility(View.GONE);
-//                            Toast.makeText(getContext(),listBeacons.get(0).getBeaconSN(),Toast.LENGTH_SHORT).show();
+                            listBeacons.addAll(getBeaconDetail(beaconArray));
+                            beaconAdapter.notifyDataSetChanged();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -163,46 +150,9 @@ public class EditRegisteredBeacon extends Fragment implements SwipeRefreshLayout
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void getBeaconDetail(JSONArray j) {
-        listBeacons.clear();
-        //Traversing through all the items in the json array
-        for (int i = 0; i < j.length(); i++) {
-            try {
-                JSONObject json = j.getJSONObject(i);
-                Beacon beacon = new Beacon();
-                beacon.setBeaconName(json.getString(Config.BEACON_NAME));
-                beacon.setBeaconID(json.getString(Config.BEACON_ID));
-                beacon.setBeaconSN(json.getString(Config.BEACON_SN));
-                beacon.setBeaconUUID(json.getString(Config.BEACON_UUID));
-                beacon.setMajor(Integer.parseInt(json.getString(Config.BEACON_MAJOR)));
-                beacon.setMinor(Integer.parseInt(json.getString(Config.BEACON_MINOR)));
-                //Adding the event object to the list
-                listBeacons.add(beacon);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        //Notifying the adapter that data has been added or changed
-        beaconAdapter.notifyDataSetChanged();
-    }
-
-    private boolean isLastItemDisplaying(RecyclerView recyclerView) {
-        if (recyclerView.getAdapter().getItemCount() != 0) {
-            int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-            if (lastVisibleItemPosition != RecyclerView.NO_POSITION && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1)
-                return true;
-        }
-        return false;
-    }
-
     @Override
     public void onRefresh() {
         getBeaconRespond(requestQueue);
-        if (!(listBeacons.equals(temListBeacon))) {
-            beaconAdapter.notifyDataSetChanged();
-            temListBeacon = listBeacons;
-        }
         if (swipeRefreshLayout.isRefreshing())swipeRefreshLayout.setRefreshing(false);
     }
 }

@@ -12,14 +12,14 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManageRule extends Fragment {
+public class ManageRule extends BaseFragment {
 
     public ManageRule() {
         // Required empty public constructor
@@ -92,7 +92,7 @@ public class ManageRule extends Fragment {
     //TabLayout and ViewPager class
     private class CustomAdapter extends FragmentPagerAdapter {
 
-        private String fragments[] = {"Assign Event", "Manage Event"};
+        private String fragments[] = {"Assign Rules", "Manage Rules"};
 
         public CustomAdapter(FragmentManager fragmentManager, Context context) {
             super(fragmentManager);

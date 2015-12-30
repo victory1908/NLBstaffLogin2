@@ -5,8 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +27,6 @@ import java.util.Map;
 
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.R;
-import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.event.Event;
 
 public class CreateEventFragment extends Fragment implements View.OnClickListener{
@@ -101,11 +98,6 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
         event.setEventStartTime(eventStartTime.getText().toString());
         event.setEventEndTime(eventEndTime.getText().toString());
         event.setEventID(eventID.getText().toString());
-
-//        Toast.makeText(this, event.getEventTitle(),Toast.LENGTH_SHORT).show();
-//        Toast.makeText(this, event.getEventDesc(),Toast.LENGTH_SHORT).show();
-//        Toast.makeText(this, event.getEventStartTime(),Toast.LENGTH_SHORT).show();
-//        Toast.makeText(this, event.getEventEndTime(),Toast.LENGTH_SHORT).show();
 
         //UpdateEvent
         createConfirm();

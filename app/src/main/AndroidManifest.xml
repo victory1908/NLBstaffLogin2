@@ -42,7 +42,7 @@
             android:label="@string/title_activity_activity_check_in"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Beacon_MainFragment"
+            android:name=".ScanBeaconFragment"
             android:label="@string/title_Beacon_MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -82,7 +82,7 @@
             android:label="@string/title_activity_edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EditEventDetailActivity"
+            android:name=".EditEventDetailFragment"
             android:label="Edit Event Detail"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />

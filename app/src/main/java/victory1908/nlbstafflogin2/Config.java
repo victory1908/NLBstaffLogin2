@@ -1,12 +1,11 @@
 package victory1908.nlbstafflogin2;
 
 
-import java.util.UUID;
-
 public class Config {
     //JSON URL
     public static final String LOGIN_URL = "http://vinhvumobile.com/phpconnect/volleylogin.php";
     public static final String EVENT_URL = "http://vinhvumobile.com/phpconnect/getevent.php";
+    public static final String GET_EVENT_FROM_BEACON = "http://vinhvumobile.com/phpconnect/getEventFromBeacon.php";
 
     public static final String DATA_URL = "http://vinhvumobile.com/phpconnect/geteventdetail.php";
     public static final String GET_ALL_EVENT_URL = "http://vinhvumobile.com/phpconnect/getAllEvent.php";

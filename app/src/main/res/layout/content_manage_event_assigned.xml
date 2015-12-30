@@ -47,7 +47,7 @@
                 android:layout_alignParentLeft="true"
                 android:padding="15dp"/>
 
-            <android.support.v7.widget.AppCompatEditText
+            <android.support.v7.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/EventTitle"
@@ -55,7 +55,10 @@
                 android:textColorHint="#FF1744"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:layout_toRightOf="@+id/textView_EventDesc" />
+                android:layout_toRightOf="@+id/textView_EventDesc"
+                style="@style/Animation.AppCompat.Dialog"
+                android:textSize="30dp"
+                android:textColorLink="@color/wallet_dim_foreground_holo_dark"/>
 
 
             <android.support.v7.widget.AppCompatTextView
@@ -144,39 +147,48 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"/>
 
-            <!--<android.support.v7.widget.AppCompatButton-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Edit"-->
-                <!--android:id="@+id/EditButton"-->
-                <!--android:layout_below="@id/EventID"-->
-                <!--android:layout_centerHorizontal="true" />-->
-
-            <!--<ProgressBar-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@id/progressBar"-->
-            <!--android:layout_below="@+id/EventEndTime"-->
-            <!--android:layout_toRightOf="@+id/EditButton"-->
-            <!--android:layout_toEndOf="@+id/EditButton" />-->
-
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:orientation="vertical"
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/beaconAssignedRecycleView"
-            android:layout_below="@id/event_View">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"
+            android:text="Assigned Beacon"
+            android:layout_below="@id/event_View"
+            android:textAlignment="center"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:orientation="vertical"
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:id="@+id/beaconAvailable"
-            android:layout_below="@id/beaconAssignedRecycleView">
+            android:layout_height="250dp"
+            android:id="@id/swipeRefreshLayout"
+            android:layout_below="@id/event_View">
+            <android.support.v7.widget.RecyclerView
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:id="@+id/beaconAssignedRecycleView"
+                android:layout_below="@id/event_View">
             </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/swipeRefreshLayout"
+            android:text="Available Beacon"
+            android:textAlignment="center"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/swipeRefreshLayoutBeacon"
+            android:layout_below="@id/swipeRefreshLayout">
+            <android.support.v7.widget.RecyclerView
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:id="@+id/beaconAvailable">
+            </android.support.v7.widget.RecyclerView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         </RelativeLayout>
 

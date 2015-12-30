@@ -2,11 +2,6 @@ package victory1908.nlbstafflogin2.ManageBeaconFragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +15,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.mobstac.beaconstac.models.MSBeacon;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.Config;
 import victory1908.nlbstafflogin2.R;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
-public class RegisterBeaconFragment extends Fragment implements View.OnClickListener {
+public class RegisterBeaconFragment extends BaseFragment implements View.OnClickListener {
 
     EditText beaconName;
     EditText beaconID;
@@ -38,6 +33,7 @@ public class RegisterBeaconFragment extends Fragment implements View.OnClickList
     EditText beaconMajor;
     EditText beaconMinor;
     Button registerBeacon;
+    RequestQueue requestQueue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +62,8 @@ public class RegisterBeaconFragment extends Fragment implements View.OnClickList
         beaconMinor = (EditText)viewFragment.findViewById(R.id.beaconMinor);
         registerBeacon = (Button)viewFragment.findViewById(R.id.registerBeacon);
         registerBeacon.setOnClickListener(this);
+
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
         return viewFragment;
     }
@@ -120,15 +118,12 @@ public class RegisterBeaconFragment extends Fragment implements View.OnClickList
                 map.put(Config.BEACON_NAME, beaconName.getText().toString());
                 map.put(Config.BEACON_ID, beaconID.getText().toString());
                 map.put(Config.BEACON_SN, beaconSN.getText().toString());
-
                 map.put(Config.BEACON_UUID, beaconUUID.getText().toString());
                 map.put(Config.BEACON_MAJOR, beaconMajor.getText().toString());
                 map.put(Config.BEACON_MINOR, beaconMinor.getText().toString());
                 return map;
             }
         };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
 
