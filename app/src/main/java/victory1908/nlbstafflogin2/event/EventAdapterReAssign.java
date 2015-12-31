@@ -1,7 +1,10 @@
 package victory1908.nlbstafflogin2.event;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +15,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import victory1908.nlbstafflogin2.ManageEventAssignedBeacon;
+import victory1908.nlbstafflogin2.MainActivity;
+import victory1908.nlbstafflogin2.ManageEventBeaconFragment.ManageEventAssignedBeaconFragment;
 import victory1908.nlbstafflogin2.R;
 
 /**
@@ -89,9 +93,14 @@ public class EventAdapterReAssign extends RecyclerView.Adapter<EventAdapterReAss
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(context, ManageEventAssignedBeacon.class);
-            intent.putExtra("event",events.get(getLayoutPosition()));
-            context.startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("event", events.get(getLayoutPosition()));
+            Fragment fragment = new ManageEventAssignedBeaconFragment();
+            fragment.setArguments(bundle);
+//
+            FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contentMainDrawer, fragment, "tag").addToBackStack(null).commit();
         }
     }
 

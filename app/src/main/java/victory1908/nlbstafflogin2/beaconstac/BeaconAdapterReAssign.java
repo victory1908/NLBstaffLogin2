@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import victory1908.nlbstafflogin2.EditRegisterBeacon;
+import victory1908.nlbstafflogin2.ManageBeaconFragment.FragmentEditBeaconDetail;
 import victory1908.nlbstafflogin2.R;
 
 
@@ -90,7 +90,7 @@ public class BeaconAdapterReAssign extends RecyclerView.Adapter<BeaconAdapterReA
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(context,EditRegisterBeacon.class);
+            Intent intent = new Intent(context,FragmentEditBeaconDetail.class);
             intent.putExtra("beacon",beacons.get(getLayoutPosition()));
             context.startActivity(intent);
         }

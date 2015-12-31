@@ -127,12 +127,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (!homeFlag){
-                fragment = new MainFragment();
-                fragmentManager.popBackStack();
-                fragmentManager.beginTransaction().replace(R.id.contentMainDrawer, fragment).commit();
-                homeFlag = true;
-            }else exit();
+            // if got BackStack, come back to it
+            if (fragmentManager.getBackStackEntryCount()>0) {
+                super.onBackPressed();
+
+                // if not come to home screen
+            }else {
+                if (!homeFlag) {
+                    fragment = new MainFragment();
+                    fragmentManager.popBackStack();
+                    fragmentManager.beginTransaction().replace(R.id.contentMainDrawer, fragment).commit();
+                    homeFlag = true;
+                } else exit();
+            }
         }
     }
 
@@ -170,7 +177,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 homeFlag = true;
                 break;
             case R.id.manageBeacon:
-//                fragment = new ManageBeaconFragment();
                 fragment = new ManageBeaconFragment();
                 homeFlag = false;
                 break;

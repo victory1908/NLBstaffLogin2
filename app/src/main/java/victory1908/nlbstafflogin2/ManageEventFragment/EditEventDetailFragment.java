@@ -1,4 +1,4 @@
-package victory1908.nlbstafflogin2;
+package victory1908.nlbstafflogin2.ManageEventFragment;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -23,6 +23,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.BaseFragment;
+import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
@@ -45,7 +48,7 @@ public class EditEventDetailFragment extends BaseFragment implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View viewFragment = inflater.inflate(R.layout.activity_edit_event_detail, container, false);
+        View viewFragment = inflater.inflate(R.layout.fragment_edit_event_detail, container, false);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 //        assert getSupportActionBar() != null;

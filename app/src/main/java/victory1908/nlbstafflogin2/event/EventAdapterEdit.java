@@ -1,6 +1,10 @@
 package victory1908.nlbstafflogin2.event;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import victory1908.nlbstafflogin2.MainActivity;
+import victory1908.nlbstafflogin2.ManageEventFragment.EditEventDetailFragment;
 import victory1908.nlbstafflogin2.R;
 
 /**
@@ -118,19 +124,19 @@ public class EventAdapterEdit extends RecyclerView.Adapter<EventAdapterEdit.View
 //            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 //            fragmentTransaction.replace(R.id.contentMainDrawer, fragment, "tag").commit();
 
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelable("event", events.get(getLayoutPosition()));
-//            Fragment fragment = new EditEventDetailFragment();
-//            fragment.setArguments(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("event", events.get(getLayoutPosition()));
+            Fragment fragment = new EditEventDetailFragment();
+            fragment.setArguments(bundle);
 //
-//            FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.contentMainDrawer, fragment, "tag").addToBackStack(null).commit();
+            FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contentMainDrawer, fragment, "tag").addToBackStack(null).commit();
 
-            Event myClickedItem = events.get(getLayoutPosition());
-            if(myItemClickListener != null) {
-                myItemClickListener.onMyItemClick(getLayoutPosition(), myClickedItem);
-            }
+//            Event myClickedItem = events.get(getLayoutPosition());
+//            if(myItemClickListener != null) {
+//                myItemClickListener.onMyItemClick(getLayoutPosition(), myClickedItem);
+//            }
 
         }
     }

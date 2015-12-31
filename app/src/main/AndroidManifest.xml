@@ -82,7 +82,7 @@
             android:label="@string/title_activity_edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EditEventDetailFragment"
+            android:name=".ManageEventFragment.EditEventDetailFragment"
             android:label="Edit Event Detail"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -96,19 +96,11 @@
             android:label="@string/title_activity_create_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RegisterBeacon"
-            android:label="@string/title_activity_register_beacon"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".AssignBeacon"
-            android:label="@string/title_activity_assign_beacon"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".NLBAttendance"
             android:label="@string/title_activity_nlbattendance"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EditRegisterBeacon"
+            android:name=".ManageBeaconFragment.FragmentEditBeaconDetail"
             android:label="@string/title_activity_edit_register_beacon"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -117,7 +109,7 @@
                 android:value="victory1908.nlbstafflogin2.MainActivity" />
         </activity>
         <activity
-            android:name=".ManageEventAssignedBeacon"
+            android:name=".ManageEventBeaconFragment.ManageEventAssignedBeaconFragment"
             android:label="@string/title_activity_manage_event_assigned"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

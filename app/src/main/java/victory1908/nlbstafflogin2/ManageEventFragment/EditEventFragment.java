@@ -2,7 +2,6 @@ package victory1908.nlbstafflogin2.ManageEventFragment;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import victory1908.nlbstafflogin2.BaseFragment;
 import victory1908.nlbstafflogin2.Config;
-import victory1908.nlbstafflogin2.EditEventDetailFragment;
 import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.event.Event;
 import victory1908.nlbstafflogin2.event.EventAdapterEdit;
@@ -60,9 +58,9 @@ public class EditEventFragment extends BaseFragment implements SwipeRefreshLayou
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View viewFragment = inflater.inflate(R.layout.activity_edit_event, container, false);
+        View viewFragment = inflater.inflate(R.layout.fragment_edit_event, container, false);
 
-//        setContentView(R.layout.activity_edit_event);
+//        setContentView(R.layout.fragment_edit_event);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
@@ -93,16 +91,16 @@ public class EditEventFragment extends BaseFragment implements SwipeRefreshLayou
         adapter = new EventAdapterEdit(getContext(), listEvents);
         recyclerView.setAdapter(adapter);
 
-        adapter.setMyItemClickListener(new EventAdapterEdit.MyItemClickListener() {
-            @Override
-            public void onMyItemClick(int position, Event event) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("event", event);
-                Fragment fragment = new EditEventDetailFragment();
-                fragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contentMainDrawer,fragment).addToBackStack(null).commit();
-            }
-        });
+//        adapter.setMyItemClickListener(new EventAdapterEdit.MyItemClickListener() {
+//            @Override
+//            public void onMyItemClick(int position, Event event) {
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelable("event", event);
+//                Fragment fragment = new EditEventDetailFragment();
+//                fragment.setArguments(bundle);
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.contentMainDrawer,fragment).addToBackStack(null).commit();
+//            }
+//        });
 
 
 

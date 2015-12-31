@@ -39,7 +39,7 @@ public class RegisterBeaconFragment extends BaseFragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View viewFragment = inflater.inflate(R.layout.activity_register_beacon, container, false);
+        View viewFragment = inflater.inflate(R.layout.fragment_register_beacon, container, false);
 
 //        setContentView(R.layout.activity_register_beacon);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

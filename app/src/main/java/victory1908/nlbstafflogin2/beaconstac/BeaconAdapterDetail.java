@@ -1,18 +1,21 @@
 package victory1908.nlbstafflogin2.beaconstac;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
 
-import victory1908.nlbstafflogin2.EditRegisterBeacon;
+import victory1908.nlbstafflogin2.MainActivity;
+import victory1908.nlbstafflogin2.ManageBeaconFragment.FragmentEditBeaconDetail;
 import victory1908.nlbstafflogin2.R;
 
 
@@ -91,9 +94,14 @@ public class BeaconAdapterDetail extends RecyclerView.Adapter<BeaconAdapterDetai
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(context,EditRegisterBeacon.class);
-            intent.putExtra("beacon",beacons.get(getLayoutPosition()));
-            context.startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("beacon", beacons.get(getLayoutPosition()));
+            Fragment fragment = new FragmentEditBeaconDetail();
+            fragment.setArguments(bundle);
+//
+            FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contentMainDrawer, fragment, "tag").addToBackStack(null).commit();
         }
     }
 }

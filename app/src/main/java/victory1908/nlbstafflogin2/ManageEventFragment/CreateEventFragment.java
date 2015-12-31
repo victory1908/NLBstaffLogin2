@@ -48,7 +48,7 @@ public class CreateEventFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View viewFragment = inflater.inflate(R.layout.activity_create_event, container, false);
+        View viewFragment = inflater.inflate(R.layout.fragment_create_event, container, false);
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);

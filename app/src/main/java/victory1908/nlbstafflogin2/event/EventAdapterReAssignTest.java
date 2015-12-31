@@ -10,9 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import victory1908.nlbstafflogin2.R;
@@ -119,6 +117,7 @@ public class EventAdapterReAssignTest extends RecyclerView.Adapter<EventAdapterR
 
         return events.get(selectedPosition);
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         //View

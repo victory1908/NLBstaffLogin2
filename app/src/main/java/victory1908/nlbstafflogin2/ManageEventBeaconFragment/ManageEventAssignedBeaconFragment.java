@@ -1,11 +1,12 @@
-package victory1908.nlbstafflogin2;
+package victory1908.nlbstafflogin2.ManageEventBeaconFragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import victory1908.nlbstafflogin2.BaseFragment;
+import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterEventReAssign;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterEventUnAssign;
@@ -30,7 +34,9 @@ import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
 import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 
-public class ManageEventAssignedBeacon extends BaseActivity {
+public class ManageEventAssignedBeaconFragment extends BaseFragment {
+    public ManageEventAssignedBeaconFragment() {
+    }
 
     Event event;
 //    Beacon beacon;
@@ -53,9 +59,10 @@ public class ManageEventAssignedBeacon extends BaseActivity {
     SwipeRefreshLayout swipeRefreshLayout,swipeRefreshLayoutBeacon;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_event_assigned);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View viewFragment = inflater.inflate(R.layout.activity_manage_event_assigned, container, false);
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -69,31 +76,32 @@ public class ManageEventAssignedBeacon extends BaseActivity {
 //            }
 //        });
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        assert getSupportActionBar() != null;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        assert getSupportActionBar() != null;
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        event = getIntent().getParcelableExtra("event");
-        eventTitle = (TextView) (findViewById(R.id.EventTitle));
+        Bundle bundle = this.getArguments();
+        event = bundle.getParcelable("event");
+        eventTitle = (TextView)viewFragment.findViewById(R.id.EventTitle);
         eventTitle.setText(event.getEventTitle());
 
-        eventDesc = (TextView) (findViewById(R.id.EventDesc));
+        eventDesc = (TextView)viewFragment.findViewById(R.id.EventDesc);
         eventDesc.setText(event.getEventDesc());
 
-        eventStartTime = (TextView) (findViewById(R.id.EventStartTime));
+        eventStartTime = (TextView)viewFragment.findViewById(R.id.EventStartTime);
         eventStartTime.setText(event.getEventStartTime());
 
 
-        eventEndTime = (TextView) (findViewById(R.id.EventEndTime));
+        eventEndTime = (TextView)viewFragment.findViewById(R.id.EventEndTime);
         eventEndTime.setText(event.getEventEndTime());
 
-        eventID = (TextView) (findViewById(R.id.EventID));
+        eventID = (TextView)viewFragment.findViewById(R.id.EventID);
         eventID.setText(event.getEventID());
 
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
 
-        requestQueue = CustomVolleyRequest.getInstance(this.getApplicationContext()).getRequestQueue();
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
         listBeacons = new ArrayList<>();
         beaconAssigned = new ArrayList<>();
@@ -101,23 +109,23 @@ public class ManageEventAssignedBeacon extends BaseActivity {
         beaconAvailable = new ArrayList<>();
         beaconAvailableSelected = new ArrayList<>();
 
-        assignedBeaconRecycleView = (RecyclerView)findViewById(R.id.beaconAssignedRecycleView);
+        assignedBeaconRecycleView = (RecyclerView)viewFragment.findViewById(R.id.beaconAssignedRecycleView);
         assignedBeaconRecycleView.setHasFixedSize(true);
-        layoutAssignedBeacon = new LinearLayoutManager(this);
+        layoutAssignedBeacon = new LinearLayoutManager(getContext());
         assignedBeaconRecycleView.setLayoutManager(layoutAssignedBeacon);
-        assignedBeaconAdapter = new BeaconAdapterEventUnAssign(this,beaconAssigned, beaconAssignedSelected);
+        assignedBeaconAdapter = new BeaconAdapterEventUnAssign(getContext(),beaconAssigned, beaconAssignedSelected);
         assignedBeaconRecycleView.setAdapter(assignedBeaconAdapter);
 
-        availableBeaconRecycleView = (RecyclerView)findViewById(R.id.beaconAvailable);
+        availableBeaconRecycleView = (RecyclerView)viewFragment.findViewById(R.id.beaconAvailable);
         availableBeaconRecycleView.setHasFixedSize(true);
-        layoutAvailableBeacon = new LinearLayoutManager(this);
+        layoutAvailableBeacon = new LinearLayoutManager(getContext());
         availableBeaconRecycleView.setLayoutManager(layoutAvailableBeacon);
-        availableBeaconAdapter = new BeaconAdapterEventReAssign(this,listBeacons, beaconAvailableSelected);
+        availableBeaconAdapter = new BeaconAdapterEventReAssign(getContext(),listBeacons, beaconAvailableSelected);
         availableBeaconRecycleView.setAdapter(availableBeaconAdapter);
 
 
-        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayoutBeacon = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayoutBeacon);
+        swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayoutBeacon = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayoutBeacon);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -129,17 +137,19 @@ public class ManageEventAssignedBeacon extends BaseActivity {
             @Override
             public void onRefresh() {
                 requestQueue.add(getAllBeaconRespond());
-                if (swipeRefreshLayoutBeacon.isRefreshing()) swipeRefreshLayoutBeacon.setRefreshing(false);
+                if (swipeRefreshLayoutBeacon.isRefreshing())
+                    swipeRefreshLayoutBeacon.setRefreshing(false);
             }
         });
 
         requestQueue.add(getBeaconFromEvent(event));
         requestQueue.add(getAllBeaconRespond());
 
+        return viewFragment;
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         assignedBeaconAdapter.notifyDataSetChanged();
 
@@ -150,7 +160,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
     private CustomJsonObjectRequest getBeaconFromEvent(Event event) {
         //Displaying Progressbar
         progressBar.setVisibility(View.VISIBLE);
-        setProgressBarIndeterminateVisibility(true);
+        getActivity().setProgressBarIndeterminateVisibility(true);
         JSONObject params = new JSONObject();
         try {
             params.put(Config.EVENT_ID, event.getEventID());
@@ -178,7 +188,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Unable to fetch data event ID: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data event ID: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
                 }
             });
@@ -202,12 +212,12 @@ public class ManageEventAssignedBeacon extends BaseActivity {
 
                             for (int i = 0; i<beaconAssigned.size(); i++) {
 
-                                Toast.makeText(getApplicationContext(),beaconAssigned.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext().getApplicationContext(),beaconAssigned.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
 
                             }
 
                             for (int j = 0; j <listBeacons.size() ; j++) {
-                                Toast.makeText(getApplicationContext(),listBeacons.get(j).getBeaconID(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext().getApplicationContext(),listBeacons.get(j).getBeaconID(),Toast.LENGTH_SHORT).show();
                             }
 
 
@@ -222,7 +232,7 @@ public class ManageEventAssignedBeacon extends BaseActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "Unable to fetch data event Detail: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data event Detail: " + error.getMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 });

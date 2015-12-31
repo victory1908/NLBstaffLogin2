@@ -1,15 +1,12 @@
-package victory1908.nlbstafflogin2;
+package victory1908.nlbstafflogin2.ManageBeaconFragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -18,25 +15,35 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import victory1908.nlbstafflogin2.BaseFragment;
+import victory1908.nlbstafflogin2.Config;
+import victory1908.nlbstafflogin2.R;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
+import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
-public class EditRegisterBeacon extends BaseActivity implements View.OnClickListener{
+public class FragmentEditBeaconDetail extends BaseFragment implements View.OnClickListener{
+
+    public FragmentEditBeaconDetail() {
+    }
 
     Beacon beacon,beaconUpdate;
     EditText beaconName,beaconID,beaconSN,beaconUUID,beaconMajor,beaconMinor;
     Button editRegisterBeacon,deleteRegisterBeacon;
 
+    RequestQueue requestQueue;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_register_beacon);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View viewFragment = inflater.inflate(R.layout.fragment_edit_register_beacon_detail, container, false);
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -47,19 +54,22 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
 //            }
 //        });
 
-        assert getSupportActionBar() != null;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        assert getContext().getSupportActionBar() != null;
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        beacon = getIntent().getParcelableExtra("beacon");
-        beaconName = (EditText) findViewById(R.id.beaconName);
-        beaconID = (EditText) findViewById(R.id.beaconID);
-        beaconSN = (EditText) findViewById(R.id.beaconSN);
-        beaconUUID = (EditText) findViewById(R.id.beaconUUID);
-        beaconMajor = (EditText) findViewById(R.id.beaconMajor);
-        beaconMinor = (EditText) findViewById(R.id.beaconMinor);
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
-        editRegisterBeacon = (Button) findViewById(R.id.editRegisterBeacon);
-        deleteRegisterBeacon = (Button) findViewById(R.id.deleteRegisterBeacon);
+        Bundle bundle = this.getArguments();
+        beacon = bundle.getParcelable("beacon");
+        beaconName = (EditText)viewFragment.findViewById(R.id.beaconName);
+        beaconID = (EditText)viewFragment.findViewById(R.id.beaconID);
+        beaconSN = (EditText)viewFragment.findViewById(R.id.beaconSN);
+        beaconUUID = (EditText)viewFragment.findViewById(R.id.beaconUUID);
+        beaconMajor = (EditText)viewFragment.findViewById(R.id.beaconMajor);
+        beaconMinor = (EditText)viewFragment.findViewById(R.id.beaconMinor);
+
+        editRegisterBeacon = (Button)viewFragment.findViewById(R.id.editRegisterBeacon);
+        deleteRegisterBeacon = (Button)viewFragment.findViewById(R.id.deleteRegisterBeacon);
 
         editRegisterBeacon.setOnClickListener(this);
         deleteRegisterBeacon.setOnClickListener(this);
@@ -71,6 +81,8 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
         beaconMajor.setText(String.valueOf(beacon.getMajor()));
         beaconMinor.setText(String.valueOf(beacon.getMinor()));
 
+
+        return viewFragment;
     }
 
     @Override
@@ -90,7 +102,7 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
 
     private void updateConfirm() {
         //Creating an alert dialog to confirm update
-        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
         alertDialogBuilder.setMessage("Are you sure you want to update Beacon?");
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
@@ -117,7 +129,7 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
 
     private void deleteConfirm() {
         //Creating an alert dialog to confirm delete
-        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(this);
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(getContext());
         alertDialogBuilder.setMessage("Are you sure you want to delete Beacon?");
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
@@ -149,13 +161,13 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(getContext(),error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
@@ -171,31 +183,27 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
                 return map;
             }
         };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
 
     // DeleteBeacon
     private void deleteBeaconData() {
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.DELETE_BEACON_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),response,Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_LONG ).show();
+                        Toast.makeText(getContext(),error.toString(),Toast.LENGTH_LONG ).show();
                     }
                 }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
-
                 map.put(Config.BEACON_NAME, beacon.getBeaconName());
                 map.put(Config.BEACON_ID, beacon.getBeaconID());
                 map.put(Config.BEACON_SN, beacon.getBeaconSN());
@@ -205,7 +213,6 @@ public class EditRegisterBeacon extends BaseActivity implements View.OnClickList
                 return map;
             }
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
 
