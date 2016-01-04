@@ -57,7 +57,7 @@ import java.util.Map;
 import victory1908.nlbstafflogin2.beaconstac.Beacon;
 import victory1908.nlbstafflogin2.beaconstac.BeaconAdapter;
 import victory1908.nlbstafflogin2.event.Event;
-import victory1908.nlbstafflogin2.event.EventAdapter1;
+import victory1908.nlbstafflogin2.event.EventAdapter;
 import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
 import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
@@ -157,7 +157,7 @@ public class ScanBeaconFragment extends BaseFragment implements View.OnClickList
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new EventAdapter1(getContext(), listEvents);
+        adapter = new EventAdapter(getContext(), listEvents);
 
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
 
