@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +35,14 @@ import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
 import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 
-public class ManageEventAssignedBeaconFragment extends BaseFragment {
+public class ManageEventAssignedBeaconFragment extends BaseFragment implements View.OnClickListener {
     public ManageEventAssignedBeaconFragment() {
     }
 
     Event event;
-//    Beacon beacon;
+
+    Button unAssignBeacon,reAssignBeacon;
+
     TextView eventTitle;
     TextView eventDesc;
     TextView eventStartTime;
@@ -50,7 +53,7 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
     List<Beacon> listBeacons, beaconAssigned,beaconAssignedSelected;
     List<Beacon> beaconAvailable, beaconAvailableSelected;
 
-    RequestQueue requestQueue;
+    RequestQueue requestQueue,requestQueueExtra;
 
     RecyclerView assignedBeaconRecycleView,availableBeaconRecycleView;
     RecyclerView.Adapter assignedBeaconAdapter,availableBeaconAdapter;
@@ -81,6 +84,14 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
 //        assert getSupportActionBar() != null;
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        unAssignBeacon = (Button) viewFragment.findViewById(R.id.unAssignBeaconButton);
+        reAssignBeacon = (Button) viewFragment.findViewById(R.id.reAssignBeaconButton);
+
+        unAssignBeacon.setOnClickListener(this);
+        reAssignBeacon.setOnClickListener(this);
+
+
+
         Bundle bundle = this.getArguments();
         event = bundle.getParcelable("event");
         eventTitle = (TextView)viewFragment.findViewById(R.id.EventTitle);
@@ -103,6 +114,8 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
 
         requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
+        requestQueueExtra = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
+
         listBeacons = new ArrayList<>();
         beaconAssigned = new ArrayList<>();
         beaconAssignedSelected = new ArrayList<>();
@@ -120,7 +133,7 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
         availableBeaconRecycleView.setHasFixedSize(true);
         layoutAvailableBeacon = new LinearLayoutManager(getContext());
         availableBeaconRecycleView.setLayoutManager(layoutAvailableBeacon);
-        availableBeaconAdapter = new BeaconAdapterEventReAssign(getContext(),listBeacons, beaconAvailableSelected);
+        availableBeaconAdapter = new BeaconAdapterEventReAssign(getContext(),beaconAvailable, beaconAvailableSelected);
         availableBeaconRecycleView.setAdapter(availableBeaconAdapter);
 
 
@@ -136,14 +149,14 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
         swipeRefreshLayoutBeacon.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestQueue.add(getAllBeaconRespond());
+                requestQueueExtra.add(getAvailableBeacon(event));
                 if (swipeRefreshLayoutBeacon.isRefreshing())
                     swipeRefreshLayoutBeacon.setRefreshing(false);
             }
         });
 
         requestQueue.add(getBeaconFromEvent(event));
-        requestQueue.add(getAllBeaconRespond());
+        requestQueueExtra.add(getAvailableBeacon(event));
 
         return viewFragment;
     }
@@ -151,8 +164,8 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        assignedBeaconAdapter.notifyDataSetChanged();
-
+        requestQueue.add(getBeaconFromEvent(event));
+        requestQueueExtra.add(getAvailableBeacon(event));
     }
 
 
@@ -175,10 +188,10 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
                    try {
                        JSONArray beaconArray = new JSONArray();
                        beaconArray = respond.getJSONArray("result");
+                       beaconAssigned.clear();
                        beaconAssigned.addAll(getBeaconDetail(beaconArray));
                        //Notifying the adapter that data has been added or changed
                        assignedBeaconAdapter.notifyDataSetChanged();
-                       requestQueue.add(getAllBeaconRespond());
 
                    } catch (JSONException e) {
                        e.printStackTrace();
@@ -188,41 +201,37 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data event ID: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data beacon Detail: " + error.getMessage(), Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
                 }
             });
         return jsonObjectRequest;
     }
 
-    //get All Beacon
-    private CustomJsonObjectRequest getAllBeaconRespond() {
+    //get available Beacon
+    private CustomJsonObjectRequest getAvailableBeacon(Event event) {
 
         progressBar.setVisibility(View.VISIBLE);
-        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST, Config.GET_ALL_BEACON_URL,null,
+
+        getActivity().setProgressBarIndeterminateVisibility(true);
+        JSONObject params = new JSONObject();
+        try {
+            params.put(Config.EVENT_ID, event.getEventID());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        CustomJsonObjectRequest jsonObjectRequest = new CustomJsonObjectRequest(Request.Method.POST, Config.GET_AVAILABLE_BEACON,params,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject respond) {
                         try {
                             JSONArray beaconArray = new JSONArray();
                             beaconArray = respond.getJSONArray("result");
-                            listBeacons.clear();
-                            listBeacons.addAll(getBeaconDetail(beaconArray));
-                            listBeacons.removeAll(beaconAssigned);
-
-                            for (int i = 0; i<beaconAssigned.size(); i++) {
-
-                                Toast.makeText(getContext().getApplicationContext(),beaconAssigned.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
-
-                            }
-
-                            for (int j = 0; j <listBeacons.size() ; j++) {
-                                Toast.makeText(getContext().getApplicationContext(),listBeacons.get(j).getBeaconID(),Toast.LENGTH_SHORT).show();
-                            }
-
-
+//                            Toast.makeText(getContext().getApplicationContext(),respond.toString(),Toast.LENGTH_LONG).show();
+                            beaconAvailable.clear();
+                            beaconAvailable.addAll(getBeaconDetail(beaconArray));
                             availableBeaconAdapter.notifyDataSetChanged();
-
                             progressBar.setVisibility(View.GONE);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -232,11 +241,26 @@ public class ManageEventAssignedBeaconFragment extends BaseFragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data event Detail: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext().getApplicationContext(), "Unable to fetch data beacon Detail: " + error.getMessage(), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 });
         return jsonObjectRequest;
     }
 
+    @Override
+    public void onClick(View view) {
+        if (view == unAssignBeacon) {
+            for (int i = 0; i <beaconAssignedSelected.size() ; i++) {
+                Toast.makeText(getContext(),beaconAssignedSelected.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (view == unAssignBeacon) {
+            for (int i = 0; i <beaconAvailableSelected.size() ; i++) {
+                Toast.makeText(getContext(),beaconAvailableSelected.get(i).getBeaconID(),Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
 }

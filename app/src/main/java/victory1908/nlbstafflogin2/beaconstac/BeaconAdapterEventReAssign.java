@@ -104,10 +104,33 @@ public class BeaconAdapterEventReAssign extends RecyclerView.Adapter<BeaconAdapt
             BeaconMajor = (TextView)itemView.findViewById(R.id.beaconMajor);
             BeaconMinor = (TextView)itemView.findViewById(R.id.beaconMinor);
 
-            selectCheckBox = (CheckBox)itemView.findViewById(R.id.beaconUnAssign);
+            selectCheckBox = (CheckBox)itemView.findViewById(R.id.beaconReAssign);
+
+
+//            //Getting the particular item from the list
+//            final Beacon beacon = beacons.get(getLayoutPosition());
+//
+//            //in some case, it will prevent unwanted situations;
+//            selectCheckBox.setOnCheckedChangeListener(null);
+//
+//            //if true, your check box will be selected, else unselected
+//            selectCheckBox.setChecked(beacon.isSelected());
+//
+//            selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//                    beacon.setIsSelected(isChecked);
+//                    if (isChecked) {
+//                        beaconSelected.add(beacon);
+//                    } else {
+//                        beaconSelected.remove(beacon);
+//                    }
+//                }
+//            });
+
 
         }
-
     }
 }
 

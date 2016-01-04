@@ -6,10 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ManageEventBeaconFragment.ManageEventAssignedBeaconFragment"
     tools:showIn="@layout/activity_manage_event_assigned">
@@ -150,17 +147,26 @@
         </RelativeLayout>
 
         <android.support.v7.widget.AppCompatTextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/assignedBeaconTextView"
             android:text="Assigned Beacon"
             android:layout_below="@id/event_View"
             android:textAlignment="center"/>
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unAssignBeaconButton"
+            android:text="Un Assign Selected Beacon"
+            android:layout_below="@+id/event_View"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:id="@id/swipeRefreshLayout"
-            android:layout_below="@id/event_View">
+            android:layout_below="@id/unAssignBeaconButton">
             <android.support.v7.widget.RecyclerView
                 android:orientation="vertical"
                 android:layout_width="match_parent"
@@ -171,17 +177,28 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.v7.widget.AppCompatTextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/reAssignBeaconTextView"
             android:layout_below="@id/swipeRefreshLayout"
             android:text="Available Beacon"
             android:textAlignment="center"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reAssignBeaconButton"
+            android:text="Un Assign Selected Beacon"
+            android:layout_below="@+id/swipeRefreshLayout"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:id="@+id/swipeRefreshLayoutBeacon"
-            android:layout_below="@id/swipeRefreshLayout">
+            android:layout_below="@id/reAssignBeaconButton">
             <android.support.v7.widget.RecyclerView
                 android:orientation="vertical"
                 android:layout_width="match_parent"

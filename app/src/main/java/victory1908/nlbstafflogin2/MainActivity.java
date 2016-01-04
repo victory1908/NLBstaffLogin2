@@ -130,18 +130,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             // if got BackStack, come back to it
             if (fragmentManager.getBackStackEntryCount()>0) {
                 super.onBackPressed();
-
+//                super.onBackPressed();
                 // if not come to home screen
             }else {
                 if (!homeFlag) {
                     fragment = new MainFragment();
-                    fragmentManager.popBackStack();
+//                    fragmentManager.popBackStack();
                     fragmentManager.beginTransaction().replace(R.id.contentMainDrawer, fragment).commit();
                     homeFlag = true;
                 } else exit();
             }
         }
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//            // if got BackStack, come back to it
+//            if (fragmentManager.getBackStackEntryCount()>0) {
+//                fragmentManager.popBackStack();
+//                fragmentManager.executePendingTransactions();
+//
+//                // if not come to home screen
+//            }else {
+//                if (!homeFlag) {
+//                    fragment = new MainFragment();
+//                    fragmentManager.beginTransaction().replace(R.id.contentMainDrawer, fragment).commit();
+//                    fragmentManager.executePendingTransactions();// Change
+//                    homeFlag = true;
+//                } else exit();
+//            }
+//        }
+//    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

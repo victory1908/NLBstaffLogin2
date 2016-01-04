@@ -43,6 +43,7 @@ public class BeaconAdapterEventUnAssign extends RecyclerView.Adapter<BeaconAdapt
     public void onBindViewHolder(BeaconAdapterEventUnAssign.ViewHolder holder, int position) {
         //Getting the particular item from the list
         final Beacon beacon = beacons.get(position);
+        beaconSelected.clear();
 
         //Showing data on the views
         holder.BeaconName.setText(beacon.getBeaconName());
@@ -104,7 +105,7 @@ public class BeaconAdapterEventUnAssign extends RecyclerView.Adapter<BeaconAdapt
             BeaconMajor = (TextView)itemView.findViewById(R.id.beaconMajor);
             BeaconMinor = (TextView)itemView.findViewById(R.id.beaconMinor);
 
-            selectCheckBox = (CheckBox)itemView.findViewById(R.id.beaconUnAssign);
+            selectCheckBox = (CheckBox)itemView.findViewById(R.id.beaconReAssign);
 
         }
 
