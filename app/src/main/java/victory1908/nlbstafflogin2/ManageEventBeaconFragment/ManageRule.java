@@ -32,7 +32,7 @@ public class ManageRule extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View viewFragment = inflater.inflate(R.layout.fragment_managerule, container, false);
+        View viewFragment = inflater.inflate(R.layout.fragment_manage_rule, container, false);
 
         viewPager = (ViewPager) viewFragment.findViewById(R.id.viewPager);
 
