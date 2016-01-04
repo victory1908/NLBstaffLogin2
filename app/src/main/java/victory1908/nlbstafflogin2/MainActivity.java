@@ -33,7 +33,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public static final int REQUEST_CODE = 0;
 //    public static final int RESULT_CODE = 0;
     public static final String EXTRA_EXIT = "exit";
-
+//
 
     TextView staffID;
     Menu body;
