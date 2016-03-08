@@ -45,13 +45,13 @@ public class BaseFragment extends Fragment {
 
     private static final String TAG = BaseFragment.class.getSimpleName();
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
-
-        return viewFragment;
-    }
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//
+//        View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
+//
+//        return viewFragment;
+//    }
 
 
         @Override

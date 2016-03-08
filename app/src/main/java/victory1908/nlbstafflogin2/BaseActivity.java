@@ -37,11 +37,12 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle("NLBstaffAttedance");
-        toolbar.setLogo(R.drawable.nlblogo);
+
+//        setContentView(R.layout.activity_main);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle("NLBstaffAttedance");
+//        toolbar.setLogo(R.drawable.nlblogo);
 
 //        // Use this check to determine whether BLE is supported on the device.
 //        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context=".ManageEventFragment.CreateEventFragment">
 
     <!--<android.support.design.widget.AppBarLayout-->
@@ -20,7 +19,155 @@
 
     <!--</android.support.design.widget.AppBarLayout>-->
 
-    <include layout="@layout/content_create_event" />
+    <!--<include layout="@layout/content_create_event" />-->
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/event_View"
+                android:paddingBottom="15sp">
+                <!--android:visibility="invisible">-->
+
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="EventTitle"
+                    android:id="@+id/textView_EventTitle"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:padding="15dp"
+                    android:layout_toLeftOf="@+id/EventTitle"
+                    android:layout_toStartOf="@+id/EventTitle" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/EventTitle"
+                    android:padding="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/textView_EventDesc"
+                    />
+
+
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="EventDescription"
+                    android:id="@+id/textView_EventDesc"
+                    android:padding="15dp"
+                    android:layout_alignBottom="@+id/EventDesc"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+                <android.support.v7.widget.AppCompatEditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/EventDesc"
+                    android:padding="15dp"
+                    android:layout_below="@+id/EventTitle"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/textView_EventDesc" />
+
+                <android.support.v7.widget.AppCompatTextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="EventStartTime"
+                    android:id="@+id/textView_EventTime"
+                    android:padding="15dp"
+                    android:layout_above="@+id/EventEndTime"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_toLeftOf="@+id/EventStartTime"
+                    android:layout_toStartOf="@+id/EventStartTime" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/EventStartTime"
+                    android:padding="15dp"
+                    android:layout_below="@+id/EventDesc"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toRightOf="@+id/textView_EventDesc"/>
+
+                <android.support.v7.widget.AppCompatTextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="EventEndTime"
+                    android:id="@+id/textView_EventEndTime"
+                    android:padding="15dp"
+                    android:layout_above="@+id/createEvent"
+                    android:layout_toLeftOf="@+id/EventEndTime"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/EventEndTime"
+                    android:padding="15dp"
+                    android:layout_below="@+id/EventStartTime"
+                    android:layout_toRightOf="@+id/textView_EventDesc"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"/>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create"
+                    android:id="@+id/createEvent"
+                    android:layout_below="@+id/EventEndTime"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="83dp" />
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/EventID"
+                    android:layout_below="@+id/textView_EventEndTime"
+                    android:layout_alignLeft="@+id/EventEndTime"
+                    android:layout_alignStart="@+id/EventEndTime" />
+
+                <android.support.v7.widget.AppCompatTextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="EventID"
+                    android:id="@+id/textView_EventID"
+                    android:layout_below="@id/EventEndTime"
+                    android:padding="15dp"
+                    android:layout_toLeftOf="@+id/EventEndTime"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
 
     <!--<android.support.design.widget.FloatingActionButton-->
         <!--android:id="@+id/fab"-->

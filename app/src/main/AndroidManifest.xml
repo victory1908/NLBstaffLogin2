@@ -18,7 +18,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -40,11 +40,6 @@
         <activity
             android:name=".ActivityCheckIn"
             android:label="@string/title_activity_activity_check_in"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ScanBeaconFragment"
-            android:label="@string/title_Beacon_MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
@@ -77,41 +72,16 @@
             android:syncable="true" />
 
         <activity android:name=".BaseActivity" />
-        <activity
-            android:name=".ManageEventFragment.EditEventFragment"
-            android:label="@string/title_activity_edit_event"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ManageEventFragment.EditEventDetailFragment"
-            android:label="Edit Event Detail"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value="victory1908.nlbstafflogin2.MainActivity" />
-        />
-        <activity
-            android:name=".ManageEventFragment.CreateEventFragment"
-            android:label="@string/title_activity_create_event"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".NLBAttendance"
             android:label="@string/title_activity_nlbattendance"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ManageBeaconFragment.FragmentEditBeaconDetail"
-            android:label="@string/title_activity_edit_register_beacon"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="victory1908.nlbstafflogin2.MainActivity" />
-        </activity>
-        <activity
-            android:name=".ManageEventBeaconFragment.ManageEventAssignedBeaconFragment"
-            android:label="@string/title_activity_manage_event_assigned"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>

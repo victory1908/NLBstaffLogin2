@@ -37,7 +37,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
@@ -53,6 +53,35 @@
         android:layout_below="@+id/buttonLogin"
         android:layout_centerHorizontal="true"
         android:visibility="gone"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:id="@+id/buttonRegister"
+        android:layout_below="@+id/buttonLogin"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password"
+        android:id="@+id/buttonForgotPassword"
+        android:layout_below="@+id/buttonRegister"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/view"
+        android:layout_below="@+id/buttonForgotPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="119dp" />
 
 
 </RelativeLayout>
