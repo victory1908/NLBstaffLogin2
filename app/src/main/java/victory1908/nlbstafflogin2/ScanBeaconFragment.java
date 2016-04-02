@@ -66,304 +66,18 @@ import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
 public class ScanBeaconFragment extends BaseFragment implements View.OnClickListener {
 
-    public ScanBeaconFragment(){
-        //Constructor;
-    }
-
-    private BluetoothAdapter mBluetoothAdapter;
     private static final int REQUEST_ENABLE_BT = 1;
     private static final String TAG = ScanBeaconFragment.class.getSimpleName();
-
     Button fetchEvent;
     RequestQueue requestQueue;
     ProgressBar progressBar;
-
-    private ArrayList<MSBeacon> beacons = new ArrayList<>();
     MSBeacon beaconAction;
     Beacon beaconInRange;
-
-    Event eventInAction;
-
-    private BeaconAdapter beaconAdapter;
-
-    private TextView bCount;
-    private TextView testCamped;
     Beaconstac bstacInstance;
-
-
-    private boolean registered = false;
-    private boolean isPopupVisible = false;
-
-    //Creating a List of event
-    private List<Event> listEvents;
-
-    //Creating Views
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private RecyclerView.Adapter adapter;
-
     Spinner beaconList;
-
     Button dailyCheckIn;
     String staffID;
-
     SwipeRefreshLayout swipeRefreshLayout;
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
-
-        // Use this check to determine whether BLE is supported on the device.
-        if (!getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(getContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-        }
-
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            BluetoothManager mBluetoothManager = (BluetoothManager)getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-            mBluetoothAdapter = mBluetoothManager.getAdapter();
-        }
-
-        // Checks if Bluetooth is supported on the device.
-        if (mBluetoothAdapter == null) {
-            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
-            Toast.makeText(getContext(), "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
-
-        //checkLogged In
-        //Fetching StaffID from shared preferences
-        //If we will get true
-        if (!loggedIn) {
-            //We will start the Beacon_Main Activity
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            startActivity(intent);
-        }
-
-        //Initializing our listBeacons list
-        listEvents = new ArrayList();
-
-        beaconInRange = new Beacon();
-        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
-
-        //Initializing Views
-        recyclerView = (RecyclerView)viewFragment.findViewById(R.id.recycleView);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new EventAdapter1(getContext(), listEvents);
-
-        progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
-
-        fetchEvent = (Button)viewFragment.findViewById(R.id.fetchEvent);
-        fetchEvent.setOnClickListener(this);
-
-        dailyCheckIn = (Button)viewFragment.findViewById(R.id.buttonCheckIN);
-
-        beaconList = (Spinner)viewFragment.findViewById(R.id.beaconSpinner);
-
-        bCount = (TextView)viewFragment.findViewById(R.id.beaconCount);
-        testCamped = (TextView)viewFragment.findViewById(R.id.CampedView);
-
-
-        staffID = sharedPreferences.getString(Config.STAFF_ID, "Not Available");
-
-        dailyCheckIn.setOnClickListener(this);
-
-        swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
-
-        // set region parameters (UUID and unique region identifier)
-        bstacInstance = Beaconstac.getInstance(getContext());
-        bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
-                "com.mobstac.beaconstac");
-        bstacInstance.syncRules();
-
-        try {
-            bstacInstance.startRangingBeacons();
-            bstacInstance.setIsAutoManageBluetooth(true);
-        } catch (MSException e) {
-            // handle for older devices
-            TextView rangedView = (TextView)viewFragment.findViewById(R.id.RangedView);
-            rangedView.setText(R.string.ble_not_supported);
-            bCount.setVisibility(View.GONE);
-            testCamped.setVisibility(View.GONE);
-            e.printStackTrace();
-        }
-
-        if ((!beacons.isEmpty()) && (listEvents.isEmpty())){
-            fetchEvent.setVisibility(View.VISIBLE);
-        }else fetchEvent.setVisibility(View.GONE);
-
-        //Initialize list of Beacon in range
-        initList();
-
-        return viewFragment;
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-//        setContentView(R.layout.beacon_activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        toolbar.setTitle("NLBstaffAttedance");
-//        toolbar.setLogo(R.drawable.nlblogo);
-
-
-
-//        // if location is enabled
-//        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-//                locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-//            bstacInstance.syncPlaces();
-//
-//            new PlaceSyncReceiver() {
-//
-//                @Override
-//                public void onSuccess(Context context) {
-//                    bstacInstance.enableGeofences(true);
-//
-//                    try {
-//                        bstacInstance.startRangingBeacons();
-//                    } catch (MSException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Context context) {
-//                    MSLogger.error("Error syncing geofence");
-//                }
-//            };
-//
-//        } else {
-//            // if location disabled, start ranging beacons
-//            try {
-//                bstacInstance.startRangingBeacons();
-//            } catch (MSException e) {
-//                // handle for older devices
-//                TextView rangedView = (TextView) findViewById(R.id.RangedView);
-//                rangedView.setText(R.string.ble_not_supported);
-//                bCount.setVisibility(View.GONE);
-//                testCamped.setVisibility(View.GONE);
-//                e.printStackTrace();
-//            }
-//        }
-    }
-
-    // end OnCreate
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        beaconAdapter.clear();
-        beaconAdapter.notifyDataSetChanged();
-        bCount.setText("" + beacons.size());
-
-        listEvents.clear();
-        adapter.notifyDataSetChanged();
-
-        unregisterBroadcast();
-        isPopupVisible = true;
-        dailyCheckIn.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerBroadcast();
-        initList();
-        bCount.setText("" + beacons.size());
-        isPopupVisible = false;
-
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterBroadcast();
-
-        // stop scanning when the app closes
-        if (bstacInstance != null) {
-            try {
-                bstacInstance.stopRangingBeacons();
-            } catch (MSException e) {
-                // handle for older devices
-                e.printStackTrace();
-            }
-        }
-        dailyCheckIn.setVisibility(View.GONE);
-    }
-
-    // Callback intent results
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            getActivity().finish();
-        }
-        if (bstacInstance != null) {
-            try {
-                bstacInstance.startRangingBeacons();
-            } catch (MSException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    //method display ListBeacon
-    private void initList() {
-        beaconAdapter = new BeaconAdapter(beacons,getContext());
-        beaconList.setAdapter(beaconAdapter);
-        registerBroadcast();
-    }
-
-    private void registerBroadcast() {
-        if (!registered) {
-            // register beaconstac receiver
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_RANGED_BEACON);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_CAMPED_BEACON);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_BEACON);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_RULE_TRIGGERED);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_ENTERED_REGION);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_REGION);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_ENTERED_GEOFENCE);
-            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_GEOFENCE);
-            getContext().registerReceiver(beaconstacReceiver, intentFilter);
-
-            //register place sync receiver
-            IntentFilter iFilter = new IntentFilter();
-            iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_SUCCESS);
-            iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_FAILURE);
-            getContext().registerReceiver(placeSyncReceiver, iFilter);
-
-            registered = true;
-        }
-    }
-
-    private void unregisterBroadcast() {
-        if (registered) {
-            // unregister beaconstac receiver
-            getContext().unregisterReceiver(beaconstacReceiver);
-            // unregister place sync receiver
-            getContext().unregisterReceiver(placeSyncReceiver);
-            registered = false;
-        }
-    }
-
     PlaceSyncReceiver placeSyncReceiver = new PlaceSyncReceiver() {
 
         @Override
@@ -382,8 +96,19 @@ public class ScanBeaconFragment extends BaseFragment implements View.OnClickList
             MSLogger.error("Error syncing geofence");
         }
     };
-
-
+    private BluetoothAdapter mBluetoothAdapter;
+    private ArrayList<MSBeacon> beacons = new ArrayList<>();
+    private BeaconAdapter beaconAdapter;
+    private TextView bCount;
+    private TextView testCamped;
+    private boolean registered = false;
+    private boolean isPopupVisible = false;
+    //Creating a List of event
+    private List<Event> listEvents;
+    //Creating Views
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
     BeaconstacReceiver beaconstacReceiver = new BeaconstacReceiver() {
         @Override
         public void exitedBeacon(Context context, MSBeacon beacon) {
@@ -597,6 +322,263 @@ public class ScanBeaconFragment extends BaseFragment implements View.OnClickList
         }
     };
 
+    public ScanBeaconFragment() {
+        //Constructor;
+    }
+
+    // end OnCreate
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View viewFragment = inflater.inflate(R.layout.beacon_activity_main, container, false);
+
+        // Use this check to determine whether BLE is supported on the device.
+        if (!getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(getContext(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+        }
+
+        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
+        // BluetoothAdapter through BluetoothManager.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            BluetoothManager mBluetoothManager = (BluetoothManager)getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
+            mBluetoothAdapter = mBluetoothManager.getAdapter();
+        }
+
+        // Checks if Bluetooth is supported on the device.
+        if (mBluetoothAdapter == null) {
+            Log.e(TAG, "Unable to obtain a BluetoothAdapter.");
+            Toast.makeText(getContext(), "Unable to obtain a BluetoothAdapter", Toast.LENGTH_LONG).show();
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+        }
+
+        //checkLogged In
+        //Fetching StaffID from shared preferences
+        //If we will get true
+        if (!loggedIn) {
+            //We will start the Beacon_Main Activity
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            startActivity(intent);
+        }
+
+        //Initializing our listBeacons list
+        listEvents = new ArrayList();
+
+        beaconInRange = new Beacon();
+        requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
+
+        //Initializing Views
+        recyclerView = (RecyclerView)viewFragment.findViewById(R.id.recycleView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new EventAdapter1(getContext(), listEvents);
+
+        progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
+
+        fetchEvent = (Button)viewFragment.findViewById(R.id.fetchEvent);
+        fetchEvent.setOnClickListener(this);
+
+        dailyCheckIn = (Button)viewFragment.findViewById(R.id.buttonCheckIN);
+
+        beaconList = (Spinner)viewFragment.findViewById(R.id.beaconSpinner);
+
+        bCount = (TextView)viewFragment.findViewById(R.id.beaconCount);
+        testCamped = (TextView)viewFragment.findViewById(R.id.CampedView);
+
+
+        staffID = sharedPreferences.getString(Config.STAFF_ID, "Not Available");
+
+        dailyCheckIn.setOnClickListener(this);
+
+        swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
+
+        // set region parameters (UUID and unique region identifier)
+        bstacInstance = Beaconstac.getInstance(getContext());
+        bstacInstance.setRegionParams("F94DBB23-2266-7822-3782-57BEAC0952AC",
+                "com.mobstac.beaconstac");
+        bstacInstance.syncRules();
+
+        try {
+            bstacInstance.startRangingBeacons();
+            bstacInstance.setIsAutoManageBluetooth(true);
+        } catch (MSException e) {
+            // handle for older devices
+            TextView rangedView = (TextView)viewFragment.findViewById(R.id.RangedView);
+            rangedView.setText(R.string.ble_not_supported);
+            bCount.setVisibility(View.GONE);
+            testCamped.setVisibility(View.GONE);
+            e.printStackTrace();
+        }
+
+        if ((!beacons.isEmpty()) && (listEvents.isEmpty())){
+            fetchEvent.setVisibility(View.VISIBLE);
+        }else fetchEvent.setVisibility(View.GONE);
+
+        //Initialize list of Beacon in range
+        initList();
+
+        return viewFragment;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+//        setContentView(R.layout.beacon_activity_main);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle("NLBstaffAttedance");
+//        toolbar.setLogo(R.drawable.nlblogo);
+
+
+
+//        // if location is enabled
+//        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+//                locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+//            bstacInstance.syncPlaces();
+//
+//            new PlaceSyncReceiver() {
+//
+//                @Override
+//                public void onSuccess(Context context) {
+//                    bstacInstance.enableGeofences(true);
+//
+//                    try {
+//                        bstacInstance.startRangingBeacons();
+//                    } catch (MSException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Context context) {
+//                    MSLogger.error("Error syncing geofence");
+//                }
+//            };
+//
+//        } else {
+//            // if location disabled, start ranging beacons
+//            try {
+//                bstacInstance.startRangingBeacons();
+//            } catch (MSException e) {
+//                // handle for older devices
+//                TextView rangedView = (TextView) findViewById(R.id.RangedView);
+//                rangedView.setText(R.string.ble_not_supported);
+//                bCount.setVisibility(View.GONE);
+//                testCamped.setVisibility(View.GONE);
+//                e.printStackTrace();
+//            }
+//        }
+        MSPlace msPlace;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        beaconAdapter.clear();
+        beaconAdapter.notifyDataSetChanged();
+        bCount.setText("" + beacons.size());
+
+        listEvents.clear();
+        adapter.notifyDataSetChanged();
+
+        unregisterBroadcast();
+        isPopupVisible = true;
+        dailyCheckIn.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerBroadcast();
+        initList();
+        bCount.setText("" + beacons.size());
+        isPopupVisible = false;
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterBroadcast();
+
+        // stop scanning when the app closes
+        if (bstacInstance != null) {
+            try {
+                bstacInstance.stopRangingBeacons();
+            } catch (MSException e) {
+                // handle for older devices
+                e.printStackTrace();
+            }
+        }
+        dailyCheckIn.setVisibility(View.GONE);
+    }
+
+    // Callback intent results
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
+            getActivity().finish();
+        }
+        if (bstacInstance != null) {
+            try {
+                bstacInstance.startRangingBeacons();
+            } catch (MSException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //method display ListBeacon
+    private void initList() {
+        beaconAdapter = new BeaconAdapter(beacons,getContext());
+        beaconList.setAdapter(beaconAdapter);
+        registerBroadcast();
+    }
+
+    private void registerBroadcast() {
+        if (!registered) {
+            // register beaconstac receiver
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_RANGED_BEACON);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_CAMPED_BEACON);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_BEACON);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_RULE_TRIGGERED);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_ENTERED_REGION);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_REGION);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_ENTERED_GEOFENCE);
+            intentFilter.addAction(MSConstants.BEACONSTAC_INTENT_EXITED_GEOFENCE);
+            getContext().registerReceiver(beaconstacReceiver, intentFilter);
+
+            //register place sync receiver
+            IntentFilter iFilter = new IntentFilter();
+            iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_SUCCESS);
+            iFilter.addAction(MSConstants.BEACONSTAC_INTENT_PLACE_SYNC_FAILURE);
+            getContext().registerReceiver(placeSyncReceiver, iFilter);
+
+            registered = true;
+        }
+    }
+
+    private void unregisterBroadcast() {
+        if (registered) {
+            // unregister beaconstac receiver
+            getContext().unregisterReceiver(beaconstacReceiver);
+            // unregister place sync receiver
+            getContext().unregisterReceiver(placeSyncReceiver);
+            registered = false;
+        }
+    }
 
     @Override
     public void onClick(View view) {

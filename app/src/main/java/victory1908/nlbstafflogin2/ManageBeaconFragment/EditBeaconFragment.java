@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.annimon.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,33 +34,28 @@ import victory1908.nlbstafflogin2.beaconstac.BeaconAdapterDetail;
 import victory1908.nlbstafflogin2.request.CustomJsonObjectRequest;
 import victory1908.nlbstafflogin2.request.CustomVolleyRequest;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class EditBeaconFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
 
-    public EditBeaconFragment() {
-        // Required empty public constructor
-    }
-
     RequestQueue requestQueue;
-
+    SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar progressBar;
     //JSON Array
     private JSONArray beaconArray;
-
     private List<Beacon> listBeacons;
-
     //Creating Views
     private RecyclerView beaconRecyclerView;
     private RecyclerView.LayoutManager layoutMangerBeacon;
     private RecyclerView.Adapter beaconAdapter;
 
-    SwipeRefreshLayout swipeRefreshLayout;
 
-
-    ProgressBar progressBar;
-
+    public EditBeaconFragment() {
+        // Required empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,9 +63,13 @@ public class EditBeaconFragment extends BaseFragment implements SwipeRefreshLayo
 
         View viewFragment = inflater.inflate(R.layout.fragment_edit_registered_beacon, container, false);
 
+
         requestQueue = CustomVolleyRequest.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
         progressBar = (ProgressBar)viewFragment.findViewById(R.id.progressBar);
         listBeacons = new ArrayList<>();
+
+        Stream.of(listBeacons)
+                .filter(value -> value.getBeaconName().contains("vic"));
 
         beaconRecyclerView = (RecyclerView)viewFragment.findViewById(R.id.beaconList);
         swipeRefreshLayout = (SwipeRefreshLayout)viewFragment.findViewById(R.id.swipeRefreshLayout);
